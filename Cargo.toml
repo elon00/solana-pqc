@@ -1,0 +1,48 @@
+[workspace]
+members = [
+    "programs/quantum-custody",
+    "programs/token",
+    "sdk/rust"
+]
+
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+authors = ["SOLANA-PQC Team <info@solana-pqc.io>"]
+
+[workspace.dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"
+spl-token = "4.0"
+spl-associated-token-account = "2.2"
+solana-program = "1.18.0"
+solana-sdk = "1.18.0"
+borsh = "0.10.3"
+thiserror = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Post-Quantum Cryptography Libraries
+pqcrypto = "0.19"
+pqcrypto-kyber = "0.8"
+pqcrypto-dilithium = "0.5"
+pqcrypto-sphincsplus = "0.7"
+
+# Cryptographic utilities
+sha3 = "0.10"
+blake3 = "1.5"
+rand = "0.8"
+zeroize = { version = "1.7", features = ["derive"] }
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+
+[profile.release.build-override]
+opt-level = 3
+incremental = false
+codegen-units = 1
