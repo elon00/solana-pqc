@@ -1,0 +1,28 @@
+[package]
+name = "solana-pqc-sdk"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Rust SDK for Solana Quantum-Safe Custody"
+repository = "https://github.com/elon00/solana-pqc"
+keywords = ["solana", "post-quantum", "cryptography", "nist"]
+
+[dependencies]
+anchor-lang = { workspace = true }
+solana-sdk = { workspace = true }
+solana-program = { workspace = true }
+borsh = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+pqcrypto = { workspace = true }
+pqcrypto-kyber = { workspace = true }
+pqcrypto-dilithium = { workspace = true }
+pqcrypto-sphincsplus = { workspace = true }
+sha3 = { workspace = true }
+blake3 = { workspace = true }
+rand = { workspace = true }
+zeroize = { workspace = true, features = ["derive"] }
+
+[dev-dependencies]
+tokio = { version = "1.35", features = ["full"] }
