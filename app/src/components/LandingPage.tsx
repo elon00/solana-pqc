@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { Connection, PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js';
+import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js';
 
 const LandingPage = () => {
   const { connected, publicKey, sendTransaction } = useWallet();
@@ -46,70 +46,72 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, [connected, publicKey, connection]);
 
-  // Enhanced transaction functionality with real blockchain interaction
+  // Enhanced transaction functionality with real sendTransaction
   const handleTestTransaction = async () => {
-    if (!connected || !publicKey) {
-      setTransactionStatus('Please connect your wallet first');
+    if (!connected || !publicKey || !sendTransaction) {
+      setTransactionStatus('❌ Wallet not properly connected');
       return;
     }
 
     setIsLoading(true);
-    setTransactionStatus('🔍 Checking program deployment status...');
+    setTransactionStatus('🔍 Checking blockchain connection...');
 
     try {
-      // Check if programs are deployed
-      const programId = new PublicKey('QCustAbCdEfGhIjKlMnOpQrStUvWxYz123456789');
+      // Test 1: Check network connectivity
+      const version = await connection.getVersion();
+      setTransactionStatus(`✅ Connected to Solana ${version['solana-core']}`);
 
+      // Test 2: Get recent blockhash for transaction
+      setTransactionStatus('📦 Getting recent blockhash...');
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
+      setTransactionStatus(`📦 Blockhash: ${blockhash.slice(0, 8)}...${blockhash.slice(-8)}`);
+
+      // Test 3: Create a simple memo transaction (doesn't require deployed programs)
+      setTransactionStatus('✍️ Creating memo transaction...');
+
+      // Create a proper Solana transaction
+      const transaction = new Transaction();
+      transaction.recentBlockhash = blockhash;
+      transaction.lastValidBlockHeight = lastValidBlockHeight;
+      transaction.feePayer = publicKey;
+
+      // Add memo instruction (built into Solana)
+      transaction.add({
+        programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+        keys: [],
+        data: Buffer.from('Solana PQC Test Transaction 🚀')
+      });
+
+      setTransactionStatus('⚡ Requesting signature from wallet...');
+
+      // Test 4: Send transaction using wallet adapter
       try {
-        // Try to get program account info
-        const programInfo = await connection.getAccountInfo(programId);
+        const signature = await sendTransaction(transaction, connection);
+        setTransactionStatus(`✅ Transaction sent! Signature: ${signature.slice(0, 8)}...${signature.slice(-8)}`);
 
-        if (programInfo) {
-          setTransactionStatus('✅ Programs deployed! Simulating transaction...');
+        // Wait for confirmation
+        setTransactionStatus('⏳ Waiting for confirmation...');
 
-          // Simulate real transaction preparation
-          const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-          setTransactionStatus(`📦 Blockhash: ${blockhash.slice(0, 8)}...${blockhash.slice(-8)}`);
+        const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+        setTransactionStatus('🎉 Transaction confirmed on blockchain!');
 
-          // Simulate transaction processing
-          setTimeout(async () => {
-            try {
-              // Create a mock transaction for demonstration
-              const mockTransaction = {
-                recentBlockhash: blockhash,
-                feePayer: publicKey,
-                instructions: [], // Would contain actual program instructions
-              };
+        // Show transaction link
+        const txUrl = `https://solscan.io/tx/${signature}?cluster=devnet`;
+        setTransactionStatus(`🔗 View: ${txUrl}`);
 
-              setTransactionStatus('⚡ Transaction ready for signing...');
+        setIsLoading(false);
 
-              // In a real implementation, this would call the deployed program
-              setTimeout(() => {
-                setTransactionStatus('✅ Mock transaction completed successfully!');
-                setTransactionStatus('🎯 Ready for real program interaction when deployed');
-                setIsLoading(false);
-              }, 1500);
-
-            } catch (txError) {
-              setTransactionStatus('⚠️ Transaction simulation completed (programs need deployment)');
-              setIsLoading(false);
-            }
-          }, 1000);
-
+      } catch (txError: any) {
+        if (txError.message?.includes('User rejected')) {
+          setTransactionStatus('❌ Transaction cancelled by user');
         } else {
-          setTransactionStatus('📋 Programs not yet deployed to devnet');
-          setTransactionStatus('🔧 Use GitHub Actions or manual deployment');
-          setIsLoading(false);
+          setTransactionStatus(`⚠️ Transaction issue: ${txError.message?.slice(0, 50)}...`);
         }
-
-      } catch (programError) {
-        setTransactionStatus('🚀 Programs need to be deployed first');
-        setTransactionStatus('💡 Run: anchor deploy --provider.cluster devnet');
         setIsLoading(false);
       }
 
-    } catch (error) {
-      setTransactionStatus('❌ Connection error - check network');
+    } catch (error: any) {
+      setTransactionStatus(`❌ Error: ${error.message?.slice(0, 50)}...`);
       setIsLoading(false);
     }
   };
