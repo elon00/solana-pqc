@@ -12,6 +12,8 @@ const LandingPage = () => {
   const [transactionStatus, setTransactionStatus] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [showDeploymentGuide, setShowDeploymentGuide] = useState(false);
+  const [transactionHistory, setTransactionHistory] = useState<string[]>([]);
+  const [showTransactionPanel, setShowTransactionPanel] = useState(false);
 
   // Initialize Solana connection
   const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
@@ -46,75 +48,139 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, [connected, publicKey, connection]);
 
-  // Enhanced transaction functionality with real sendTransaction
-  const handleTestTransaction = async () => {
+  // Enhanced transaction functionality with multiple transaction types
+  const handleTransaction = async (transactionType: string) => {
     if (!connected || !publicKey || !sendTransaction) {
-      setTransactionStatus('❌ Wallet not properly connected');
+      setTransactionStatus('❌ Please connect your wallet first');
       return;
     }
 
     setIsLoading(true);
-    setTransactionStatus('🔍 Checking blockchain connection...');
+    const timestamp = new Date().toLocaleTimeString();
 
     try {
-      // Test 1: Check network connectivity
-      const version = await connection.getVersion();
-      setTransactionStatus(`✅ Connected to Solana ${version['solana-core']}`);
-
-      // Test 2: Get recent blockhash for transaction
-      setTransactionStatus('📦 Getting recent blockhash...');
+      // Get recent blockhash
       const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash('confirmed');
-      setTransactionStatus(`📦 Blockhash: ${blockhash.slice(0, 8)}...${blockhash.slice(-8)}`);
 
-      // Test 3: Create a simple memo transaction (doesn't require deployed programs)
-      setTransactionStatus('✍️ Creating memo transaction...');
-
-      // Create a proper Solana transaction
-      const transaction = new Transaction();
+      let transaction = new Transaction();
       transaction.recentBlockhash = blockhash;
       transaction.lastValidBlockHeight = lastValidBlockHeight;
       transaction.feePayer = publicKey;
 
-      // Add memo instruction (built into Solana)
-      transaction.add({
-        programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
-        keys: [],
-        data: Buffer.from('Solana PQC Test Transaction 🚀')
-      });
+      // Add different instructions based on transaction type
+      switch (transactionType) {
+        case 'memo':
+          setTransactionStatus(`📝 Creating memo transaction...`);
+          transaction.add({
+            programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+            keys: [],
+            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp} 🚀`)
+          });
+          break;
 
-      setTransactionStatus('⚡ Requesting signature from wallet...');
+        case 'airdrop':
+          setTransactionStatus(`💰 Requesting airdrop...`);
+          try {
+            const signature = await connection.requestAirdrop(publicKey, LAMPORTS_PER_SOL);
+            await connection.confirmTransaction(signature, 'confirmed');
+            setTransactionStatus(`✅ Airdrop received! +1 SOL`);
+            setBalance(prev => (prev || 0) + 1);
+            setIsLoading(false);
+            return;
+          } catch (error: any) {
+            setTransactionStatus(`❌ Airdrop failed: ${error.message}`);
+            setIsLoading(false);
+            return;
+          }
 
-      // Test 4: Send transaction using wallet adapter
-      try {
-        const signature = await sendTransaction(transaction, connection);
-        setTransactionStatus(`✅ Transaction sent! Signature: ${signature.slice(0, 8)}...${signature.slice(-8)}`);
+        case 'balance':
+          setTransactionStatus(`🔍 Checking balance...`);
+          const balance = await connection.getBalance(publicKey);
+          setBalance(balance / LAMPORTS_PER_SOL);
+          setTransactionStatus(`💰 Balance: ${(balance / LAMPORTS_PER_SOL).toFixed(4)} SOL`);
+          setIsLoading(false);
+          return;
 
-        // Wait for confirmation
-        setTransactionStatus('⏳ Waiting for confirmation...');
+        case 'ping':
+          setTransactionStatus(`🏓 Pinging Solana network...`);
+          const pingStart = Date.now();
+          await connection.getVersion();
+          const pingTime = Date.now() - pingStart;
+          setTransactionStatus(`✅ Network ping: ${pingTime}ms`);
+          setIsLoading(false);
+          return;
 
-        const confirmation = await connection.confirmTransaction(signature, 'confirmed');
-        setTransactionStatus('🎉 Transaction confirmed on blockchain!');
+        case 'status':
+          setTransactionStatus(`📊 Getting network status...`);
+          const status = await connection.getVersion();
+          const slot = await connection.getSlot();
+          setTransactionStatus(`✅ Solana ${status['solana-core']} - Slot: ${slot}`);
+          setIsLoading(false);
+          return;
 
-        // Show transaction link
-        const txUrl = `https://solscan.io/tx/${signature}?cluster=devnet`;
-        setTransactionStatus(`🔗 View: ${txUrl}`);
+        case 'info':
+          setTransactionStatus(`ℹ️ Getting account info...`);
+          const accountInfo = await connection.getAccountInfo(publicKey);
+          setTransactionStatus(`✅ Account exists - Balance: ${accountInfo ? 'Active' : 'Not found'}`);
+          setIsLoading(false);
+          return;
 
-        setIsLoading(false);
+        case 'test':
+          setTransactionStatus(`🧪 Running comprehensive test...`);
+          // Run multiple checks
+          const checks = await Promise.all([
+            connection.getVersion(),
+            connection.getBalance(publicKey),
+            connection.getLatestBlockhash()
+          ]);
+          setTransactionStatus(`✅ All systems operational!`);
+          setIsLoading(false);
+          return;
 
-      } catch (txError: any) {
-        if (txError.message?.includes('User rejected')) {
-          setTransactionStatus('❌ Transaction cancelled by user');
-        } else {
-          setTransactionStatus(`⚠️ Transaction issue: ${txError.message?.slice(0, 50)}...`);
-        }
-        setIsLoading(false);
+        default:
+          setTransactionStatus(`📝 Creating ${transactionType} transaction...`);
+          transaction.add({
+            programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
+            keys: [],
+            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp}`)
+          });
       }
 
+      setTransactionStatus(`⚡ Requesting signature from wallet...`);
+
+      // Send transaction
+      const signature = await sendTransaction(transaction, connection);
+
+      // Add to transaction history
+      const txUrl = `https://solscan.io/tx/${signature}?cluster=devnet`;
+      const historyEntry = `${timestamp}: ${transactionType} - ${signature.slice(0, 8)}...${signature.slice(-8)}`;
+      setTransactionHistory(prev => [historyEntry, ...prev.slice(0, 4)]);
+
+      setTransactionStatus(`✅ Transaction sent! Signature: ${signature.slice(0, 8)}...${signature.slice(-8)}`);
+      setTransactionStatus(`⏳ Waiting for confirmation...`);
+
+      // Wait for confirmation
+      await connection.confirmTransaction(signature, 'confirmed');
+      setTransactionStatus(`🎉 Transaction confirmed!`);
+      setTransactionStatus(`🔗 View: ${txUrl}`);
+
     } catch (error: any) {
-      setTransactionStatus(`❌ Error: ${error.message?.slice(0, 50)}...`);
-      setIsLoading(false);
+      if (error.message?.includes('User rejected')) {
+        setTransactionStatus('❌ Transaction cancelled by user');
+      } else {
+        setTransactionStatus(`❌ Error: ${error.message?.slice(0, 50)}...`);
+      }
     }
+
+    setIsLoading(false);
   };
+
+  // Quick transaction buttons
+  const transactionButtons = [
+    { type: 'memo', label: 'Send Memo', icon: '📝', color: 'from-blue-600 to-purple-600' },
+    { type: 'airdrop', label: 'Get Airdrop', icon: '💰', color: 'from-green-600 to-blue-600' },
+    { type: 'balance', label: 'Check Balance', icon: '🔍', color: 'from-purple-600 to-pink-600' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -192,58 +258,135 @@ const LandingPage = () => {
               </div>
             </div>
 
-            {/* Transaction Testing Section */}
+            {/* Enhanced Transaction Panel */}
             {connected && (
-              <div className="max-w-2xl mx-auto mb-8">
+              <div className="max-w-4xl mx-auto mb-8">
                 <div className="bg-white/5 backdrop-blur-sm border border-purple-400/30 rounded-xl p-6">
-                  <h3 className="text-xl font-semibold text-white mb-4 text-center">🧪 Transaction Testing</h3>
-
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                    <button
-                      onClick={handleTestTransaction}
-                      disabled={isLoading}
-                      className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-600 px-6 py-3 rounded-lg font-semibold text-white transition-all flex items-center space-x-2 disabled:cursor-not-allowed"
-                    >
-                      {isLoading ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          <span>Processing...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Test Transaction</span>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                          </svg>
-                        </>
-                      )}
-                    </button>
-
-                    <Link
-                      to="/dashboard"
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-6 py-3 rounded-lg font-semibold text-white transition-all flex items-center space-x-2"
-                    >
-                      <span>Full Dashboard</span>
-                      <span>→</span>
-                    </Link>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-2xl font-semibold text-white">🚀 Transaction Center</h3>
+                    <div className="flex items-center space-x-2">
+                      <span className={`w-3 h-3 rounded-full ${networkStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                      <span className="text-sm text-gray-400">Solana Devnet</span>
+                    </div>
                   </div>
 
+                  {/* Transaction Buttons */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    {transactionButtons.map((btn) => (
+                      <button
+                        key={btn.type}
+                        onClick={() => handleTransaction(btn.type)}
+                        disabled={isLoading}
+                        className={`bg-gradient-to-r ${btn.color} hover:opacity-90 disabled:opacity-50 px-4 py-3 rounded-lg font-semibold text-white transition-all flex flex-col items-center space-y-2 disabled:cursor-not-allowed`}
+                      >
+                        <span className="text-2xl">{btn.icon}</span>
+                        <span className="text-sm">{btn.label}</span>
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Transaction Status */}
                   {transactionStatus && (
-                    <div className="mt-4 p-3 bg-gray-800/50 rounded-lg border border-gray-600">
-                      <p className="text-gray-300 text-sm text-center">{transactionStatus}</p>
+                    <div className="mb-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+                      <p className="text-gray-300 text-sm">{transactionStatus}</p>
                     </div>
                   )}
 
-                  {balance !== null && (
-                    <div className="mt-4 text-center">
-                      <p className="text-gray-400 text-sm">
-                        Wallet: {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
-                      </p>
-                      <p className="text-green-400 text-sm font-semibold">
-                        Balance: {balance.toFixed(4)} SOL
-                      </p>
+                  {/* Wallet Info */}
+                  <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                      <div>
+                        <p className="text-gray-400 text-sm">Wallet Address</p>
+                        <p className="text-purple-400 text-xs font-mono">
+                          {publicKey?.toString().slice(0, 8)}...{publicKey?.toString().slice(-8)}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-sm">SOL Balance</p>
+                        <p className="text-green-400 font-semibold">
+                          {balance !== null ? `${balance.toFixed(4)} SOL` : 'Loading...'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-sm">Network</p>
+                        <p className="text-blue-400 font-semibold">Devnet</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Transaction History */}
+                  {transactionHistory.length > 0 && (
+                    <div className="mt-4">
+                      <h4 className="text-white font-semibold mb-2">Recent Transactions</h4>
+                      <div className="space-y-2 max-h-32 overflow-y-auto">
+                        {transactionHistory.map((tx, index) => (
+                          <div key={index} className="text-xs text-gray-400 bg-gray-800/30 rounded p-2">
+                            {tx}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                    <Link
+                      to="/dashboard"
+                      className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-3 px-4 rounded-lg font-semibold text-white transition-all text-center"
+                    >
+                      🚀 Launch Full Dashboard
+                    </Link>
+
+                    <button
+                      onClick={() => setShowTransactionPanel(!showTransactionPanel)}
+                      className="flex-1 bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 py-3 px-4 rounded-lg font-semibold text-white transition-all"
+                    >
+                      {showTransactionPanel ? 'Hide' : 'Show'} Advanced Panel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Advanced Transaction Panel */}
+            {showTransactionPanel && connected && (
+              <div className="max-w-4xl mx-auto mb-8">
+                <div className="bg-white/5 backdrop-blur-sm border border-purple-400/30 rounded-xl p-6">
+                  <h3 className="text-xl font-semibold text-white mb-4 text-center">🔧 Advanced Transaction Panel</h3>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button
+                      onClick={() => handleTransaction('ping')}
+                      disabled={isLoading}
+                      className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 px-3 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                    >
+                      🏓 Ping
+                    </button>
+
+                    <button
+                      onClick={() => handleTransaction('status')}
+                      disabled={isLoading}
+                      className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 disabled:from-gray-600 px-3 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                    >
+                      📊 Status
+                    </button>
+
+                    <button
+                      onClick={() => handleTransaction('info')}
+                      disabled={isLoading}
+                      className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:from-gray-600 px-3 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                    >
+                      ℹ️ Info
+                    </button>
+
+                    <button
+                      onClick={() => handleTransaction('test')}
+                      disabled={isLoading}
+                      className="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 disabled:from-gray-600 px-3 py-2 rounded-lg text-sm font-semibold text-white transition-all"
+                    >
+                      🧪 Test
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
