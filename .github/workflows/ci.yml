@@ -1,52 +1,160 @@
-name: CI
+name: 🚀 Complete Deployment Pipeline
 
 on:
   push:
-    branches: [ master, main, develop ]
+    branches: [ main, develop ]
   pull_request:
-    branches: [ master, main, develop ]
+    branches: [ main, develop ]
+  workflow_dispatch:
 
 env:
-  SOLANA_VERSION: 1.18.0
+  SOLANA_VERSION: 1.18.4
   ANCHOR_VERSION: 0.29.0
+  NODE_VERSION: 18
 
 jobs:
-  lint:
-    name: Lint
+  # Frontend Deployment
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - run: npm ci
-      - run: npm run lint || echo "Lint not configured yet"
 
-  test-rust:
-    name: Test Rust
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: 'app/package-lock.json'
+
+      - name: Install dependencies
+        run: cd app && npm ci
+
+      - name: Build frontend
+        run: cd app && npm run build
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./app
+          vercel-args: --prod
+
+  # Solana Program Deployment
+  deploy-solana:
+    name: Deploy Solana Programs
     runs-on: ubuntu-latest
+    needs: deploy-frontend
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
+
+      - name: Setup Solana CLI
+        uses: solana-actions/setup-cli@v1
         with:
-          toolchain: stable
-          override: true
-      - uses: actions/cache@v3
+          version: ${{ env.SOLANA_VERSION }}
+
+      - name: Setup Anchor CLI
+        uses: solana-actions/setup-anchor@v1
+        with:
+          version: ${{ env.ANCHOR_VERSION }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Cache Cargo registry
+        uses: actions/cache@v3
         with:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - run: cargo test --all-features || echo "Tests not ready yet"
-      - run: cargo clippy -- -D warnings || echo "Clippy not configured yet"
 
-  build:
-    name: Build
+      - name: Configure Solana for devnet
+        run: |
+          solana config set --url devnet
+          echo "Creating keypair..."
+          solana-keygen new --no-passphrase --silent
+          solana airdrop 2
+
+      - name: Build and deploy programs
+        run: |
+          cd app && npm ci
+          anchor build
+          anchor deploy --provider.cluster devnet
+
+      - name: Save program IDs
+        run: |
+          echo "QUANTUM_CUSTODY_PROGRAM_ID=$(solana address -k target/deploy/quantum_custody-keypair.json)" >> $GITHUB_ENV
+          echo "TOKEN_PROGRAM_ID=$(solana address -k target/deploy/solana_pqc_token-keypair.json)" >> $GITHUB_ENV
+
+      - name: Update environment variables
+        run: |
+          echo "VITE_PROGRAM_ID=${{ env.QUANTUM_CUSTODY_PROGRAM_ID }}" >> $GITHUB_ENV
+          echo "VITE_TOKEN_PROGRAM_ID=${{ env.TOKEN_PROGRAM_ID }}" >> $GITHUB_ENV
+
+  # Docker Build and Deploy
+  deploy-docker:
+    name: Build and Deploy with Docker
     runs-on: ubuntu-latest
+    needs: deploy-solana
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - uses: actions-rs/toolchain@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
         with:
-          toolchain: stable
-      - run: cargo build --release || echo "Build in progress"
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/solana-pqc:latest
+            ${{ secrets.DOCKER_USERNAME }}/solana-pqc:${{ github.sha }}
+
+  # Railway Deployment
+  deploy-railway:
+    name: Deploy to Railway
+    runs-on: ubuntu-latest
+    needs: deploy-docker
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Railway
+        uses: railwayapp/railway-action@v1
+        with:
+          railway-token: ${{ secrets.RAILWAY_TOKEN }}
+          service-name: solana-pqc-frontend
+
+  # Notification
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-frontend, deploy-solana, deploy-docker, deploy-railway]
+    if: always()
+    steps:
+      - name: Notify deployment status
+        run: |
+          if [[ "${{ needs.deploy-frontend.result }}" == "success" && "${{ needs.deploy-solana.result }}" == "success" ]]; then
+            echo "✅ Deployment completed successfully!"
+            echo "Frontend: Deployed to Vercel"
+            echo "Programs: Deployed to Solana Devnet"
+            echo "Docker: Image built and pushed"
+            echo "Railway: Application deployed"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi

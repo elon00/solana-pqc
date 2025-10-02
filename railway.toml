@@ -1,0 +1,60 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+healthcheckPath = "/"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+[services.frontend]
+name = "solana-pqc-frontend"
+source = "."
+
+[services.frontend.variables]
+NODE_ENV = "production"
+PORT = "3000"
+
+[services.backend]
+name = "solana-pqc-backend"
+source = "."
+buildCommand = "cargo build --release"
+
+[services.backend.variables]
+RUST_ENV = "production"
+SOLANA_NETWORK = "devnet"
+
+[[services.backend.ports]]
+port = 3001
+handlers = ["http"]
+
+[services.backend.variables.SOLANA_RPC_URL]
+generateValue = true
+fromService = "solana-validator"
+defaultValue = "https://api.devnet.solana.com"
+
+[services.solana-validator]
+name = "solana-validator"
+source = "public"
+image = "solana-labs/solana:v1.18.4"
+
+[services.solana-validator.variables]
+SOLANA_NETWORK = "devnet"
+
+[[services.solana-validator.ports]]
+port = 8899
+handlers = ["tcp"]
+
+# Database service (if needed)
+[services.database]
+name = "postgres-db"
+source = "public"
+image = "postgres:15-alpine"
+
+[services.database.variables]
+POSTGRES_DB = "solana_pqc"
+POSTGRES_USER = "postgres"
+POSTGRES_PASSWORD = "change_me_in_production"
+
+[[services.database.ports]]
+port = 5432
+handlers = ["tcp"]
