@@ -1,0 +1,8 @@
+[target.bpfel-unknown-unknown.dependencies.std]
+features = []
+
+[target.bpfel-unknown-unknown.dependencies.core]
+features = []
+
+[target.bpfel-unknown-unknown.dependencies.compiler_builtins]
+features = []

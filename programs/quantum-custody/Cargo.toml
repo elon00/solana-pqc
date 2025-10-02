@@ -1,0 +1,25 @@
+[package]
+name = "quantum-custody"
+version = "0.1.0"
+description = "Quantum-safe custody program for Solana"
+edition = "2021"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "quantum_custody"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }
+anchor-spl = { workspace = true }
+solana-program = { workspace = true }
+borsh = { workspace = true }
+thiserror = { workspace = true }
+sha3 = { workspace = true }

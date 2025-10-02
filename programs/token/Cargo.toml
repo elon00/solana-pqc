@@ -1,0 +1,22 @@
+[package]
+name = "solana-pqc-token"
+version = "0.1.0"
+description = "SOLANA-PQC Token with quantum-safe features"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "solana_pqc_token"
+
+[features]
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }
+anchor-spl = { workspace = true }
+spl-token = { workspace = true }
+spl-associated-token-account = { workspace = true }
+solana-program = { workspace = true }
