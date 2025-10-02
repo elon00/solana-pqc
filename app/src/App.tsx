@@ -7,6 +7,7 @@ import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
+import LandingPage from './components/LandingPage';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 function App() {
@@ -20,12 +21,17 @@ function App() {
         <WalletModalProvider>
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
-              <Header />
-              <main className="container mx-auto px-4 py-8">
-                <Routes>
-                  <Route path="/" element={<Dashboard />} />
-                </Routes>
-              </main>
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/dashboard" element={
+                  <>
+                    <Header />
+                    <main className="container mx-auto px-4 py-8">
+                      <Dashboard />
+                    </main>
+                  </>
+                } />
+              </Routes>
             </div>
           </Router>
         </WalletModalProvider>
