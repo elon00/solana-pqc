@@ -1,0 +1,55 @@
+{
+  "name": "solana-quantum-custody",
+  "version": "0.1.0",
+  "description": "Quantum-safe custody and transaction SDK for Solana",
+  "main": "index.js",
+  "scripts": {
+    "build": "anchor build",
+    "test": "anchor test",
+    "deploy:devnet": "anchor deploy --provider.cluster devnet",
+    "deploy:mainnet": "anchor deploy --provider.cluster mainnet",
+    "initialize:devnet": "ts-node scripts/initialize.ts --cluster devnet",
+    "initialize:mainnet": "ts-node scripts/initialize.ts --cluster mainnet",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "app:dev": "cd app && npm run dev",
+    "app:build": "cd app && npm run build",
+    "sdk:build": "cd sdk/typescript && npm run build",
+    "docs": "typedoc --out docs/api sdk/typescript/src"
+  },
+  "keywords": [
+    "solana",
+    "blockchain",
+    "post-quantum",
+    "cryptography",
+    "nist",
+    "custody",
+    "wallet",
+    "security"
+  ],
+  "author": "Solana PQC Team",
+  "license": "MIT",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
+    "@solana/web3.js": "^1.87.6",
+    "@solana/spl-token": "^0.3.9"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/mocha": "^10.0.6",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "chai": "^4.3.10",
+    "eslint": "^8.54.0",
+    "mocha": "^10.2.0",
+    "prettier": "^3.1.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.1",
+    "typedoc": "^0.25.4",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
