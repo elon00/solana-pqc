@@ -4,11 +4,11 @@
 [![Solana](https://img.shields.io/badge/Solana-14F195?style=flat&logo=solana&logoColor=white)](https://solana.com)
 [![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![NIST PQC](https://img.shields.io/badge/NIST-PQC%20Compliant-blue)](https://csrc.nist.gov/projects/post-quantum-cryptography)
-[![ISO 20022](https://img.shields.io/badge/ISO%2020022-Compliant-green)](https://www.iso20022.org/)
-[![MiCA](https://img.shields.io/badge/MiCA-Compliant-orange)](https://www.esma.europa.eu/)
+[![NIST PQC](https://img.shields.io/badge/NIST%20PQC-Research%20Target-lightgrey)](https://csrc.nist.gov/projects/post-quantum-cryptography)
+[![ISO 20022](https://img.shields.io/badge/ISO%2020022-Design%20Reference-lightgrey)](https://www.iso20022.org/)
+[![MiCA](https://img.shields.io/badge/MiCA-Legal%20Review%20Required-lightgrey)](https://www.esma.europa.eu/)
 
-> **The first comprehensive quantum-resistant custody and transaction protocol on Solana, implementing NIST-standardized post-quantum cryptography (FIPS 203, 204, 205) with global tokenization standards compliance.**
+> **Research and prototype project for quantum-resistant custody concepts on Solana. Claims of implemented FIPS algorithms, production security, and regulatory compliance require independent cryptographic, deployment, and legal verification.**
 
 ---
 
@@ -16,11 +16,11 @@
 
 SOLANA-PQC protects digital assets against quantum computing threats through:
 
-- **✅ NIST FIPS 203** (ML-KEM/CRYSTALS-Kyber) - Quantum-safe key encapsulation
-- **✅ NIST FIPS 204** (ML-DSA/CRYSTALS-Dilithium) - Quantum-resistant digital signatures
-- **✅ NIST FIPS 205** (SLH-DSA/SPHINCS+) - Stateless hash-based signatures
+- **Research target: NIST FIPS 203** (ML-KEM) - implementation requires cryptographic test evidence
+- **Research target: NIST FIPS 204** (ML-DSA) - implementation requires cryptographic test evidence
+- **Research target: NIST FIPS 205** (SLH-DSA) - implementation requires cryptographic test evidence
 - **✅ ISO 20022** - International financial messaging standard
-- **✅ MiCA Compliance** - EU crypto-asset regulation
+- **MiCA legal review required** - this repository is not a compliance certificate
 - **✅ FATF Travel Rule** - AML/CTF compliance
 - **✅ ERC-20 Bridge** - Cross-chain compatibility
 
