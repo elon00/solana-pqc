@@ -1,0 +1,41 @@
+{
+  "system": "SolanaPQC",
+  "version": "1.0.0",
+  "status": "EVIDENCE_BASED_PQC_PROTOCOL",
+  "description": "Quantum-Safe Custody & Transaction SDK for Solana - NIST FIPS 203 ML-KEM-768 and NIST FIPS 204 ML-DSA-65 Dual Hybrid Conjunction with Ed25519",
+  "truthTaxonomy": {
+    "cryptographicCore": "PURE_TYPESCRIPT_PQC_EXECUTION",
+    "kemScheme": "NIST_FIPS_203_ML_KEM_768",
+    "signatureScheme": "NIST_FIPS_204_ML_DSA_65",
+    "hybridScheme": "ED25519_AND_ML_DSA_65_DUAL_CONJUNCTION",
+    "simulationEliminated": true,
+    "weakestLinkGate": "H=0.60 (Pending external 3rd-party audit)",
+    "auditFirmStatus": "PENDING_EXTERNAL_AUDIT"
+  },
+  "subsystems": [
+    {
+      "name": "CryptoUtils",
+      "path": "sdk/typescript/src/crypto.ts",
+      "status": "VERIFIED_NIST_FIPS_203_204",
+      "wire": {
+        "kemPublicKeyBytes": 1184,
+        "kemSecretKeyBytes": 2400,
+        "kemCiphertextBytes": 1088,
+        "kemSharedSecretBytes": 32,
+        "dsaPublicKeyBytes": 1952,
+        "dsaSecretKeyBytes": 4032,
+        "dsaSignatureBytes": 3309
+      }
+    },
+    {
+      "name": "QuantumVaultClient",
+      "path": "sdk/typescript/src/client.ts",
+      "status": "VERIFIED_SOLANA_CUSTODY_CLIENT"
+    },
+    {
+      "name": "QuantumVaultPDA",
+      "path": "sdk/typescript/src/vault.ts",
+      "status": "VERIFIED_PDA_COMMITMENT"
+    }
+  ]
+}
