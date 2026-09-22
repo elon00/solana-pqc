@@ -10,7 +10,12 @@
     "lint": "eslint src --ext .ts",
     "prepublishOnly": "npm run build"
   },
-  "keywords": ["solana", "post-quantum", "cryptography", "typescript"],
+  "keywords": [
+    "solana",
+    "post-quantum",
+    "cryptography",
+    "typescript"
+  ],
   "author": "Solana PQC Team",
   "license": "MIT",
   "dependencies": {
@@ -18,7 +23,9 @@
     "@solana/web3.js": "^1.87.6",
     "@solana/spl-token": "^0.3.9",
     "bn.js": "^5.2.1",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "@noble/post-quantum": "0.7.1",
+    "@noble/hashes": "1.8.0"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.5",
