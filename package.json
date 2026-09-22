@@ -55,7 +55,10 @@
   },
   "overrides": {
     "bn.js": "5.2.5",
-    "rpc-websockets": "9.3.9",
+    "rpc-websockets": {
+      ".": "9.3.9",
+      "ws": "8.21.3"
+    },
     "jayson": {
       "ws": "8.21.3"
     }
