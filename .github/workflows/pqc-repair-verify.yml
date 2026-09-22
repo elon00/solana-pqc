@@ -1,0 +1,46 @@
+name: PQC dependency repair verification
+
+on:
+  push:
+    branches:
+      - automation/fix-pqc-dependency
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Regenerate root lock metadata
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Clean root install
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Project-native gate
+        run: npm test
+      - name: Root security audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: SDK clean install, build, and audit
+        working-directory: sdk/typescript
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm run build
+          npm audit --omit=dev --audit-level=high
+      - name: Documentation generation
+        run: npm run docs
+      - name: Emit repaired locks for review
+        if: success()
+        run: |
+          echo "ROOT_LOCK_B64_BEGIN"
+          base64 -w0 package-lock.json
+          echo
+          echo "ROOT_LOCK_B64_END"
+          echo "SDK_LOCK_B64_BEGIN"
+          base64 -w0 sdk/typescript/package-lock.json
+          echo
+          echo "SDK_LOCK_B64_END"
