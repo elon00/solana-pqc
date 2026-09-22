@@ -24,12 +24,13 @@ jobs:
         run: npm test
       - name: Root security audit
         run: npm audit --omit=dev --audit-level=high
-      - name: SDK clean install and build
+      - name: SDK clean install, build, and audit
         working-directory: sdk/typescript
         run: |
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           npm ci --ignore-scripts --no-audit --no-fund
           npm run build
+          npm audit --omit=dev --audit-level=high
       - name: Documentation generation
         run: npm run docs
       - name: Emit repaired locks for review
