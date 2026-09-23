@@ -3,7 +3,8 @@ export const SOLANA_RPC_URL =
   import.meta.env.VITE_SOLANA_RPC_URL || "https://api.testnet.solana.com";
 
 const browserOrigin =
-  typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app")
+  typeof window !== "undefined" &&
+  (window.location.hostname.endsWith(".vercel.app") || window.location.hostname.endsWith(".netlify.app"))
     ? window.location.origin
     : "";
 
