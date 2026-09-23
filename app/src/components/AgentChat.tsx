@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { API_BASE_URL, APP_NAME } from '../config';
+import { useBackendWallet } from '../context/BackendWalletContext';
 
 type ChatLine = {
   role: 'user' | 'assistant';
@@ -14,35 +15,24 @@ type BackendStatus = {
 };
 
 const AgentChat = () => {
-  const { publicKey, connected, signMessage } = useWallet();
+  const { publicKey } = useWallet();
   const [status, setStatus] = useState<BackendStatus | null>(null);
   const [statusError, setStatusError] = useState('');
   const [provider, setProvider] = useState('auto');
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
-  const [walletSession, setWalletSession] = useState('');
-  const [walletAuth, setWalletAuth] = useState<'unverified' | 'verifying' | 'verified' | 'unsupported' | 'backend-offline' | 'error'>(
-    API_BASE_URL ? 'unverified' : 'backend-offline'
-  );
-  const [walletAuthError, setWalletAuthError] = useState('');
+  const {
+    authState: walletAuth,
+    sessionToken: walletSession,
+    error: walletAuthError,
+    verifyWallet
+  } = useBackendWallet();
   const [messages, setMessages] = useState<ChatLine[]>([
     {
       role: 'assistant',
       text: `${APP_NAME} Testnet assistant. I can use backend Testnet RPC context and configured model providers without accessing your private keys.`
     }
   ]);
-
-  useEffect(() => {
-    setWalletSession('');
-    setWalletAuth(
-      !API_BASE_URL
-        ? 'backend-offline'
-        : publicKey
-          ? (signMessage ? 'unverified' : 'unsupported')
-          : 'unverified'
-    );
-    setWalletAuthError('');
-  }, [publicKey, signMessage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,56 +60,6 @@ const AgentChat = () => {
       window.clearInterval(id);
     };
   }, []);
-
-  const verifyWallet = async () => {
-    if (!API_BASE_URL) {
-      setWalletAuth('backend-offline');
-      setWalletAuthError('Public backend is not connected to this deployment yet.');
-      return;
-    }
-    if (!connected || !publicKey || !signMessage) {
-      setWalletAuth(signMessage ? 'error' : 'unsupported');
-      setWalletAuthError(!signMessage ? 'This wallet adapter does not support message signing.' : 'Connect a wallet first.');
-      return;
-    }
-
-    setWalletAuth('verifying');
-    setWalletAuthError('');
-    try {
-      const challengeResponse = await fetch(`${API_BASE_URL}/api/auth/challenge`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ walletAddress: publicKey.toBase58() })
-      });
-      const challenge = await challengeResponse.json();
-      if (!challengeResponse.ok) throw new Error(challenge?.error || `HTTP ${challengeResponse.status}`);
-
-      const signed = await signMessage(new TextEncoder().encode(challenge.message));
-      const binary = Array.from(signed, (byte) => String.fromCharCode(byte)).join('');
-      const signature = window.btoa(binary);
-
-      const verifyResponse = await fetch(`${API_BASE_URL}/api/auth/verify`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          walletAddress: publicKey.toBase58(),
-          message: challenge.message,
-          signature,
-          challengeToken: challenge.challengeToken
-        })
-      });
-      const verified = await verifyResponse.json();
-      if (!verifyResponse.ok || !verified?.verified || !verified?.token) {
-        throw new Error(verified?.error || `HTTP ${verifyResponse.status}`);
-      }
-      setWalletSession(verified.token);
-      setWalletAuth('verified');
-    } catch (error) {
-      setWalletSession('');
-      setWalletAuth('error');
-      setWalletAuthError(error instanceof Error ? error.message : String(error));
-    }
-  };
 
   const send = async (event: FormEvent) => {
     event.preventDefault();
@@ -214,7 +154,7 @@ const AgentChat = () => {
           <button
             type="button"
             onClick={verifyWallet}
-            disabled={walletAuth === 'verifying' || walletAuth === 'unsupported' || walletAuth === 'backend-offline'}
+            disabled={walletAuth === 'verifying' || walletAuth === 'unsupported' || walletAuth === 'backend-offline' || walletAuth === 'disconnected'}
             className="rounded bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-1 text-white"
           >
             {walletAuth === 'verifying'
@@ -277,7 +217,7 @@ const AgentChat = () => {
           </button>
         </div>
         <p className="text-xs text-gray-500">
-          Connected wallet: {publicKey ? publicKey.toBase58() : 'none'} · authenticated: {walletAuth === 'verified' ? 'yes' : 'no'}. Seed phrases/private keys are never sent.
+          Connected wallet: {publicKey ? publicKey.toBase58() : 'none'} · backend authenticated: {walletAuth === 'verified' ? 'yes' : 'no'}. Seed phrases/private keys are never sent.
         </p>
       </form>
     </section>
