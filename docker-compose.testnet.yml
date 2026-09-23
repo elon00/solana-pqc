@@ -9,6 +9,7 @@ services:
       API_PORT: 3001
       SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.testnet.solana.com}
       ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      WALLET_AUTH_SECRET: ${WALLET_AUTH_SECRET:-local-test-only-wallet-auth-secret-change-before-public-use}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-}
       OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
