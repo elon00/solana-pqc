@@ -1,55 +1,43 @@
 @echo off
-setlocal enabledelayedexpansion
+setlocal
 
-echo 🚀 SOLANA-PQC Complete Deployment (Windows)
-echo ==================================
-echo.
+echo SCSTOBCMinority AI - local Solana Testnet deploy helper
 
 set "NETWORK=%~1"
-if "%NETWORK%"=="" set "NETWORK=devnet"
+if "%NETWORK%"=="" set "NETWORK=testnet"
+if /I not "%NETWORK%"=="testnet" (
+  echo Refusing network "%NETWORK%". This helper is Testnet-only; Mainnet is release-gated.
+  exit /b 1
+)
 
-echo 📋 Configuration:
-echo    Network: %NETWORK%
-echo    Wallet: VUfEUgFkniFAw2kWGPuDCZZiSGk7zHsAiFhxTewv7GR
-echo.
-
-echo ⚙️  Configuring Solana...
-"%USERPROFILE%\.local\share\solana\active_release\bin\solana" config set --url %NETWORK%
+where solana >nul 2>nul
 if errorlevel 1 (
-    echo ❌ Failed to configure Solana
-    exit /b 1
+  echo solana CLI is required.
+  exit /b 1
 )
 
-echo.
-echo 🔨 Building programs...
-if not exist "%USERPROFILE%\.local\share\solana\active_release\bin\anchor" (
-    echo ❌ Anchor CLI not found. Please install Anchor CLI first.
-    echo    Visit: https://book.anchor-lang.com/getting_started/installation.html
-    exit /b 1
-)
-
-"%USERPROFILE%\.local\share\solana\active_release\bin\anchor" build
+where anchor >nul 2>nul
 if errorlevel 1 (
-    echo ❌ Failed to build programs
-    exit /b 1
+  echo Anchor CLI 0.29.x is required.
+  exit /b 1
 )
 
-echo.
-echo 🌐 Deploying to %NETWORK%...
-"%USERPROFILE%\.local\share\solana\active_release\bin\anchor" deploy --provider.cluster %NETWORK%
-if errorlevel 1 (
-    echo ❌ Failed to deploy programs
-    exit /b 1
-)
+solana config set --url https://api.testnet.solana.com
+if errorlevel 1 exit /b 1
 
-echo.
-echo ✅ Deployment completed successfully!
-echo.
-echo 🔗 You can view your programs on Solana Explorer:
-echo    https://explorer.solana.com/?cluster=%NETWORK%
-echo.
-echo 📝 Next steps:
-echo    1. Copy the Program IDs from the deployment output above
-echo    2. Update your .env file with the new Program IDs
-echo    3. Update your frontend configuration if needed
-echo.
+solana address
+solana balance --url https://api.testnet.solana.com
+
+anchor build
+if errorlevel 1 exit /b 1
+anchor keys sync
+if errorlevel 1 exit /b 1
+anchor build
+if errorlevel 1 exit /b 1
+anchor deploy --provider.cluster testnet
+if errorlevel 1 exit /b 1
+
+echo Deployment command completed. Verify executable program accounts on Testnet before claiming success.
+echo Initialize only after verification:
+echo set ANCHOR_PROVIDER_URL=https://api.testnet.solana.com
+echo node scripts\initialize-testnet.mjs
