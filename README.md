@@ -1,4 +1,4 @@
-# 🛡️ SOLANA-PQC: Quantum-Safe Custody & Transaction Protocol
+# 🛡️ SCSTOBCMinority AI: Quantum-Safe Custody & Transaction Protocol
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Solana](https://img.shields.io/badge/Solana-14F195?style=flat&logo=solana&logoColor=white)](https://solana.com)
