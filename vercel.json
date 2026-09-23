@@ -1,42 +1,22 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "app/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
+  "functions": {
+    "api/index.mjs": {
+      "maxDuration": 30
     }
-  ],
+  },
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "/app/dist/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production",
-    "VITE_SOLANA_NETWORK": "testnet",
-    "VITE_SOLANA_RPC_URL": "https://api.testnet.solana.com"
-  },
-  "headers": [
+      "src": "/health",
+      "dest": "/api/index.mjs"
+    },
     {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Frame-Options",
-          "value": "SAMEORIGIN"
-        },
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        }
-      ]
+      "src": "/api/(.*)",
+      "dest": "/api/index.mjs"
+    },
+    {
+      "src": "/",
+      "dest": "/api/index.mjs"
     }
   ]
 }
