@@ -3,6 +3,7 @@ name = "quantum-custody"
 version = "0.1.0"
 description = "Quantum-safe custody program for Solana"
 edition = "2021"
+rust-version = "1.73"
 license = "MIT"
 
 [lib]
