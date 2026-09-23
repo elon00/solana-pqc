@@ -1,4 +1,4 @@
-name: Deploy SCSTOBCMinority AI Web to GitHub Pages
+name: Deploy Solana PQC Web to GitHub Pages
 
 on:
   push:

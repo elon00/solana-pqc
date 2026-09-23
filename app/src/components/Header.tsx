@@ -1,6 +1,7 @@
 import React from 'react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Link } from 'react-router-dom';
+import { APP_NAME, APP_TAGLINE, NETWORK_LABEL } from '../config';
 
 const Header: React.FC = () => {
   return (
@@ -10,16 +11,16 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center space-x-3">
             <div className="text-2xl">🛡️</div>
             <div>
-              <h1 className="text-xl font-bold text-white">SCSTOBCMinority AI</h1>
-              <p className="text-xs text-gray-400">Quantum-Safe Custody</p>
+              <h1 className="text-xl font-bold text-white">{APP_NAME}</h1>
+              <p className="text-xs text-gray-400">{APP_TAGLINE}</p>
             </div>
           </Link>
           <div className="flex items-center space-x-4">
             <div className="hidden sm:block">
               <div className="text-xs text-gray-400">Network</div>
-              <div className="text-sm font-semibold text-blue-400">Devnet</div>
+              <div className="text-sm font-semibold text-purple-400">{NETWORK_LABEL}</div>
             </div>
-            <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-700" />
           </div>
         </div>
       </div>

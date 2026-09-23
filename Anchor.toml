@@ -14,6 +14,9 @@ scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 quantum_custody = "D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm"
 scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 
+[programs.testnet]
+quantum_custody = "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3"
+
 [programs.mainnet]
 quantum_custody = "D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm"
 scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
@@ -22,7 +25,7 @@ scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "testnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
