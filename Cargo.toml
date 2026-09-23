@@ -10,6 +10,7 @@ resolver = "2"
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.73"
 license = "MIT"
 authors = ["SOLANA-PQC Team <info@solana-pqc.io>"]
 
