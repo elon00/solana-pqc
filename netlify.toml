@@ -1,5 +1,5 @@
 [build]
-  command = "node scripts/check-branding.mjs && cd app && npm ci && npm run build"
+  command = "node scripts/check-branding.mjs && node scripts/reality-audit.mjs && cd app && npm ci && npm run build"
   publish = "app/dist"
   functions = "netlify/functions"
 
