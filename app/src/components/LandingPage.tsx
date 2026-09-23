@@ -104,7 +104,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp} 🚀`)
+            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp} 🚀`)
           });
           break;
 
@@ -172,7 +172,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp}`)
+            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp}`)
           });
       }
 
@@ -237,7 +237,15 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
+              <span className="text-white font-bold text-xl">Solana PQC</span>
+              <a
+                href="https://scstobcminority-ai.netlify.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center ml-2 px-2.5 py-0.5 text-xs font-semibold rounded-full bg-teal-500/20 text-teal-300 border border-teal-500/30 hover:bg-teal-500/30 transition-all"
+              >
+                ⚡ Live on Netlify
+              </a>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -843,16 +851,16 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
+              <span className="text-white font-bold text-xl">Solana PQC</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
               <div>
                 <h5 className="text-white font-semibold mb-3">Product</h5>
                 <ul className="space-y-2 text-gray-400">
+                  <li><a href="https://scstobcminority-ai.netlify.app" target="_blank" rel="noopener noreferrer" className="hover:text-purple-400 transition-colors">Netlify Live dApp</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Features</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Security</a></li>
-                  <li><a href="#" className="hover:text-purple-400 transition-colors">Pricing</a></li>
                 </ul>
               </div>
 
@@ -886,7 +894,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8">
               <p className="text-gray-400">
-                © 2024 SCSTOBCMinority AI. Built with post-quantum security for the future of blockchain.
+                © 2026 Solana PQC. Built with post-quantum security for the future of blockchain.
               </p>
             </div>
           </div>

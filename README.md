@@ -12,9 +12,10 @@
 
 ## 🔗 Project Links
 
-- **Web App**: https://elon00.github.io/scstobcminority-ai/
+- **Live Full-Stack App (Netlify)**: https://scstobcminority-ai.netlify.app
+- **Static Web Mirror (GitHub Pages)**: https://elon00.github.io/scstobcminority-ai/
 - **GitHub Repository**: https://github.com/elon00/scstobcminority-ai
-- **Network Target**: Solana Testnet
+- **Network Target**: Solana Testnet (`https://api.testnet.solana.com`)
 - **Token Policy**: Uncapped application-level minting; SPL Token raw supply remains bounded by Solana's `u64` counter.
 - **Full-stack Testnet Blueprint**: [TESTNET_BLUEPRINT.md](./TESTNET_BLUEPRINT.md)
 - **Testnet Deployment Evidence**: [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md)
