@@ -187,10 +187,16 @@ pub struct TransferQuantumSafe<'info> {
     )]
     pub token_info: Account<'info, TokenInfo>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = from.mint == token_info.mint @ TokenError::InvalidMint,
+    )]
     pub from: Account<'info, TokenAccount>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = to.mint == token_info.mint @ TokenError::InvalidMint,
+    )]
     pub to: Account<'info, TokenAccount>,
     
     pub authority: Signer<'info>,
@@ -250,6 +256,9 @@ pub enum TokenError {
     
     #[msg("Invalid quantum signature")]
     InvalidQuantumSignature,
+
+    #[msg("Token account mint does not match the SPQC mint")]
+    InvalidMint,
 }
 
 #[event]
