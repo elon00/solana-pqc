@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
-  base: '/scstobcminority-ai/',
+  base: process.env.NETLIFY ? '/' : (process.env.VITE_BASE || '/scstobcminority-ai/'),
   plugins: [react()],
   resolve: {
     alias: {
