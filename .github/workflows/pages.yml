@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Verify canonical branding
+        run: node scripts/check-branding.mjs
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
