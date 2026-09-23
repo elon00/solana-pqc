@@ -114,3 +114,43 @@ impl Default for ComplianceStatus {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn compliance_defaults_fail_closed() {
+        let status = ComplianceStatus::default();
+        assert!(!status.nist_fips_203_compliant);
+        assert!(!status.nist_fips_204_compliant);
+        assert!(!status.nist_fips_205_compliant);
+        assert_eq!(status.last_audit, 0);
+        assert_eq!(status.quantum_readiness_score, 0);
+    }
+
+    #[test]
+    fn kem_algorithms_are_not_signature_algorithms() {
+        assert_eq!(CryptoAlgorithm::Kyber512.signature_size(), 0);
+        assert_eq!(CryptoAlgorithm::Kyber768.signature_size(), 0);
+        assert_eq!(CryptoAlgorithm::Kyber1024.signature_size(), 0);
+        assert!(CryptoAlgorithm::Dilithium3.signature_size() > 0);
+    }
+
+    #[test]
+    fn rotation_check_handles_earlier_clock_without_underflow() {
+        let vault = QuantumVault {
+            owner: Pubkey::default(),
+            algorithm: CryptoAlgorithm::Dilithium3,
+            public_key: vec![0; CryptoAlgorithm::Dilithium3.public_key_size()],
+            created_at: 100,
+            last_key_rotation: 100,
+            transaction_count: 0,
+            compliance_status: ComplianceStatus::default(),
+            bump: 0,
+        };
+        assert!(!vault.is_key_rotation_required(99));
+        assert!(!vault.is_key_rotation_required(100));
+    }
+}
