@@ -14,9 +14,11 @@ This document describes the **current token design plus intended future communit
 - **Application-level supply policy:** Uncapped minting
 - **Technical ceiling:** SPL Token raw supply accounting is ultimately bounded by a `u64` counter
 - **Mint model:** Authority-controlled
-- **Current code paths:** initialize, mint, burn, transfer
+- **Current code paths:** initialize, mint, burn, plus a prototype transfer instruction that is fail-closed until on-chain PQC verification exists
 
 “Uncapped” means there is no project-defined fixed total-supply cap. It does **not** mean mathematically infinite supply.
+
+The custom instruction historically named `transfer_quantum_safe` does not currently verify PQC cryptography on-chain. During the reality audit the token's `is_quantum_secured` state was changed to initialize **false**, so this path is disabled until a real verification design exists. Native Testnet SOL payments in the web app use Solana's System Program and are separate from SPQC token transfers.
 
 ## Core Social Purpose
 
