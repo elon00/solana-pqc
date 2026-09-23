@@ -66,7 +66,7 @@ jobs:
           anchor keys sync
           anchor build
           echo "QUANTUM_CUSTODY_PROGRAM_ID=$(solana address -k target/deploy/quantum_custody-keypair.json)" >> "$GITHUB_ENV"
-          echo "SPQC_TOKEN_PROGRAM_ID=$(solana address -k target/deploy/solana_pqc_token-keypair.json)" >> "$GITHUB_ENV"
+          echo "SPQC_TOKEN_PROGRAM_ID=$(solana address -k target/deploy/scstobcminority_ai_token-keypair.json)" >> "$GITHUB_ENV"
 
       - name: Deploy programs to devnet
         run: |
