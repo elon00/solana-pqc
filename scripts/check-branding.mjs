@@ -6,7 +6,7 @@ const canonical = "SCSTOBCMinority AI";
 const legacyPattern = new RegExp(["solana", "pqc"].join("[\\s_-]+"), "i");
 const textExtensions = new Set([
   ".md", ".txt", ".json", ".toml", ".yml", ".yaml", ".html", ".css",
-  ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".rs"
+  ".js", ".mjs", ".cjs", ".ts", ".tsx", ".jsx", ".rs", ".sh", ".bat", ".ps1"
 ]);
 const skip = new Set([
   "package-lock.json",
@@ -24,7 +24,8 @@ for (const file of files) {
   if (skip.has(file) || file === "scripts/check-branding.mjs") continue;
   const dot = file.lastIndexOf(".");
   const ext = dot >= 0 ? file.slice(dot) : "";
-  if (!textExtensions.has(ext)) continue;
+  const isEnvFile = file === ".env" || file.startsWith(".env.");
+  if (!textExtensions.has(ext) && !isEnvFile) continue;
   const content = fs.readFileSync(file, "utf8");
   const match = content.match(legacyPattern);
   if (match) violations.push({ file, value: match[0] });
