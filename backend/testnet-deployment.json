@@ -8,5 +8,7 @@
   "custodyGlobalStatePda": null,
   "custodyInitializeSignature": null,
   "tokenInitializeSignature": null,
-  "verifiedAt": null
+  "verifiedAt": null,
+  "quantumCustodyDeploySignature": null,
+  "spqcTokenDeploySignature": null
 }
