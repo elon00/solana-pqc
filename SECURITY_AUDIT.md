@@ -370,9 +370,9 @@ npm test
 
 ### Contact Information
 
-- **Security Team**: security@solana-pqc.io
+- **Security Team**: Not configured
 - **Emergency**: +1-XXX-XXX-XXXX (24/7)
-- **Bug Bounty**: https://solana-pqc.io/bug-bounty
+- **Bug Bounty**: Not configured
 
 ---
 
