@@ -16,6 +16,7 @@ The deployment is considered complete only after all of these succeed:
 - custody initialization
 - upgrade-authority transfer
 - executable program-account verification
+- program deployment transaction-signature capture
 - mint account verification
 - initialization transaction-signature capture
 - synchronized machine-readable deployment config
@@ -29,4 +30,4 @@ SPQC uses uncapped application-level minting. SPL Token raw supply remains techn
 
 Mainnet deployment is intentionally disabled until Testnet deployment, end-to-end verification and security-readiness review succeed.
 
-Final program IDs, SPQC mint address, PDAs and initialization transaction signatures will be written here automatically only after verified on-chain success.
+Final program IDs, program deployment transaction signatures, SPQC mint address, PDAs and initialization transaction signatures will be written here automatically only after verified on-chain success.
