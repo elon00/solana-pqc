@@ -1,7 +1,7 @@
 {
   "name": "scstobcminority-ai",
   "version": "0.1.0",
-  "description": "Quantum-safe custody and transaction SDK for Solana",
+  "description": "SCSTOBCMinority AI — quantum-safe Solana custody and transaction research prototype with an uncapped SPQC mint policy and wallet-enabled web app.",
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
