@@ -1,4 +1,4 @@
-# 🛡️ Solana-PQC — Universal Reality Evidence Certificate
+# 🛡️ SCSTOBCMinority AI — Universal Reality Evidence Certificate
 
 **Sealed Timestamp**: `2026-09-07T11:28:51.307Z`  
 **Master Reality Hash (SHA-256)**: `072454059aa9fd1587c68280d88c113d4fec4c55ec8732dd2a02571c1a1bdf4c`  
