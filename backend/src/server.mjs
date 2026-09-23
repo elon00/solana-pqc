@@ -180,7 +180,7 @@ export async function handler(req, res) {
 
 export const server = http.createServer(handler);
 
-if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== "test" && !process.env.VERCEL) {
   server.listen(PORT, HOST, () => {
     console.log(`SCSTOBCMinority AI backend listening on http://${HOST}:${PORT} (Solana Testnet)`);
   });
