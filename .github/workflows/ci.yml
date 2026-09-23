@@ -113,6 +113,6 @@ jobs:
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [branding, reality, backend, frontend, rust]
+    needs: [branding, reality, serverless, backend, frontend, rust]
     steps:
-      - run: echo "Branding, reality, backend, frontend and Rust gates completed for the Testnet-first stack."
+      - run: echo "Branding, reality, serverless, backend, frontend and Rust gates completed for the Testnet-first stack."
