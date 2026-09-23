@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js';
-import { API_BASE_URL, SOLANA_RPC_URL, explorerAccountUrl, explorerTxUrl } from '../config';
+import { API_BASE_URL, APP_NAME, SOLANA_RPC_URL, explorerAccountUrl, explorerTxUrl } from '../config';
 import { Buffer } from 'buffer';
 
 const LandingPage = () => {
@@ -104,7 +104,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp} 🚀`)
+            data: Buffer.from(`${APP_NAME} ${transactionType} - ${timestamp} 🚀`)
           });
           break;
 
@@ -172,7 +172,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp}`)
+            data: Buffer.from(`${APP_NAME} ${transactionType} - ${timestamp}`)
           });
       }
 
@@ -237,7 +237,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
+              <span className="text-white font-bold text-xl">{APP_NAME}</span>
               <a
                 href="https://scstobcminority-ai.netlify.app"
                 target="_blank"
@@ -851,7 +851,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
+              <span className="text-white font-bold text-xl">{APP_NAME}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -894,7 +894,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8">
               <p className="text-gray-400">
-                © 2026 SCSTOBCMinority AI. Built with post-quantum security for the future of blockchain.
+                © 2026 {APP_NAME}. Built with post-quantum security for the future of blockchain.
               </p>
             </div>
           </div>
