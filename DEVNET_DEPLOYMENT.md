@@ -1,6 +1,6 @@
 # SCSTOBCMinority AI — Solana Devnet Deployment
 
-Status: deployment initiated with the official Anchor 0.29 build image.
+Status: deployment retriggered with official Anchor 0.29 / Solana 1.17 container toolchain.
 
 Supply policy: uncapped at the application layer. The SPQC mint retains an authority-controlled mint path; Solana SPL Token's raw supply counter is still technically bounded by u64.
 
