@@ -79,7 +79,9 @@ pub mod scstobcminority_ai_token {
         
         require!(!token_info.is_paused, TokenError::TokenPaused);
         require!(token_info.is_quantum_secured, TokenError::QuantumSecurityRequired);
-        require!(quantum_signature.len() >= 32, TokenError::InvalidQuantumSignature);
+        // Prototype only: the program does not perform PQC verification on-chain.
+        // The attached bytes are treated as external evidence, not a verified signature.
+        require!(quantum_signature.len() >= 32, TokenError::InvalidQuantumEvidence);
 
         let cpi_accounts = Transfer {
             from: ctx.accounts.from.to_account_info(),
@@ -94,7 +96,7 @@ pub mod scstobcminority_ai_token {
             from: ctx.accounts.from.key(),
             to: ctx.accounts.to.key(),
             amount,
-            quantum_secured: true,
+            quantum_verified_on_chain: false,
             timestamp: Clock::get()?.unix_timestamp,
         });
 
@@ -115,7 +117,10 @@ pub mod scstobcminority_ai_token {
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
         token::burn(cpi_ctx, amount)?;
 
-        token_info.circulating_supply = token_info.circulating_supply.saturating_sub(amount);
+        token_info.circulating_supply = token_info
+            .circulating_supply
+            .checked_sub(amount)
+            .ok_or(TokenError::SupplyUnderflow)?;
 
         emit!(TokenBurnedEvent {
             mint: ctx.accounts.mint.key(),
@@ -161,7 +166,10 @@ pub struct InitializeToken<'info> {
 
 #[derive(Accounts)]
 pub struct MintTokens<'info> {
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = mint.key() == token_info.mint @ TokenError::InvalidMint,
+    )]
     pub mint: Account<'info, Mint>,
     
     #[account(
@@ -172,7 +180,10 @@ pub struct MintTokens<'info> {
     )]
     pub token_info: Account<'info, TokenInfo>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = destination.mint == mint.key() @ TokenError::InvalidMint,
+    )]
     pub destination: Account<'info, TokenAccount>,
     
     pub authority: Signer<'info>,
@@ -215,7 +226,10 @@ pub struct BurnTokens<'info> {
     )]
     pub token_info: Account<'info, TokenInfo>,
     
-    #[account(mut)]
+    #[account(
+        mut,
+        constraint = from.mint == mint.key() @ TokenError::InvalidMint,
+    )]
     pub from: Account<'info, TokenAccount>,
     
     pub authority: Signer<'info>,
@@ -254,8 +268,11 @@ pub enum TokenError {
     #[msg("Quantum security verification required")]
     QuantumSecurityRequired,
     
-    #[msg("Invalid quantum signature")]
-    InvalidQuantumSignature,
+    #[msg("Attached PQC evidence is too short")]
+    InvalidQuantumEvidence,
+
+    #[msg("Burn would underflow tracked circulating supply")]
+    SupplyUnderflow,
 
     #[msg("Token account mint does not match the SPQC mint")]
     InvalidMint,
@@ -283,7 +300,8 @@ pub struct QuantumTransferEvent {
     pub from: Pubkey,
     pub to: Pubkey,
     pub amount: u64,
-    pub quantum_secured: bool,
+    /// False until cryptographic PQC verification is implemented on-chain.
+    pub quantum_verified_on_chain: bool,
     pub timestamp: i64,
 }
 
