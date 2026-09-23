@@ -18,7 +18,7 @@ import { ml_kem768 } from '@noble/post-quantum/ml-kem.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 
 console.log('=====================================================================');
-console.log('⚡ SOLANA-PQC // STANDALONE CRYPTOGRAPHIC AUDITOR');
+console.log('⚡ SCSTOBCMinority AI // STANDALONE CRYPTOGRAPHIC AUDITOR');
 console.log('=====================================================================\n');
 
 let assertionCount = 0;
