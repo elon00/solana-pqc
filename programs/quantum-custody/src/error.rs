@@ -13,6 +13,9 @@ pub enum QuantumCustodyError {
     
     #[msg("Signature verification failed")]
     SignatureVerificationFailed,
+
+    #[msg("On-chain PQC signature verification is not implemented; signing is disabled")]
+    PqcVerificationUnavailable,
     
     #[msg("Key rotation is required before performing this operation")]
     KeyRotationRequired,
