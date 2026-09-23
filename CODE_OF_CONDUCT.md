@@ -22,7 +22,7 @@ We pledge to make participation in our community a harassment-free experience fo
 
 ## Enforcement
 
-Report violations to: conduct@solana-pqc.io
+Report violations to: Not configured
 
 ### Consequences
 1. **Correction**: Private warning
@@ -36,4 +36,4 @@ Adapted from [Contributor Covenant](https://www.contributor-covenant.org/), vers
 
 ---
 
-**Contact**: conduct@solana-pqc.io
+**Contact**: Not configured
