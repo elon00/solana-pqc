@@ -17,7 +17,7 @@ function normalizeAmount(value, { optional = true } = {}) {
   if (!/^(?:0|[1-9]\d*)(?:\.\d{1,9})?$/.test(raw)) throw new Error("Invalid SOL amount");
   const amount = Number(raw);
   if (!Number.isFinite(amount) || amount <= 0 || amount > MAX_SOL) throw new Error("SOL amount is out of range");
-  return raw.replace(/(?:\.0+|(?<=\.[0-9]*?)0+)$/, "").replace(/\.$/, "");
+  return raw.includes(".") ? raw.replace(/0+$/, "").replace(/\.$/, "") : raw;
 }
 
 function safeText(value, max) {
