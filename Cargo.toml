@@ -33,7 +33,7 @@ pqcrypto-traits = "0.3.5"
 
 # Cryptographic utilities
 sha3 = "0.10"
-blake3 = "1.5"
+blake3 = "=1.5.0"
 rand = "0.8"
 zeroize = "=1.3.0"
 
