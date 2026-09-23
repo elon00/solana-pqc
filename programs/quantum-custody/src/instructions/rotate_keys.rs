@@ -23,9 +23,9 @@ pub fn handler(
     vault.public_key = new_public_key.clone();
     vault.last_key_rotation = clock.unix_timestamp;
     
-    vault.compliance_status.quantum_readiness_score = 
-        vault.compliance_status.quantum_readiness_score.saturating_add(5).min(100);
-    
+    // Signature length is checked, but cryptographic PQC verification is not
+    // implemented on-chain; do not increase any readiness/compliance score.
+
     emit!(KeyRotatedEvent {
         vault: vault.key(),
         timestamp: clock.unix_timestamp,
