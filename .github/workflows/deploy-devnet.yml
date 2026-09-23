@@ -16,7 +16,7 @@ permissions:
 
 concurrency:
   group: scstobcminority-ai-devnet
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 env:
   PROJECT_AUTHORITY: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
@@ -27,26 +27,19 @@ jobs:
   deploy:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-devnet]')
     runs-on: ubuntu-latest
+    container:
+      image: backpackapp/build:v0.29.0
     timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install system dependencies
+      - name: Verify pinned toolchain
         run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config build-essential libudev-dev libssl-dev
-
-      - name: Install AVM and pinned Anchor/Solana toolchain
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/otter-sec/anchor/master/avm/install | sh
-          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          export PATH="$HOME/.cargo/bin:$PATH"
-          avm install 0.29.0
-          avm use 0.29.0
-          avm solana install 1.18.18 --force
           anchor --version
           solana --version
+          rustc --version
+          node --version
 
       - name: Create ephemeral devnet payer
         run: |
