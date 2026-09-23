@@ -1,84 +1,70 @@
-# Security Policy
+# Security Policy — SCSTOBCMinority AI
 
-## 🔒 Reporting Security Vulnerabilities
+## Current security status
 
-**DO NOT** create public issues for security vulnerabilities.
+SCSTOBCMinority AI is a **research/Testnet prototype**. It has not completed an independent professional smart-contract, cryptographic, infrastructure, or full-stack security audit.
 
-### Report To
-- **Email**: Not configured
-- **Bug Bounty**: Not configured
+Do not use this repository as evidence of regulatory certification, production security, or suitability for custody of real-value assets.
 
-### Include
-1. Description of vulnerability
-2. Impact assessment
-3. Reproduction steps
-4. Proof of concept
-5. Suggested fix (if any)
+## Supported security boundary
 
-### Response Timeline
-- **Initial Response**: Within 24 hours
-- **Status Update**: Within 72 hours
-- **Fix Timeline**: Based on severity
-  - Critical: 1-7 days
-  - High: 7-30 days
-  - Medium: 30-90 days
+Current repository safeguards include:
 
-## 🎁 Bug Bounty Program
+- user transaction signing remains inside the connected Phantom/Solflare wallet;
+- the backend never requests or stores a wallet seed phrase or private key;
+- wallet-to-backend authentication uses an Ed25519 `signMessage` challenge and a short-lived authenticated session;
+- backend endpoints validate Solana addresses and transaction signatures before RPC queries;
+- request bodies have size limits in the Node backend;
+- the persistent Node backend has a basic per-IP in-memory rate limiter;
+- frontend and backend target Solana Testnet;
+- CI checks backend syntax/tests, frontend build, Rust workspace checks, and canonical branding;
+- Mainnet deployment is intentionally gated behind Testnet evidence and further review.
 
-| Severity | Reward |
-|----------|--------|
-| **Critical** | $50,000 - $100,000 SPQC |
-| **High** | $10,000 - $50,000 SPQC |
-| **Medium** | $2,000 - $10,000 SPQC |
-| **Low** | $500 - $2,000 SPQC |
+These safeguards are useful engineering controls, not a security certification.
 
-### Scope
-**In Scope**:
-- Smart contracts
-- Cryptographic implementations
-- SDK vulnerabilities
-- dApp security
-- Infrastructure
+## Known limitations / open risks
 
-**Out of Scope**:
-- Social engineering
-- Physical attacks
-- DoS attacks
-- Third-party dependencies
+- Testnet smart-contract deployment is not yet recorded as verified on-chain in `TESTNET_DEPLOYMENT.md`.
+- The SPQC mint address and initialization transaction signatures are not yet recorded.
+- End-to-end post-quantum security has not been independently verified.
+- The custody program does not establish full on-chain PQC signature verification as a production guarantee.
+- No independent penetration test, fuzzing campaign, or formal verification has been completed.
+- Serverless deployments may need provider-native rate limiting/WAF controls beyond the Node in-memory limiter.
+- External AI providers are optional and require server-side API keys; those providers have their own security/privacy boundaries.
+- Token economics, treasury governance, and authority-management design require further review before real-value use.
+- Dependency and supply-chain risk remains and should be continuously monitored.
 
-## 🛡️ Security Measures
+## Vulnerability reporting
 
-### Smart Contract Security
-- Multiple third-party audits
-- Formal verification
-- >90% test coverage
-- Multi-sig governance
+No dedicated security email, paid bug-bounty program, or 24/7 incident-response channel is currently configured.
 
-### Cryptographic Security
-- NIST FIPS 203/204/205 compliance
-- Peer-reviewed algorithms
-- Audited libraries
-- Automated key rotation
+Do **not** post secrets, private keys, seed phrases, or weaponized exploit details in a public issue. If you need to report a sensitive issue before a private channel is configured, open a minimal issue that requests a secure contact without including exploit details.
 
-### Infrastructure Security
-- 24/7 monitoring
-- Encrypted communications
-- Access control
-- Audit logging
+## No bug-bounty promise
 
-## 🔐 Best Practices for Users
+There is currently **no funded or contractually committed bug-bounty reward program**. Any older reward amounts or payout promises should be treated as obsolete.
 
-- ✅ Use hardware wallets
-- ✅ Enable 2FA
-- ✅ Verify addresses
-- ✅ Never share private keys
-- ✅ Keep software updated
+## User safety
 
-## 📞 Contact
+- Never share a seed phrase or private key with this project, Netlify, GitHub, an AI model, or a support contact.
+- Verify the network is Solana Testnet before signing test transactions.
+- Review recipient, amount, and transaction details inside the wallet before approving.
+- Use a dedicated Testnet wallet for testing.
+- Do not treat SPQC or any project token as guaranteeing returns, rights, aid, or access.
 
-- **Security Team**: Not configured
-- **Emergency**: Available 24/7
+## Production / Mainnet release gates
 
----
+Before a production or Mainnet release, at minimum:
 
-**Last Updated**: October 2, 2024
+1. verified Testnet program deployment evidence;
+2. recorded program IDs, mint address, PDAs, and initialization signatures;
+3. independent smart-contract review;
+4. independent cryptographic implementation review;
+5. expanded integration and adversarial testing;
+6. dependency/security scanning with reviewed findings;
+7. treasury, upgrade-authority, and mint-authority governance review;
+8. incident-response and private vulnerability-reporting channels;
+9. privacy/legal review for any real beneficiary or financial data;
+10. explicit Mainnet release approval.
+
+**Last updated:** September 23, 2026
