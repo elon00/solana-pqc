@@ -6,9 +6,12 @@ export const SOLANA_RPC_URL =
   import.meta.env.VITE_SOLANA_RPC_URL || "https://api.testnet.solana.com";
 
 const browserOrigin =
-  typeof window !== "undefined" &&
-  (window.location.hostname.endsWith(".vercel.app") || window.location.hostname.endsWith(".netlify.app"))
-    ? window.location.origin
+  typeof window !== "undefined"
+    ? window.location.hostname.endsWith(".vercel.app") || window.location.hostname.endsWith(".netlify.app")
+      ? window.location.origin
+      : window.location.hostname === "elon00.github.io"
+        ? "https://scstobcminority-ai.netlify.app"
+        : ""
     : "";
 
 export const API_BASE_URL =
