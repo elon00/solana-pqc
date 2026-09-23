@@ -1,6 +1,6 @@
 # SCSTOBCMinority AI — Solana Testnet Deployment
 
-**Status:** Final clean evidence-gated Testnet deployment triggered after green backend, frontend and Rust CI on September 23, 2026. Mainnet remains intentionally deferred.
+**Status:** Fresh audited Testnet deployment triggered after green branding, reality, serverless, backend, frontend and Rust gates on September 23, 2026. Mainnet remains intentionally deferred.
 
 **Network:** Solana Testnet  
 **RPC:** https://api.testnet.solana.com
