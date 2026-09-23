@@ -111,6 +111,20 @@ export async function handler(req, res) {
       });
     }
 
+    if (req.method === "GET" && url.pathname === "/api/wallet/me") {
+      const session = getWalletSession(req.headers.authorization);
+      if (!session) return send(res, 401, { error: "verified wallet session required" });
+      return send(res, 200, {
+        authenticated: true,
+        session: {
+          walletAddress: session.walletAddress,
+          network: session.network,
+          expiresAt: session.expiresAt
+        },
+        wallet: await walletStatus(session.walletAddress)
+      });
+    }
+
     if (req.method === "GET" && url.pathname.startsWith("/api/wallet/")) {
       const address = decodeURIComponent(url.pathname.slice("/api/wallet/".length));
       return send(res, 200, await walletStatus(address));
