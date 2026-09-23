@@ -5,10 +5,17 @@ const CHALLENGE_TTL_MS = Number(process.env.WALLET_CHALLENGE_TTL_MS || 5 * 60_00
 const SESSION_TTL_MS = Number(process.env.WALLET_SESSION_TTL_MS || 30 * 60_000);
 const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
 
+function isHostedProduction() {
+  return process.env.NODE_ENV === "production" ||
+    Boolean(process.env.NETLIFY) ||
+    Boolean(process.env.VERCEL) ||
+    process.env.CONTEXT === "production";
+}
+
 function authSecret() {
   const configured = String(process.env.WALLET_AUTH_SECRET || "");
   if (configured.length >= 32) return configured;
-  if (process.env.NODE_ENV === "production") {
+  if (isHostedProduction()) {
     throw new Error("WALLET_AUTH_SECRET is not configured");
   }
   return "scstobcminority-ai-local-test-wallet-auth-secret";
@@ -150,9 +157,10 @@ export function revokeWalletSession(authorization) {
 
 export function walletAuthStatus() {
   const configured = String(process.env.WALLET_AUTH_SECRET || "").length >= 32;
+  const hostedProduction = isHostedProduction();
   return {
-    configured: configured || process.env.NODE_ENV !== "production",
+    configured: configured || !hostedProduction,
     productionSecretConfigured: configured,
-    mode: configured ? "configured-secret" : (process.env.NODE_ENV === "production" ? "unavailable" : "local-test-fallback")
+    mode: configured ? "configured-secret" : (hostedProduction ? "unavailable" : "local-test-fallback")
   };
 }
