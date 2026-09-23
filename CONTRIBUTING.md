@@ -86,7 +86,7 @@ npm test
 
 - **GitHub Issues**: Bug reports, features
 - **Discord**: Real-time chat
-- **Twitter**: @solana_pqc
+- **Twitter**: @scstobcminority_ai
 
 ## 🎁 Rewards
 
