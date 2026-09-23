@@ -1,409 +1,164 @@
-# Security Audit Report - SCSTOBCMinority AI
+# SCSTOBCMinority AI — Security Reality Review
 
-**Version**: 0.1.0  
-**Date**: October 2, 2024  
-**Status**: Pre-Audit (Awaiting Professional Audit)
+**Date:** September 23, 2026  
+**Scope:** repository source review and automated CI evidence  
+**Status:** internal engineering review; **not an independent professional audit**
 
----
+## Executive summary
 
-## Executive Summary
+SCSTOBCMinority AI is a Testnet-first research prototype. The repository has useful security controls and green CI evidence, but it is **not Mainnet-ready** and must not be represented as independently audited or fully quantum-safe end-to-end.
 
-This document outlines the security measures, potential vulnerabilities, and audit recommendations for the SCSTOBCMinority AI project.
+The most important release blockers are:
 
-## Automated Security Checks
+1. custom Anchor programs are not yet recorded as verified on Solana Testnet;
+2. SPQC mint and initialization transaction signatures are not recorded;
+3. custody/token programs do not perform full cryptographic PQC signature verification on-chain;
+4. no independent smart-contract or cryptographic audit is recorded;
+5. fuzzing, formal verification, and independent penetration testing are pending.
 
-### 1. Dependency Vulnerabilities
+## Evidence reviewed
 
-```bash
-# Run npm audit
-npm audit
+- Anchor custody and token programs
+- Rust workspace configuration
+- TypeScript/Rust PQC research SDKs
+- React/Vite wallet application
+- Node backend and Netlify Functions adapter
+- wallet authentication flow
+- Solana Pay QR/payment module
+- GitHub Actions CI and Pages workflows
+- Testnet deployment workflow and machine deployment records
+- security, README, manifest, and reality artifacts
 
-# Run cargo audit
-cargo audit
-```
+## Findings
 
-**Current Status**: ✅ No known vulnerabilities in dependencies
-
-### 2. Code Quality Checks
+### HIGH — On-chain PQC verification is not implemented
 
-```bash
-# Rust linting
-cargo clippy -- -D warnings
+The custody `sign_transaction` and `rotate_keys` paths validate authorization, algorithm compatibility, signature length, and other structural constraints, but they do not cryptographically verify the PQC signature on-chain.
 
-# TypeScript linting
-npm run lint
+The token instruction historically named `transfer_quantum_safe` also does not verify attached PQC evidence on-chain.
 
-# Format checking
-npm run format:check
-```
+**Mitigation applied in this audit:**
 
-**Current Status**: ⚠️ Pending implementation
+- token initialization now sets `is_quantum_secured = false`;
+- the custom quantum-safe transfer path therefore fails closed until real verification exists;
+- transfer events explicitly record `quantum_verified_on_chain: false`;
+- custody vault creation no longer self-certifies FIPS compliance/readiness;
+- KEM-only algorithms are rejected from signature-oriented custody operations.
 
-### 3. Static Analysis
+**Remaining work:** design and independently review a feasible verification architecture before enabling PQC-verified on-chain claims.
 
-**Tools to Use**:
-- **Rust**: `cargo-audit`, `cargo-deny`, `cargo-geiger`
-- **Solana**: `solana-verify`, `anchor-verify`
-- **TypeScript**: ESLint with security plugins
+### HIGH — Testnet deployment evidence is incomplete
 
----
+`backend/testnet-deployment.json` and `app/public/testnet-deployment.json` remain in `pending` state.
 
-## Security Vulnerabilities Assessment
+Missing verified evidence includes:
 
-### Critical Issues (Priority 1)
+- custody program account;
+- token program account;
+- SPQC mint;
+- TokenInfo PDA;
+- custody global-state PDA;
+- custody initialization signature;
+- token initialization signature.
 
-#### 1. Integer Overflow Protection
-**Status**: ✅ MITIGATED  
-**Location**: All arithmetic operations  
-**Mitigation**: Using `checked_add`, `checked_sub`, `saturating_*` methods
+The latest known deployment workflow successfully reached Anchor/SBF build but was blocked by lack of funded Testnet SOL for the ephemeral deployer.
 
-```rust
-// Example from token program
-vault.transaction_count = vault.transaction_count
-    .checked_add(1)
-    .ok_or(TokenError::MathOverflow)?;
-```
-
-#### 2. Reentrancy Attacks
-**Status**: ✅ MITIGATED  
-**Location**: Cross-program invocations  
-**Mitigation**: Anchor framework's built-in protection, state updates before external calls
-
-#### 3. Access Control
-**Status**: ✅ IMPLEMENTED  
-**Location**: All instruction handlers  
-**Mitigation**: 
-- `has_one` constraints
-- Signer verification
-- PDA derivation checks
-
-```rust
-#[account(
-    mut,
-    seeds = [b"vault", owner.key().as_ref()],
-    bump,
-    has_one = owner
-)]
-pub vault: Account<'info, QuantumVault>,
-```
+**Release impact:** Mainnet remains blocked.
 
-### High Priority Issues (Priority 2)
+### MEDIUM — Independent security assurance is absent
 
-#### 1. Key Rotation Enforcement
-**Status**: ⚠️ NEEDS REVIEW  
-**Recommendation**: Add automated key rotation reminders and enforcement
+No evidence is recorded for:
 
-```rust
-// Current implementation
-pub fn is_key_rotation_required(&self, current_time: i64) -> bool {
-    const ROTATION_PERIOD: i64 = 90 * 24 * 60 * 60; // 90 days
-    current_time - self.last_key_rotation > ROTATION_PERIOD
-}
-
-// Recommendation: Add grace period and hard enforcement
-```
-
-#### 2. Signature Verification
-**Status**: ⚠️ SIMPLIFIED FOR MVP  
-**Current**: Event emission for off-chain verification  
-**Recommendation**: Implement on-chain PQC signature verification
-
-```rust
-// TODO: Implement full on-chain verification
-pub fn verify_signature(
-    ctx: Context<VerifySignature>,
-    message: Vec<u8>,
-    signature: Vec<u8>,
-) -> Result<()> {
-    // Current: Simplified verification
-    // Needed: Full cryptographic verification
-}
-```
-
-#### 3. Rate Limiting
-**Status**: ❌ NOT IMPLEMENTED  
-**Recommendation**: Add rate limiting for transaction signing
-
-### Medium Priority Issues (Priority 3)
-
-#### 1. Gas Optimization
-**Status**: ⚠️ NEEDS OPTIMIZATION  
-**Recommendation**: Optimize PQC operations for Solana's compute limits
-
-#### 2. Error Messages
-**Status**: ✅ IMPLEMENTED  
-**Quality**: Good, but could be more descriptive
-
-#### 3. Event Emission
-**Status**: ✅ IMPLEMENTED  
-**Coverage**: All major operations emit events
-
----
-
-## Cryptographic Security
-
-### NIST PQC Implementation
-
-#### 1. CRYSTALS-Dilithium (FIPS 204)
-**Status**: ✅ USING AUDITED LIBRARY  
-**Library**: `pqcrypto-dilithium` v0.5  
-**Security Level**: 2, 3, 5 (configurable)
-
-**Verification**:
-```rust
-#[test]
-fn test_dilithium_security() {
-    let keypair = generate_dilithium3_keypair().unwrap();
-    let message = b"Test message";
-    let signature = sign_dilithium3(message, &keypair.secret_key).unwrap();
-    let valid = verify_dilithium3(message, &signature, &keypair.public_key).unwrap();
-    assert!(valid);
-}
-```
-
-#### 2. CRYSTALS-Kyber (FIPS 203)
-**Status**: ✅ USING AUDITED LIBRARY  
-**Library**: `pqcrypto-kyber` v0.8  
-**Security Level**: 1, 3, 5 (configurable)
-
-#### 3. SPHINCS+ (FIPS 205)
-**Status**: ✅ USING AUDITED LIBRARY  
-**Library**: `pqcrypto-sphincsplus` v0.7  
-**Security Level**: 1 (multiple variants)
-
-### Key Management
-
-**Strengths**:
-- ✅ Client-side key generation
-- ✅ Zeroization on drop
-- ✅ No private keys stored on-chain
-
-**Weaknesses**:
-- ⚠️ No HSM integration yet (planned)
-- ⚠️ No multi-party computation (planned)
-
----
-
-## Smart Contract Security
-
-### Anchor Framework Security
-
-**Benefits**:
-- ✅ Automatic account validation
-- ✅ Built-in reentrancy protection
-- ✅ Type-safe account handling
-- ✅ Automatic serialization/deserialization
-
-### Account Security
-
-```rust
-// Example of secure account validation
-#[derive(Accounts)]
-pub struct SecureInstruction<'info> {
-    #[account(
-        mut,
-        seeds = [b"vault", owner.key().as_ref()],
-        bump = vault.bump,
-        has_one = owner,
-        constraint = !vault.is_paused @ ErrorCode::VaultPaused
-    )]
-    pub vault: Account<'info, QuantumVault>,
-    
-    #[account(mut)]
-    pub owner: Signer<'info>,
-}
-```
-
-### PDA Security
-
-**Status**: ✅ PROPERLY IMPLEMENTED  
-**Verification**: All PDAs use proper seeds and bump validation
-
----
-
-## Testing Coverage
-
-### Unit Tests
-**Status**: ⚠️ NEEDS EXPANSION  
-**Current Coverage**: ~40%  
-**Target Coverage**: >80%
-
-```bash
-# Run tests
-cargo test --all-features
-anchor test
-npm test
-```
-
-### Integration Tests
-**Status**: ⚠️ NEEDS IMPLEMENTATION  
-**Needed**:
-- End-to-end vault creation flow
-- Token minting and distribution
-- Vesting schedule execution
-- Cross-program invocations
-
-### Fuzzing Tests
-**Status**: ❌ NOT IMPLEMENTED  
-**Recommendation**: Implement fuzzing for:
-- Input validation
-- Arithmetic operations
-- State transitions
-
----
-
-## Compliance & Standards
-
-### Global Standards Compliance
-
-#### ISO 20022
-**Status**: ✅ IMPLEMENTED  
-**Coverage**: Financial messaging structures
-
-#### MiCA (EU)
-**Status**: ✅ COMPLIANT  
-**Documentation**: Complete white paper and disclosures
-
-#### FATF Travel Rule
-**Status**: ✅ IMPLEMENTED  
-**Features**: Transaction monitoring, encrypted PII storage
-
-#### GDPR
-**Status**: ✅ COMPLIANT  
-**Features**: Data minimization, right to erasure
-
----
-
-## Recommendations
-
-### Immediate Actions (Before Mainnet)
-
-1. **Professional Security Audit** ⭐ CRITICAL
-   - Engage CertiK, Trail of Bits, or Quantstamp
-   - Focus on cryptographic implementation
-   - Review all smart contracts
-
-2. **Implement Full On-Chain Verification** ⭐ HIGH
-   - Complete PQC signature verification
-   - Add performance benchmarks
-
-3. **Expand Test Coverage** ⭐ HIGH
-   - Unit tests >80% coverage
-   - Integration tests for all flows
-   - Fuzzing tests for edge cases
-
-4. **Add Rate Limiting** ⭐ MEDIUM
-   - Prevent spam attacks
-   - Protect against DoS
-
-5. **HSM Integration** ⭐ MEDIUM
-   - For enterprise customers
-   - Enhanced key security
-
-### Long-term Improvements
-
-1. **Multi-Party Computation (MPC)**
-   - Distributed key generation
-   - Threshold signatures
+- professional smart-contract audit;
+- independent cryptographic implementation review;
+- penetration test;
+- fuzzing campaign;
+- formal verification;
+- funded bug-bounty program.
 
-2. **Hardware Acceleration**
-   - Optimize PQC operations
-   - Reduce compute costs
-
-3. **Formal Verification**
-   - Mathematically prove correctness
-   - Eliminate entire classes of bugs
-
-4. **Bug Bounty Program**
-   - Launch with $1M pool
-   - Engage security researchers
-
----
-
-## Security Checklist
-
-### Pre-Deployment Checklist
-
-- [ ] All dependencies updated to latest secure versions
-- [ ] Professional security audit completed
-- [ ] All critical and high priority issues resolved
-- [ ] Test coverage >80%
-- [ ] Fuzzing tests implemented
-- [ ] Rate limiting implemented
-- [ ] Emergency pause mechanism tested
-- [ ] Multi-sig governance tested
-- [ ] Key rotation tested
-- [ ] Compliance documentation complete
-- [ ] Incident response plan documented
-- [ ] Bug bounty program launched
-
-### Ongoing Security
-
-- [ ] Monthly dependency audits
-- [ ] Quarterly security reviews
-- [ ] Annual penetration testing
-- [ ] Continuous monitoring
-- [ ] Regular key rotation
-- [ ] Security awareness training
-
----
-
-## Incident Response Plan
-
-### Severity Levels
-
-**Critical**: Immediate threat to funds
-- Response time: <1 hour
-- Action: Emergency pause, notify users
-
-**High**: Significant vulnerability
-- Response time: <24 hours
-- Action: Assess, patch, deploy
-
-**Medium**: Limited impact
-- Response time: <7 days
-- Action: Schedule fix, monitor
-
-**Low**: Minor issue
-- Response time: <30 days
-- Action: Include in next release
-
-### Contact Information
-
-- **Security Team**: Not configured
-- **Emergency**: +1-XXX-XXX-XXXX (24/7)
-- **Bug Bounty**: Not configured
-
----
-
-## Audit Trail
-
-| Date | Action | Status | Notes |
-|------|--------|--------|-------|
-| 2024-10-02 | Initial security assessment | Complete | This document |
-| TBD | Professional audit (CertiK) | Scheduled | Q4 2024 |
-| TBD | Professional audit (Trail of Bits) | Scheduled | Q4 2024 |
-| TBD | Mainnet deployment | Pending | After audits |
-
----
-
-## Conclusion
-
-The SCSTOBCMinority AI project implements strong security foundations with:
-- ✅ NIST-approved PQC algorithms
-- ✅ Secure smart contract architecture
-- ✅ Comprehensive access controls
-- ✅ Global standards compliance
-
-**However**, before mainnet deployment:
-- ⚠️ Professional security audits are REQUIRED
-- ⚠️ Test coverage must be expanded
-- ⚠️ On-chain verification must be completed
-
-**Risk Level**: MEDIUM (acceptable for testnet, NOT for mainnet with real funds)
-
----
-
-**Document Version**: 1.0  
-**Last Updated**: October 2, 2024  
-**Next Review**: After professional audits
+Automated tests are valuable engineering evidence but are not substitutes for independent review.
+
+### MEDIUM — Serverless abuse controls need provider-native hardening
+
+The persistent Node server includes a basic in-memory per-IP rate limiter. Serverless deployments may create multiple isolated instances and should use Netlify/provider-native rate limiting, WAF, bot controls, or equivalent controls for production exposure.
+
+### MEDIUM — Authority and governance design requires review
+
+SPQC minting is authority-controlled and intentionally uncapped at the application layer. Before real-value use, review:
+
+- mint authority custody;
+- program upgrade authority;
+- treasury governance;
+- emergency controls;
+- multisig/threshold policy;
+- monitoring and incident response.
+
+### LOW — Documentation historically overstated assurance
+
+Older repository artifacts claimed or implied:
+
+- 10/10 reality certification;
+- global compliance;
+- audit/bounty commitments;
+- automatic FIPS compliance/readiness.
+
+This audit deprecates those artifacts and replaces them with evidence-based status documents and scorecards.
+
+## Positive controls verified in source
+
+- wallet seed phrases/private keys are not required by the backend;
+- wallet ownership authentication uses Ed25519 `signMessage`;
+- backend wallet sessions are stateless and time-limited;
+- transaction signing remains in Phantom/Solflare;
+- Testnet RPC is the canonical chain target;
+- Mainnet root scripts are disabled;
+- payment requests validate recipient and amount;
+- SPL-token QR transfers are blocked until the SPQC mint is verified;
+- token supply arithmetic uses checked operations;
+- token mint/destination relationships are constrained;
+- KEM algorithms are blocked from signature-only custody operations;
+- branding/reality CI gates exist.
+
+## Testing status
+
+### Automated checks present
+
+- frontend TypeScript/Vite build
+- backend syntax checks
+- backend unit tests
+- wallet-auth Ed25519 round-trip test
+- payment request validation tests
+- Rust workspace `cargo check` and `cargo test`
+- branding guard
+- reality audit/scorecard
+- Anchor/SBF build in the Testnet deployment workflow
+
+### Still needed
+
+- end-to-end wallet payment browser tests
+- Anchor instruction integration tests against a local validator/Testnet fixture
+- negative authorization tests for every program instruction
+- property/fuzz tests for account/state transitions
+- load/abuse tests for public backend
+- external security review
+
+## Compliance position
+
+This repository is **not** a compliance certificate.
+
+References to NIST, ISO 20022, MiCA, FATF, GDPR, securities laws, or other frameworks are research/design considerations only unless independently established by qualified reviewers for the actual deployment and jurisdiction.
+
+## Current risk conclusion
+
+- **Research/Testnet use:** acceptable for controlled experimentation with non-real-value assets, subject to the limitations above.
+- **Production/Mainnet use:** not approved by repository evidence.
+- **Real-value custody:** not recommended until independent review and release gates are complete.
+
+See:
+
+- [SECURITY.md](./SECURITY.md)
+- [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md)
+- [docs/reality/REALITY_AUDIT.md](./docs/reality/REALITY_AUDIT.md)
+- [reality/REALITY_SCORECARD.json](./reality/REALITY_SCORECARD.json)
+
+**This document is an internal engineering review, not a third-party audit.**
