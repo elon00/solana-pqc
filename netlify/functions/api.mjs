@@ -3,6 +3,7 @@ import { providerStatus } from "../../backend/src/providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "../../backend/src/solana.mjs";
 import { createWalletChallenge, getWalletSession, verifyWalletChallenge } from "../../backend/src/auth.mjs";
 import { readTestnetDeployment } from "../../backend/src/deployment.mjs";
+import { buildSolanaPayRequest, parseSolanaPayRequest } from "../../backend/src/payments.mjs";
 
 const allowedOrigins = new Set(
   (process.env.ALLOWED_ORIGINS || "https://scstobcminority-ai.netlify.app,https://elon00.github.io")
@@ -135,6 +136,16 @@ export default async (request) => {
       return session
         ? json(200, { verified: true, walletAddress: session.walletAddress, network: session.network, expiresAt: session.expiresAt }, origin)
         : json(401, { verified: false, error: "wallet session missing or expired" }, origin);
+    }
+
+    if (request.method === "POST" && path === "/api/payments/request") {
+      const body = await readJson(request);
+      return json(200, buildSolanaPayRequest(body), origin);
+    }
+
+    if (request.method === "POST" && path === "/api/payments/parse") {
+      const body = await readJson(request);
+      return json(200, parseSolanaPayRequest(body.uri), origin);
     }
 
     if (request.method === "POST" && path === "/api/chat") {
