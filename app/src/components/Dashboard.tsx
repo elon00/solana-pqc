@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import AgentChat from './AgentChat';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, APP_NAME } from '../config';
 
 const Dashboard: React.FC = () => {
   const { publicKey, connected } = useWallet();
@@ -51,7 +51,7 @@ const Dashboard: React.FC = () => {
         <div className="text-center space-y-6">
           <div className="text-6xl">🛡️</div>
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome to SCSTOBCMinority AI</h2>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome to {APP_NAME}</h2>
             <p className="text-gray-400 text-lg mb-6">Connect a wallet to the synchronized Solana Testnet research environment</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
               <span>🧪 PQC research targets: FIPS 203/204/205 families</span>
@@ -69,7 +69,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">SCSTOBCMinority AI Testnet Dashboard</h2>
+        <h2 className="text-2xl font-bold mb-2">{APP_NAME} Testnet Dashboard</h2>
         <p className="text-blue-100">Wallet: {publicKey?.toBase58().slice(0, 8)}...{publicKey?.toBase58().slice(-8)}</p>
         <div className="mt-4">
           <div className="text-sm text-blue-200">Balance</div>
