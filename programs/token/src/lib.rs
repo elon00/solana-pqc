@@ -3,7 +3,6 @@ use anchor_spl::token::{self, Mint, Token, TokenAccount, MintTo, Burn, Transfer}
 
 declare_id!("SPQC1111111111111111111111111111111111111");
 
-pub const TOTAL_SUPPLY: u64 = 2_100_000_000_000_000;
 pub const DECIMALS: u8 = 9;
 
 #[program]
@@ -22,7 +21,7 @@ pub mod solana_pqc_token {
         token_info.name = name;
         token_info.symbol = symbol;
         token_info.uri = uri;
-        token_info.total_supply = TOTAL_SUPPLY;
+        token_info.supply_cap = None;
         token_info.circulating_supply = 0;
         token_info.decimals = DECIMALS;
         token_info.is_paused = false;
@@ -33,7 +32,7 @@ pub mod solana_pqc_token {
         emit!(TokenInitializedEvent {
             mint: ctx.accounts.mint.key(),
             authority: ctx.accounts.authority.key(),
-            total_supply: TOTAL_SUPPLY,
+            supply_cap: None,
             timestamp: Clock::get()?.unix_timestamp,
         });
 
@@ -44,10 +43,10 @@ pub mod solana_pqc_token {
         let token_info = &mut ctx.accounts.token_info;
         
         require!(!token_info.is_paused, TokenError::TokenPaused);
-        require!(
-            token_info.circulating_supply.checked_add(amount).unwrap() <= TOTAL_SUPPLY,
-            TokenError::ExceedsTotalSupply
-        );
+        let new_circulating_supply = token_info
+            .circulating_supply
+            .checked_add(amount)
+            .ok_or(TokenError::SupplyOverflow)?;
 
         let cpi_accounts = MintTo {
             mint: ctx.accounts.mint.to_account_info(),
@@ -58,7 +57,7 @@ pub mod solana_pqc_token {
         let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
         token::mint_to(cpi_ctx, amount)?;
 
-        token_info.circulating_supply = token_info.circulating_supply.checked_add(amount).unwrap();
+        token_info.circulating_supply = new_circulating_supply;
 
         emit!(TokenMintedEvent {
             mint: ctx.accounts.mint.key(),
@@ -221,7 +220,8 @@ pub struct TokenInfo {
     pub name: String,
     pub symbol: String,
     pub uri: String,
-    pub total_supply: u64,
+    /// Application-level supply cap. None means uncapped minting.
+    pub supply_cap: Option<u64>,
     pub circulating_supply: u64,
     pub decimals: u8,
     pub is_paused: bool,
@@ -231,7 +231,7 @@ pub struct TokenInfo {
 }
 
 impl TokenInfo {
-    pub const SPACE: usize = 32 + 32 + 64 + 16 + 256 + 8 + 8 + 1 + 1 + 1 + 8 + 1;
+    pub const SPACE: usize = 32 + 32 + 64 + 16 + 256 + 9 + 8 + 1 + 1 + 1 + 8 + 1;
 }
 
 #[error_code]
@@ -239,8 +239,8 @@ pub enum TokenError {
     #[msg("Token transfers are currently paused")]
     TokenPaused,
     
-    #[msg("Amount exceeds total supply")]
-    ExceedsTotalSupply,
+    #[msg("Minting would overflow the SPL Token u64 supply counter")]
+    SupplyOverflow,
     
     #[msg("Quantum security verification required")]
     QuantumSecurityRequired,
@@ -253,7 +253,7 @@ pub enum TokenError {
 pub struct TokenInitializedEvent {
     pub mint: Pubkey,
     pub authority: Pubkey,
-    pub total_supply: u64,
+    pub supply_cap: Option<u64>,
     pub timestamp: i64,
 }
 
