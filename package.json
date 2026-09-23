@@ -27,7 +27,8 @@
     "reality:audit": "node scripts/reality-audit.mjs",
     "deploy:testnet": "anchor deploy --provider.cluster testnet",
     "initialize:testnet": "node scripts/initialize-testnet.mjs",
-    "test:deployment": "node --test tests/deployment-evidence.test.mjs"
+    "test:deployment": "node --test tests/deployment-evidence.test.mjs",
+    "copilot:check": "node scripts/check-colosseum.mjs"
   },
   "keywords": [
     "solana",
