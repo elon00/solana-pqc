@@ -1,101 +1,57 @@
-# 🚀 Deployment Guide for Your Wallet
+# SCSTOBCMinority AI — Solana Testnet Deployment
 
-**Your Wallet**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
+## Preferred path
 
-## Quick Deploy (3 Steps)
+Use the GitHub Actions workflow **Deploy SCSTOBCMinority AI to Solana Testnet**.
 
-### Step 1: Install Solana CLI (if not installed)
+The workflow builds first, checks funding, deploys both programs, initializes custody/SPQC, transfers upgrade authority, verifies on-chain accounts, and writes deployment evidence.
 
-```powershell
-# Download and install from:
-# https://docs.solana.com/cli/install-solana-cli-tools
+## Funding requirement
 
-# Or use this command:
-sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
-```
+A Solana program deployment requires Testnet SOL.
 
-### Step 2: Configure Your Wallet
+The public Testnet faucet can be rate-limited. For reproducibility, use a dedicated Testnet-only deployer and store its encoded keypair only as a protected GitHub Actions secret. Do not use or paste a personal wallet seed phrase/private key.
 
-```powershell
-# Set to testnet
-solana config set --url testnet
+## Local manual path
 
-# Set your wallet (you'll need your keypair file)
-solana config set --keypair <path-to-your-keypair.json>
-
-# Check balance
+```bash
+solana config set --url https://api.testnet.solana.com
 solana balance
 
-# If low, request airdrop
-solana airdrop 2
-```
-
-### Step 3: Deploy
-
-```powershell
-cd scstobcminority-ai
-
-# Install dependencies
-npm install
-
-# Build programs
 anchor build
-
-# Deploy to testnet
+anchor keys sync
+anchor build
 anchor deploy --provider.cluster testnet
+
+ANCHOR_PROVIDER_URL=https://api.testnet.solana.com \
+  node scripts/initialize-testnet.mjs
 ```
 
-## 📋 What Will Happen
+Or use:
 
-After deployment, you'll see:
-
-```
-Deploying workspace: https://api.testnet.solana.com
-Upgrade authority: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
-Deploying program "quantum_custody"...
-Program Id: QCust... 
-
-Deploying program "scstobcminority_ai_token"...
-Program Id: SPQC...
-
-Deploy success
+```bash
+./scripts/deploy-all.sh testnet
 ```
 
-## 🔗 After Deployment
+## Verification
 
-1. **Copy the Program IDs** from the output
-2. **Update .env file** with the new IDs
-3. **View on Explorer**: 
-   - https://explorer.solana.com/address/[PROGRAM_ID]?cluster=testnet
+Do not treat command completion as final evidence. Verify:
 
-## ⚠️ Important Notes
+- custody program account exists and is executable;
+- token program account exists and is executable;
+- SPQC mint account exists;
+- custody and TokenInfo PDAs are correct;
+- initialization transaction signatures exist and confirm;
+- authority transfers are correct.
 
-- **Costs**: ~2-5 SOL for deployment (testnet is free)
-- **Time**: Takes 2-5 minutes
-- **Network**: Make sure you're on testnet first
-- **Backup**: Save the program IDs
+The workflow records these only after successful verification.
 
-## 🆘 Troubleshooting
+## Current status
 
-**Error: Insufficient funds**
-```powershell
-solana airdrop 5
-```
+See [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md).
 
-**Error: Anchor not found**
-```powershell
-cargo install --git https://github.com/coral-xyz/anchor avm --locked --force
-avm install latest
-avm use latest
-```
+If it says pending, no verified custom smart-contract deployment hash/signature should be claimed.
 
-**Error: Build failed**
-```powershell
-# Make sure Rust is installed
-rustup update
-cargo --version
-```
+## Mainnet
 
----
-
-**Need Help?** Run these commands and share any errors you see.
+Mainnet is explicitly out of scope until Testnet evidence and security release gates are complete.
