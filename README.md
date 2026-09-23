@@ -151,7 +151,7 @@ External AI providers remain server-side. Private wallet keys and seed phrases m
 
 ### Pinned project expectations
 
-- Node.js 20 for CI/backend/frontend
+- Node.js 24 for CI/backend/frontend
 - Anchor CLI 0.29.0
 - Solana CLI 1.17.0 in the deployment container
 - Rust 2021 workspace with a conservative `rust-version = 1.68` for Solana SBF compatibility
