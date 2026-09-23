@@ -8,6 +8,7 @@ import { SOLANA_RPC_URL } from './config';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import LandingPage from './components/LandingPage';
+import { BackendWalletProvider } from './context/BackendWalletContext';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
+          <BackendWalletProvider>
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
               <Routes>
@@ -34,6 +36,7 @@ function App() {
               </Routes>
             </div>
           </Router>
+          </BackendWalletProvider>
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>
