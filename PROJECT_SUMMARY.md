@@ -1,8 +1,8 @@
-# 🎉 SOLANA-PQC Project - Complete Summary
+# 🎉 SCSTOBCMinority AI Project - Complete Summary
 
 ## 📊 Project Status: PRODUCTION READY ✅
 
-**Repository**: https://github.com/elon00/solana-pqc  
+**Repository**: https://github.com/elon00/scstobcminority-ai  
 **Total Files**: 50+  
 **Total Commits**: 6  
 **Status**: Live on GitHub  
@@ -76,7 +76,7 @@
 
 ## 🪙 Token Details
 
-**Name**: SOLANA-PQC  
+**Name**: SCSTOBCMinority AI  
 **Symbol**: SPQC  
 **Total Supply**: 2,100,000,000,000,000 (2.1 Quadrillion)  
 **Decimals**: 9  
@@ -213,7 +213,7 @@ npm run dev
 ## 📞 Resources
 
 ### Links
-- **GitHub**: https://github.com/elon00/solana-pqc
+- **GitHub**: https://github.com/elon00/scstobcminority-ai
 - **Whitepaper**: [WHITEPAPER.md](./WHITEPAPER.md)
 - **Documentation**: [docs/](./docs/)
 - **Security**: [SECURITY.md](./SECURITY.md)
@@ -221,7 +221,7 @@ npm run dev
 ### Commands
 ```bash
 # Clone repository
-git clone https://github.com/elon00/solana-pqc.git
+git clone https://github.com/elon00/scstobcminority-ai.git
 
 # Install & build
 npm install && anchor build
@@ -262,4 +262,4 @@ You now have a **complete, production-ready, quantum-safe custody protocol** wit
 **Created**: October 2, 2024  
 **Version**: 0.1.0  
 **Status**: Production Ready  
-**Repository**: https://github.com/elon00/solana-pqc
+**Repository**: https://github.com/elon00/scstobcminority-ai
