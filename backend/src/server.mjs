@@ -3,7 +3,7 @@ import { URL } from "node:url";
 import { runAgent } from "./agent.mjs";
 import { providerStatus } from "./providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "./solana.mjs";
-import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWalletChallenge } from "./auth.mjs";
+import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWalletChallenge, walletAuthStatus } from "./auth.mjs";
 import { readTestnetDeployment } from "./deployment.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";
 
@@ -11,7 +11,7 @@ const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const HOST = process.env.API_HOST || "0.0.0.0";
 const MAX_BODY = 64 * 1024;
 const allowedOrigins = new Set(
-  (process.env.ALLOWED_ORIGINS || "https://elon00.github.io,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080")
+  (process.env.ALLOWED_ORIGINS || "https://scstobcminority-ai.netlify.app,https://elon00.github.io,http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080")
     .split(",").map((x) => x.trim()).filter(Boolean)
 );
 const hits = new Map();
@@ -69,6 +69,7 @@ export async function handler(req, res) {
         environment: "testnet",
         ok: chain.ok,
         chain,
+        walletAuth: walletAuthStatus(),
         providers: providerStatus()
       });
     }
@@ -106,6 +107,7 @@ export async function handler(req, res) {
         chain,
         programs,
         providers: providerStatus(),
+        walletAuth: walletAuthStatus(),
         deployment,
         walletSigning: "frontend-only",
         walletBackendServices: ["balance", "account-status", "transaction-status", "program-status"]
