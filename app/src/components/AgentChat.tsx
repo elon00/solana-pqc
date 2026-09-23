@@ -91,7 +91,8 @@ const AgentChat = () => {
         body: JSON.stringify({
           walletAddress: publicKey.toBase58(),
           message: challenge.message,
-          signature
+          signature,
+          challengeToken: challenge.challengeToken
         })
       });
       const verified = await verifyResponse.json();
