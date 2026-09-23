@@ -1,0 +1,86 @@
+{
+  "system": "SCSTOBCMinority AI",
+  "generatedAt": "2026-09-23T18:30:00Z",
+  "score": 68,
+  "grade": "D+",
+  "engineeringImplementationScore": 87,
+  "engineeringImplementationGrade": "B+",
+  "releaseAssuranceScore": 12,
+  "releaseAssuranceGrade": "F",
+  "releaseStatus": "NOT_MAINNET_READY",
+  "deploymentStatus": "pending",
+  "checks": [
+    {
+      "name": "Canonical identity and truth guard",
+      "weight": 8,
+      "earned": 8,
+      "evidence": "Canonical brand + CI branding guard"
+    },
+    {
+      "name": "Frontend / wallet integration",
+      "weight": 12,
+      "earned": 12,
+      "evidence": "React/Vite, Phantom/Solflare, backend wallet context, QR payment panel"
+    },
+    {
+      "name": "Backend API and wallet authentication",
+      "weight": 12,
+      "earned": 12,
+      "evidence": "Node + Netlify Functions, stateless Ed25519 wallet auth"
+    },
+    {
+      "name": "Send / receive payment implementation",
+      "weight": 10,
+      "earned": 10,
+      "evidence": "Solana Pay QR generation/parsing + wallet-signed native Testnet SOL transfer"
+    },
+    {
+      "name": "Automated payment tests",
+      "weight": 8,
+      "earned": 8,
+      "evidence": "Backend payment request/parser validation tests"
+    },
+    {
+      "name": "Smart-contract defensive constraints",
+      "weight": 12,
+      "earned": 9,
+      "evidence": "Checked arithmetic, mint constraints, fail-closed PQC flag; full on-chain PQC verification absent"
+    },
+    {
+      "name": "On-chain PQC verification",
+      "weight": 8,
+      "earned": 1,
+      "evidence": "Signature size/authorization checks exist, cryptographic PQC verification on-chain does not"
+    },
+    {
+      "name": "Verified Testnet deployment evidence",
+      "weight": 15,
+      "earned": 0,
+      "evidence": "Deployment JSON is pending; program IDs/mint/PDAs/init signatures not recorded"
+    },
+    {
+      "name": "Independent security assurance",
+      "weight": 10,
+      "earned": 3,
+      "evidence": "Internal CI/review only; no independent professional audit/pentest/formal verification"
+    },
+    {
+      "name": "Documentation honesty",
+      "weight": 5,
+      "earned": 5,
+      "evidence": "README/security/manifest distinguish implemented vs pending and deprecate self-certification"
+    }
+  ],
+  "blockers": [
+    "On-chain PQC verification",
+    "Verified Testnet deployment evidence",
+    "Independent security assurance"
+  ],
+  "upgradePath": [
+    "Fund a dedicated Testnet-only deployer and complete verified Testnet deployment",
+    "Record program IDs, SPQC mint, PDAs and initialization transaction signatures",
+    "Complete independent smart-contract and cryptographic reviews",
+    "Design and validate a feasible PQC verification architecture before enabling quantum-safe on-chain claims"
+  ],
+  "note": "Internal evidence score only. Not a security certification, regulatory approval, investment rating, or guarantee."
+}
