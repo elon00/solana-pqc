@@ -195,11 +195,11 @@ export default function PaymentPanel() {
 
       const recipient = new PublicKey(parsed.recipient);
       const latest = await connection.getLatestBlockhash('confirmed');
-      const transaction = new Transaction({
-        feePayer: publicKey,
-        recentBlockhash: latest.blockhash,
-        lastValidBlockHeight: latest.lastValidBlockHeight
-      }).add(SystemProgram.transfer({
+      const transaction = new Transaction();
+      transaction.feePayer = publicKey;
+      transaction.recentBlockhash = latest.blockhash;
+      transaction.lastValidBlockHeight = latest.lastValidBlockHeight;
+      transaction.add(SystemProgram.transfer({
         fromPubkey: publicKey,
         toPubkey: recipient,
         lamports
