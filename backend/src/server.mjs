@@ -5,6 +5,7 @@ import { providerStatus } from "./providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "./solana.mjs";
 import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWalletChallenge } from "./auth.mjs";
 import { readTestnetDeployment } from "./deployment.mjs";
+import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const HOST = process.env.API_HOST || "0.0.0.0";
@@ -169,6 +170,16 @@ export async function handler(req, res) {
 
     if (req.method === "POST" && url.pathname === "/api/auth/logout") {
       return send(res, 200, { revoked: revokeWalletSession(req.headers.authorization) });
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/payments/request") {
+      const body = await readJson(req);
+      return send(res, 200, buildSolanaPayRequest(body));
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/payments/parse") {
+      const body = await readJson(req);
+      return send(res, 200, parseSolanaPayRequest(body.uri));
     }
 
     if (req.method === "POST" && url.pathname === "/api/chat") {
