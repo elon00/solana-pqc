@@ -5,15 +5,14 @@
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
-    "test": "npm run test:nist && npm run audit:crypto && npm run reality:universal",
+    "test": "npm run branding:check && npm run test:nist && npm run audit:crypto && npm run reality:audit",
     "test:nist": "npx tsx tests/official-nist-vectors.test.ts",
     "audit:crypto": "node scripts/audit-crypto.mjs",
-    "reality:universal": "npx tsx scripts/reality-universal.ts",
-    "reality:certify": "npx tsx scripts/generate-urs-certificate.ts",
-    "deploy:devnet": "anchor deploy --provider.cluster devnet",
-    "deploy:mainnet": "anchor deploy --provider.cluster mainnet",
-    "initialize:devnet": "ts-node scripts/initialize.ts --cluster devnet",
-    "initialize:mainnet": "ts-node scripts/initialize.ts --cluster mainnet",
+    "reality:universal": "npm run reality:audit",
+    "reality:certify": "npm run reality:audit",
+    "deploy:mainnet": "node -e \"console.error('Mainnet deployment is disabled until verified Testnet evidence and explicit release approval.'); process.exit(1)\"",
+    "initialize:devnet": "node scripts/initialize-devnet.mjs",
+    "initialize:mainnet": "node -e \"console.error('Mainnet initialization is disabled until verified Testnet evidence and explicit release approval.'); process.exit(1)\"",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "app:dev": "cd app && npm run dev",
@@ -24,7 +23,10 @@
     "testnet:frontend": "cd app && npm ci && npm run build",
     "testnet:stack": "docker compose -f docker-compose.testnet.yml up --build",
     "testnet:stack:down": "docker compose -f docker-compose.testnet.yml down --remove-orphans",
-    "branding:check": "node scripts/check-branding.mjs"
+    "branding:check": "node scripts/check-branding.mjs",
+    "reality:audit": "node scripts/reality-audit.mjs",
+    "deploy:testnet": "anchor deploy --provider.cluster testnet",
+    "initialize:testnet": "node scripts/initialize-testnet.mjs"
   },
   "keywords": [
     "solana",
