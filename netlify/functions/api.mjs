@@ -15,7 +15,7 @@ function json(status, value, origin) {
     "content-type": "application/json; charset=utf-8",
     "x-content-type-options": "nosniff"
   });
-  if (origin && (allowedOrigins.has(origin) || [...allowedOrigins].some((x) => origin.startsWith(x)))) {
+  if (origin && allowedOrigins.has(origin)) {
     headers.set("access-control-allow-origin", origin);
     headers.set("vary", "Origin");
   }
