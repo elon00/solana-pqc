@@ -1,185 +1,96 @@
 # SCSTOBCMinority AI — Project Summary
 
-## Current Status
+## Status
 
-**Stage:** Research prototype / Devnet-oriented development  
+**Stage:** Testnet-first research prototype  
 **Repository:** https://github.com/elon00/scstobcminority-ai  
-**Web app:** https://elon00.github.io/scstobcminority-ai/  
+**Netlify target:** https://scstobcminority-ai.netlify.app  
+**GitHub Pages mirror:** https://elon00.github.io/scstobcminority-ai/  
 **Token:** SPQC  
-**Supply model:** Uncapped at the application layer; SPL Token raw supply remains bounded by Solana's `u64` accounting.
+**Mainnet:** disabled pending Testnet evidence and security review
 
-The repository contains substantive Solana, Rust, TypeScript, React and post-quantum-cryptography research components, but it should not be represented as independently audited, fully production-ready, legally compliant in every jurisdiction, or guaranteed to deliver financial returns.
+The repository contains substantive Solana, Rust, TypeScript, React, backend API, wallet-authentication, payment, and post-quantum-cryptography research code. It must not be represented as independently audited, production-ready, universally compliant, or verified on Mainnet.
 
----
+## Implemented in source
 
-## Core Mission
+### Solana / smart contracts
 
-SCSTOBCMinority AI combines quantum-safe blockchain research with a human-development mission focused on dignity, opportunity and upliftment for **SC, ST, OBC, minority and other underserved communities**.
-
-Guiding values:
-
-**Love · Peace · Joy · Harmony · Truth · Charity · Unity · Equality · Dignity · Liberty · Consent · Knowledge · Service · Justice**
-
-Potential future community programs include education, scholarships, health, nutrition, housing support, jobs, livelihoods, entrepreneurship, financial literacy, productive assets, technology access, scientific learning, charitable grants, agriculture, community infrastructure and other lawful human-development initiatives.
-
-See:
-
-- [Core Purpose](./CORE_PURPOSE.md)
-- [White Paper](./WHITEPAPER.md)
-- [Tokenomics](./docs/TOKENOMICS.md)
-
----
-
-## Technology Present in the Repository
-
-### Solana / Rust
-
-- Anchor-based Solana programs
-- Quantum custody program
-- SCSTOBCMinority AI token program
+- Anchor custody program
+- Anchor SPQC token program
 - SPL Token integration
+- checked supply arithmetic
+- authority and mint-account constraints
 - PDA-based account patterns
-- Devnet deployment automation
+- Testnet deployment workflow
 
-### Post-Quantum Cryptography Research
+### Wallet / payments
 
-Repository code and evidence tooling cover research around:
+- Phantom and Solflare adapters
+- client-side transaction signing
+- Ed25519 `signMessage` wallet authentication
+- stateless backend wallet sessions
+- authenticated wallet status endpoint
+- Solana Pay-style receive request generation
+- QR image decoding
+- native Testnet SOL send flow
+- backend transaction-status verification
 
-- ML-KEM / Kyber-family tooling
-- ML-DSA / Dilithium-family tooling
-- SLH-DSA / SPHINCS+-family tooling
-- hybrid Ed25519 + PQC concepts
+Native SOL send/receive uses the Solana System Program. It is separate from the custom custody/token program deployment.
 
-Independent cryptographic review is still required before production-security claims.
+### Backend / AI
 
-### SDKs
+- Node HTTP backend
+- Netlify Functions backend adapter
+- Solana Testnet RPC health checks
+- wallet/account/transaction/program queries
+- AI intent router
+- local deterministic fallback
+- OpenAI-compatible, Anthropic, and Gemini provider adapters when server-side credentials are configured
 
-- TypeScript SDK
-- Rust SDK
-- Solana client and vault utilities
-- crypto-related utilities and tests
+### PQC research
 
-### Web Application
+- TypeScript and Rust PQC-related SDK code
+- ML-KEM / ML-DSA-family integrations
+- local cryptographic tests and evidence tooling
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- React Router
-- Phantom wallet adapter
-- Solflare wallet adapter
-- GitHub Pages deployment
+These are engineering/research artifacts, not independent certification of end-to-end quantum safety.
 
-### CI/CD
+## Important limitations
 
-- GitHub Actions
-- frontend build checks
-- Rust checks/tests
-- Devnet deployment workflow
-- GitHub Pages workflow
+- `TESTNET_DEPLOYMENT.md` is still pending verified on-chain deployment.
+- Machine deployment JSON currently contains no verified custom program IDs, SPQC mint, PDAs, or initialization signatures.
+- Custody signature paths check sizes/authorization but do not cryptographically verify PQC signatures on-chain.
+- The token instruction historically named `transfer_quantum_safe` does not perform PQC verification on-chain; the code now explicitly records that fact.
+- Vault algorithm selection no longer self-certifies FIPS compliance/readiness.
+- No independent smart-contract audit, cryptographic audit, penetration test, fuzzing campaign, or formal verification is recorded.
+- Mainnet release remains disabled.
 
----
+## SPQC model
 
-## SPQC Token
+- symbol: **SPQC**
+- decimals: **9**
+- application supply cap: **none**
+- raw SPL Token supply accounting: **u64**
+- minting: authority-controlled
+- no guaranteed financial return, yield, benefit, right, or personal outcome
 
-### Current Technical Model
+## Core mission
 
-- Symbol: **SPQC**
-- Decimals: **9**
-- Supply policy: **uncapped at the application layer**
-- Authority-controlled minting
-- Current token paths: initialize, mint, burn, transfer
-- SPL Token raw accounting ceiling: `u64`
+SCSTOBCMinority AI includes a rights-respecting human-development mission for SC, ST, OBC, minority, and other underserved communities. Intended future programs may include education, health, livelihood, technology access, research, grants, and accountable community infrastructure.
 
-### Intended Future Utility
+Aid or access must never be conditioned on political allegiance, voting behavior, religious conversion, or coercive personal relationships.
 
-Subject to implementation, governance and legal review, SPQC may support:
+## Release priorities
 
-- community grants;
-- scholarships;
-- education and skills programs;
-- health and nutrition programs;
-- housing support;
-- livelihoods and entrepreneurship;
-- technology and productive assets;
-- open-source and scientific research;
-- accountable community treasuries.
+1. Keep CI, frontend build, backend tests, Rust checks, and reality/branding guards green.
+2. Fund a dedicated Testnet-only deployer without exposing personal wallet secrets.
+3. Deploy and verify both custom programs on Solana Testnet.
+4. Record SPQC mint, PDAs, and initialization transaction signatures.
+5. Expand integration/adversarial tests.
+6. Complete independent smart-contract and cryptographic review.
+7. Review upgrade/mint/treasury authority design.
+8. Only then consider Mainnet.
 
-The token must not be used to buy public votes, condition aid on political or religious allegiance, coerce relationships, or promise guaranteed personal or investment outcomes.
+See [docs/reality/REALITY_AUDIT.md](./docs/reality/REALITY_AUDIT.md) and [reality/REALITY_SCORECARD.json](./reality/REALITY_SCORECARD.json).
 
----
-
-## Implemented vs Planned
-
-### Implemented / Present
-
-- Solana Anchor programs
-- SPL Token integration
-- uncapped application-level mint model
-- Rust SDK
-- TypeScript SDK
-- PQC research code
-- React/Vite web app
-- Phantom/Solflare provider support
-- GitHub CI/CD
-- GitHub Pages
-
-### Prototype / Requires Validation
-
-- end-to-end PQC security
-- hybrid cryptographic guarantees
-- production deployment hardening
-- token economic controls
-- community treasury architecture
-
-### Implemented Application Integration
-
-- Testnet Node backend API
-- AI agent intent routing with live chain grounding
-- multi-model provider router (OpenAI-compatible / Anthropic / Gemini when credentials are configured)
-- deterministic local safe fallback model
-- wallet/account/transaction/program verification endpoints
-- Ed25519 wallet ownership verification through signMessage
-- short-lived backend wallet sessions
-- frontend ↔ backend wallet state synchronization
-- one-click Docker Compose Testnet stack
-
-### Planned / Not Yet Complete
-
-- simultaneous multi-wallet orchestration
-- staking and yield systems
-- cross-chain bridges
-- formal community governance
-- Conway automaton integration
-- broader Web4 architecture
-- large-scale beneficiary-distribution systems
-- independent security audit
-
----
-
-## Safety and Rights Principles
-
-- Human dignity is not token-weighted.
-- Public political rights cannot be bought with SPQC.
-- Assistance cannot be conditioned on party support or voting behavior.
-- Religious or spiritual participation must remain voluntary.
-- Marriage and relationships require lawful adult consent; people can never be tokenized or allocated.
-- Sensitive beneficiary information should not be written publicly on-chain.
-- No guaranteed wealth, job, housing, land, precious metals, health outcome, relationship, blessing or supernatural result is promised.
-
----
-
-## Immediate Technical Priorities
-
-1. Verify Devnet deployment state and publish real on-chain program IDs/signatures.
-2. Keep CI green and reproducible.
-3. Complete independent smart-contract and cryptographic review.
-4. Add treasury/mint-authority safeguards before any significant issuance.
-5. Build measurable community-program pilots with qualified partners.
-6. Add AI or governance modules only when code, tests and safeguards exist.
-7. Keep documentation synchronized with actual implementation.
-
----
-
-**Version:** 2.0  
 **Last updated:** September 23, 2026
