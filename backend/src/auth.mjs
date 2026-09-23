@@ -1,11 +1,42 @@
 import crypto from "node:crypto";
 import { looksLikeBase58 } from "./solana.mjs";
 
-const challenges = new Map();
-const sessions = new Map();
 const CHALLENGE_TTL_MS = Number(process.env.WALLET_CHALLENGE_TTL_MS || 5 * 60_000);
 const SESSION_TTL_MS = Number(process.env.WALLET_SESSION_TTL_MS || 30 * 60_000);
 const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
+
+function authSecret() {
+  const configured = String(process.env.WALLET_AUTH_SECRET || "");
+  if (configured.length >= 32) return configured;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("WALLET_AUTH_SECRET is not configured");
+  }
+  return "scstobcminority-ai-local-test-wallet-auth-secret";
+}
+
+function signPart(part) {
+  return crypto.createHmac("sha256", authSecret()).update(part).digest("base64url");
+}
+
+function issueToken(payload) {
+  const part = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+  return `${part}.${signPart(part)}`;
+}
+
+function readToken(token, expectedType) {
+  const value = String(token || "");
+  const [part, signature, extra] = value.split(".");
+  if (!part || !signature || extra) throw new Error("Invalid wallet auth token");
+  const expected = Buffer.from(signPart(part), "utf8");
+  const received = Buffer.from(signature, "utf8");
+  if (expected.length !== received.length || !crypto.timingSafeEqual(expected, received)) {
+    throw new Error("Invalid wallet auth token signature");
+  }
+  const payload = JSON.parse(Buffer.from(part, "base64url").toString("utf8"));
+  if (payload?.typ !== expectedType) throw new Error("Invalid wallet auth token type");
+  if (!Number.isFinite(payload?.exp) || payload.exp <= Date.now()) throw new Error("Wallet auth token expired");
+  return payload;
+}
 
 function decodeBase58(value) {
   const alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -29,36 +60,42 @@ function decodeBase58(value) {
   return Buffer.from(bytes.reverse());
 }
 
-function cleanup() {
-  const now = Date.now();
-  for (const [key, value] of challenges) if (value.expiresAt <= now) challenges.delete(key);
-  for (const [key, value] of sessions) if (value.expiresAt <= now) sessions.delete(key);
-}
-
-export function createWalletChallenge(walletAddress) {
-  cleanup();
-  if (!looksLikeBase58(walletAddress, 32, 44)) throw new Error("Invalid Solana wallet address");
-  const nonce = crypto.randomBytes(24).toString("base64url");
-  const expiresAt = Date.now() + CHALLENGE_TTL_MS;
-  const message = [
+function challengeMessage({ walletAddress, nonce, exp }) {
+  return [
     "SCSTOBCMinority AI wallet authentication",
     "Network: Solana Testnet",
     `Wallet: ${walletAddress}`,
     `Nonce: ${nonce}`,
-    `Expires: ${new Date(expiresAt).toISOString()}`,
+    `Expires: ${new Date(exp).toISOString()}`,
     "",
     "Signing proves wallet ownership only. It does not authorize a transaction or transfer funds."
   ].join("\n");
-  challenges.set(walletAddress, { message, expiresAt });
-  return { walletAddress, network: "testnet", message, expiresAt };
 }
 
-export function verifyWalletChallenge({ walletAddress, message, signature }) {
-  cleanup();
+export function createWalletChallenge(walletAddress) {
   if (!looksLikeBase58(walletAddress, 32, 44)) throw new Error("Invalid Solana wallet address");
-  const challenge = challenges.get(walletAddress);
-  if (!challenge || challenge.expiresAt <= Date.now()) throw new Error("Wallet challenge expired or missing");
-  if (message !== challenge.message) throw new Error("Wallet challenge mismatch");
+  const payload = {
+    typ: "challenge",
+    walletAddress,
+    nonce: crypto.randomBytes(24).toString("base64url"),
+    exp: Date.now() + CHALLENGE_TTL_MS
+  };
+  const challengeToken = issueToken(payload);
+  return {
+    walletAddress,
+    network: "testnet",
+    message: challengeMessage(payload),
+    expiresAt: payload.exp,
+    challengeToken
+  };
+}
+
+export function verifyWalletChallenge({ walletAddress, message, signature, challengeToken }) {
+  if (!looksLikeBase58(walletAddress, 32, 44)) throw new Error("Invalid Solana wallet address");
+  const challenge = readToken(challengeToken, "challenge");
+  if (challenge.walletAddress !== walletAddress) throw new Error("Wallet challenge mismatch");
+  const expectedMessage = challengeMessage(challenge);
+  if (message !== expectedMessage) throw new Error("Wallet challenge message mismatch");
 
   const publicKeyRaw = decodeBase58(walletAddress);
   if (publicKeyRaw.length !== 32) throw new Error("Invalid Solana Ed25519 public key");
@@ -73,25 +110,35 @@ export function verifyWalletChallenge({ walletAddress, message, signature }) {
   const verified = crypto.verify(null, Buffer.from(message, "utf8"), publicKey, signatureRaw);
   if (!verified) throw new Error("Wallet signature verification failed");
 
-  challenges.delete(walletAddress);
-  const token = crypto.randomBytes(32).toString("base64url");
   const expiresAt = Date.now() + SESSION_TTL_MS;
-  sessions.set(token, { walletAddress, expiresAt });
+  const token = issueToken({
+    typ: "session",
+    walletAddress,
+    exp: expiresAt,
+    nonce: crypto.randomBytes(16).toString("base64url")
+  });
+
   return { verified: true, walletAddress, network: "testnet", token, expiresAt };
 }
 
 export function getWalletSession(authorization) {
-  cleanup();
   if (typeof authorization !== "string" || !authorization.startsWith("Bearer ")) return null;
-  const token = authorization.slice(7).trim();
-  const session = sessions.get(token);
-  if (!session || session.expiresAt <= Date.now()) return null;
-  return { token, ...session, network: "testnet" };
+  try {
+    const token = authorization.slice(7).trim();
+    const session = readToken(token, "session");
+    if (!looksLikeBase58(session.walletAddress, 32, 44)) return null;
+    return {
+      token,
+      walletAddress: session.walletAddress,
+      expiresAt: session.exp,
+      network: "testnet",
+      stateless: true
+    };
+  } catch {
+    return null;
+  }
 }
 
 export function revokeWalletSession(authorization) {
-  const session = getWalletSession(authorization);
-  if (!session) return false;
-  sessions.delete(session.token);
-  return true;
+  return Boolean(getWalletSession(authorization));
 }
