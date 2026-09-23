@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { API_BASE_URL } from '../config';
+import { API_BASE_URL, APP_NAME } from '../config';
 
 type ChatLine = {
   role: 'user' | 'assistant';
@@ -28,7 +28,7 @@ const AgentChat = () => {
   const [messages, setMessages] = useState<ChatLine[]>([
     {
       role: 'assistant',
-      text: 'SCSTOBCMinority AI Testnet assistant. I can use backend Testnet RPC context and configured model providers without accessing your private keys.'
+      text: `${APP_NAME} Testnet assistant. I can use backend Testnet RPC context and configured model providers without accessing your private keys.`
     }
   ]);
 
