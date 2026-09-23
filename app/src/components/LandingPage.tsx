@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from '@solana/web3.js';
+import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js';
 
 const LandingPage = () => {
   const { connected, publicKey, sendTransaction } = useWallet();
-  const [activeSection, setActiveSection] = useState('hero');
+  const [, setActiveSection] = useState('hero');
   const [balance, setBalance] = useState<number | null>(null);
   const [networkStatus, setNetworkStatus] = useState<string>('checking');
   const [transactionStatus, setTransactionStatus] = useState<string>('');
@@ -22,7 +22,7 @@ const LandingPage = () => {
   useEffect(() => {
     const checkNetworkStatus = async () => {
       try {
-        const version = await connection.getVersion();
+        await connection.getVersion();
         setNetworkStatus('connected');
       } catch (error) {
         setNetworkStatus('disconnected');
@@ -128,7 +128,7 @@ const LandingPage = () => {
         case 'test':
           setTransactionStatus(`🧪 Running comprehensive test...`);
           // Run multiple checks
-          const checks = await Promise.all([
+          await Promise.all([
             connection.getVersion(),
             connection.getBalance(publicKey),
             connection.getLatestBlockhash()
