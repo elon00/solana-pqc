@@ -49,7 +49,7 @@ export function BackendWalletProvider({ children }: { children: React.ReactNode 
     let cancelled = false;
 
     const checkBackend = async () => {
-      if (!API_BASE_URL || !backendReady) {
+      if (!API_BASE_URL) {
         if (!cancelled) setBackendReady(false);
         return;
       }
@@ -131,9 +131,9 @@ export function BackendWalletProvider({ children }: { children: React.ReactNode 
 
   const verifyWallet = useCallback(async () => {
     const wallet = publicKey?.toBase58() || '';
-    if (!API_BASE_URL) {
+    if (!API_BASE_URL || !backendReady) {
       setAuthState('backend-offline');
-      setError('Public backend is not connected to this deployment.');
+      setError('Public backend is not reachable or wallet authentication is not configured.');
       return;
     }
     if (!connected || !wallet) {
