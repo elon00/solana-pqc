@@ -1,11 +1,11 @@
 {
   "name": "scstobcminority-ai",
   "version": "0.1.0",
-  "description": "SCSTOBCMinority AI — quantum-safe Solana research infrastructure and SPQC community-utility token prototype for transparent, rights-respecting human-development programs.",
+  "description": "SCSTOBCMinority AI \u2014 quantum-safe Solana research infrastructure and SPQC community-utility token prototype for transparent, rights-respecting human-development programs.",
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
-    "test": "npm run branding:check && npm run test:nist && npm run audit:crypto && npm run reality:audit",
+    "test": "npm run branding:check && npm run test:nist && npm run audit:crypto && npm run reality:audit && npm run test:deployment",
     "test:nist": "npx tsx tests/official-nist-vectors.test.ts",
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "npm run reality:audit",
@@ -26,7 +26,8 @@
     "branding:check": "node scripts/check-branding.mjs",
     "reality:audit": "node scripts/reality-audit.mjs",
     "deploy:testnet": "anchor deploy --provider.cluster testnet",
-    "initialize:testnet": "node scripts/initialize-testnet.mjs"
+    "initialize:testnet": "node scripts/initialize-testnet.mjs",
+    "test:deployment": "node --test tests/deployment-evidence.test.mjs"
   },
   "keywords": [
     "solana",

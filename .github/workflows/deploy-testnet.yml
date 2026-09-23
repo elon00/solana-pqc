@@ -8,6 +8,7 @@ on:
     paths:
       - "programs/**"
       - "scripts/initialize-testnet.mjs"
+      - "scripts/write-testnet-evidence.mjs"
       - "Anchor.toml"
       - "Cargo.toml"
       - "sdk/rust/Cargo.toml"
@@ -19,7 +20,7 @@ permissions:
 
 concurrency:
   group: scstobcminority-ai-testnet-v3
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   PROJECT_AUTHORITY: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
@@ -36,6 +37,9 @@ jobs:
     container:
       image: backpackapp/build:v0.29.0
     timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +68,13 @@ jobs:
           solana config set --keypair "$HOME/.config/solana/id.json"
           echo "ANCHOR_WALLET=$HOME/.config/solana/id.json" >> "$GITHUB_ENV"
           echo "Testnet payer: $(solana address)"
+
+      - name: Refuse deployment to any other network
+        run: |
+          EXPECTED_GENESIS="$(solana genesis-hash --url https://api.testnet.solana.com)"
+          ACTUAL_GENESIS="$(solana genesis-hash --url "$SOLANA_URL")"
+          test -n "$EXPECTED_GENESIS"
+          test "$ACTUAL_GENESIS" = "$EXPECTED_GENESIS"
 
       # On-chain workspace intentionally excludes sdk/rust.
       - name: Generate Solana SBF-compatible dependency lock
@@ -131,68 +142,8 @@ jobs:
           solana program show "$SPQC_TOKEN_PROGRAM_ID" --url "$SOLANA_URL" | tee /tmp/token-program.txt
           solana account "$SPQC_MINT" --url "$SOLANA_URL" | tee /tmp/spqc-mint.txt
 
-      - name: Write verified Testnet deployment record
-        run: |
-          cat > TESTNET_DEPLOYMENT.md <<EOF
-          # SCSTOBCMinority AI — Solana Testnet Deployment
-
-          **Status:** VERIFIED ON-CHAIN
-          **Network:** Solana Testnet
-          **RPC:** https://api.testnet.solana.com
-          **Project authority:** $PROJECT_AUTHORITY
-
-          ## On-chain identifiers
-
-          - **Quantum Custody Program:** `$QUANTUM_CUSTODY_PROGRAM_ID`
-          - **SCSTOBCMinority AI Token Program:** `$SPQC_TOKEN_PROGRAM_ID`
-          - **SPQC Mint:** `$SPQC_MINT`
-          - **Token Info PDA:** `$SPQC_TOKEN_INFO`
-          - **Custody Global State PDA:** `$QUANTUM_CUSTODY_GLOBAL_STATE`
-
-          ## Program deployment transactions
-
-          - **Quantum Custody deployment signature:** `$QUANTUM_CUSTODY_DEPLOY_SIGNATURE`
-          - **Token Program deployment signature:** `$SPQC_TOKEN_DEPLOY_SIGNATURE`
-
-          ## Initialization transactions
-
-          - **Custody initialization signature:** `$CUSTODY_INITIALIZE_SIGNATURE`
-          - **Token initialization signature:** `$TOKEN_INITIALIZE_SIGNATURE`
-
-          ## Supply policy
-
-          SPQC uses uncapped application-level minting. SPL Token raw supply remains technically bounded by Solana's `u64` accounting.
-
-          ## Deployment policy
-
-          Mainnet deployment is intentionally deferred until Testnet verification, security review, and release-readiness checks are complete.
-
-          Generated and verified by GitHub Actions on `$(date -u +"%Y-%m-%dT%H:%M:%SZ")`.
-          EOF
-
-      - name: Write synchronized machine deployment config
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const payload = {
-            status: "verified",
-            network: "testnet",
-            quantumCustodyProgramId: process.env.QUANTUM_CUSTODY_PROGRAM_ID,
-            spqcTokenProgramId: process.env.SPQC_TOKEN_PROGRAM_ID,
-            spqcMint: process.env.SPQC_MINT,
-            quantumCustodyDeploySignature: process.env.QUANTUM_CUSTODY_DEPLOY_SIGNATURE,
-            spqcTokenDeploySignature: process.env.SPQC_TOKEN_DEPLOY_SIGNATURE,
-            tokenInfoPda: process.env.SPQC_TOKEN_INFO,
-            custodyGlobalStatePda: process.env.QUANTUM_CUSTODY_GLOBAL_STATE,
-            custodyInitializeSignature: process.env.CUSTODY_INITIALIZE_SIGNATURE,
-            tokenInitializeSignature: process.env.TOKEN_INITIALIZE_SIGNATURE,
-            verifiedAt: new Date().toISOString()
-          };
-          const content = JSON.stringify(payload, null, 2) + "\n";
-          fs.writeFileSync("backend/testnet-deployment.json", content);
-          fs.mkdirSync("app/public", { recursive: true });
-          fs.writeFileSync("app/public/testnet-deployment.json", content);
-          NODE
+      - name: Write verified Testnet deployment records
+        run: node scripts/write-testnet-evidence.mjs
 
       - name: Commit verified deployment record
         run: |
