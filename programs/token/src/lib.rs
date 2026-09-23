@@ -15,6 +15,10 @@ pub mod scstobcminority_ai_token {
         symbol: String,
         uri: String,
     ) -> Result<()> {
+        require!(name.as_bytes().len() <= 64, TokenError::MetadataTooLong);
+        require!(symbol.as_bytes().len() <= 16, TokenError::MetadataTooLong);
+        require!(uri.as_bytes().len() <= 256, TokenError::MetadataTooLong);
+
         let token_info = &mut ctx.accounts.token_info;
         token_info.authority = ctx.accounts.mint_authority.key();
         token_info.mint = ctx.accounts.mint.key();
@@ -41,6 +45,7 @@ pub mod scstobcminority_ai_token {
     }
 
     pub fn mint_tokens(ctx: Context<MintTokens>, amount: u64) -> Result<()> {
+        require!(amount > 0, TokenError::InvalidAmount);
         let token_info = &mut ctx.accounts.token_info;
         
         require!(!token_info.is_paused, TokenError::TokenPaused);
@@ -76,6 +81,7 @@ pub mod scstobcminority_ai_token {
         amount: u64,
         quantum_signature: Vec<u8>,
     ) -> Result<()> {
+        require!(amount > 0, TokenError::InvalidAmount);
         let token_info = &ctx.accounts.token_info;
         
         require!(!token_info.is_paused, TokenError::TokenPaused);
@@ -105,6 +111,7 @@ pub mod scstobcminority_ai_token {
     }
 
     pub fn burn_tokens(ctx: Context<BurnTokens>, amount: u64) -> Result<()> {
+        require!(amount > 0, TokenError::InvalidAmount);
         let token_info = &mut ctx.accounts.token_info;
         
         require!(!token_info.is_paused, TokenError::TokenPaused);
@@ -277,6 +284,12 @@ pub enum TokenError {
 
     #[msg("Token account mint does not match the SPQC mint")]
     InvalidMint,
+
+    #[msg("Amount must be greater than zero")]
+    InvalidAmount,
+
+    #[msg("Token metadata exceeds the allocated maximum length")]
+    MetadataTooLong,
 }
 
 #[event]
