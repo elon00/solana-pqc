@@ -21,7 +21,9 @@ const AgentChat = () => {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [walletSession, setWalletSession] = useState('');
-  const [walletAuth, setWalletAuth] = useState<'unverified' | 'verifying' | 'verified' | 'unsupported' | 'error'>('unverified');
+  const [walletAuth, setWalletAuth] = useState<'unverified' | 'verifying' | 'verified' | 'unsupported' | 'backend-offline' | 'error'>(
+    API_BASE_URL ? 'unverified' : 'backend-offline'
+  );
   const [walletAuthError, setWalletAuthError] = useState('');
   const [messages, setMessages] = useState<ChatLine[]>([
     {
@@ -32,7 +34,13 @@ const AgentChat = () => {
 
   useEffect(() => {
     setWalletSession('');
-    setWalletAuth(publicKey ? (signMessage ? 'unverified' : 'unsupported') : 'unverified');
+    setWalletAuth(
+      !API_BASE_URL
+        ? 'backend-offline'
+        : publicKey
+          ? (signMessage ? 'unverified' : 'unsupported')
+          : 'unverified'
+    );
     setWalletAuthError('');
   }, [publicKey, signMessage]);
 
@@ -64,9 +72,14 @@ const AgentChat = () => {
   }, []);
 
   const verifyWallet = async () => {
-    if (!API_BASE_URL || !connected || !publicKey || !signMessage) {
+    if (!API_BASE_URL) {
+      setWalletAuth('backend-offline');
+      setWalletAuthError('Public backend is not connected to this deployment yet.');
+      return;
+    }
+    if (!connected || !publicKey || !signMessage) {
       setWalletAuth(signMessage ? 'error' : 'unsupported');
-      setWalletAuthError(!signMessage ? 'This wallet adapter does not support message signing.' : 'Backend/wallet is not ready.');
+      setWalletAuthError(!signMessage ? 'This wallet adapter does not support message signing.' : 'Connect a wallet first.');
       return;
     }
 
@@ -188,7 +201,7 @@ const AgentChat = () => {
         ))}
         {!configuredProviders.length && (
           <span className="px-2 py-1 rounded bg-gray-900 text-gray-400">
-            Provider status unavailable
+            {API_BASE_URL ? 'Provider status loading…' : 'Public backend not connected'}
           </span>
         )}
       </div>
@@ -201,10 +214,14 @@ const AgentChat = () => {
           <button
             type="button"
             onClick={verifyWallet}
-            disabled={walletAuth === 'verifying' || walletAuth === 'unsupported'}
+            disabled={walletAuth === 'verifying' || walletAuth === 'unsupported' || walletAuth === 'backend-offline'}
             className="rounded bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-3 py-1 text-white"
           >
-            {walletAuth === 'verifying' ? 'Verifying…' : 'Verify wallet'}
+            {walletAuth === 'verifying'
+              ? 'Verifying…'
+              : walletAuth === 'backend-offline'
+                ? 'Backend not connected'
+                : 'Verify wallet'}
           </button>
         )}
         {walletAuthError && <span className="text-yellow-300">{walletAuthError}</span>}
