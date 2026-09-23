@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import AgentChat from './AgentChat';
+import PaymentPanel from './PaymentPanel';
 import { API_BASE_URL, APP_NAME } from '../config';
 import { useBackendWallet } from '../context/BackendWalletContext';
 
@@ -162,6 +163,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <PaymentPanel />
 
       <AgentChat />
     </div>
