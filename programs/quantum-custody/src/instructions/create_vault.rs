@@ -38,20 +38,10 @@ pub fn handler(
     vault.compliance_status = ComplianceStatus::default();
     vault.bump = ctx.bumps.vault;
     
-    match crypto_algorithm {
-        CryptoAlgorithm::Kyber512 | CryptoAlgorithm::Kyber768 | CryptoAlgorithm::Kyber1024 => {
-            vault.compliance_status.nist_fips_203_compliant = true;
-        }
-        CryptoAlgorithm::Dilithium2 | CryptoAlgorithm::Dilithium3 | CryptoAlgorithm::Dilithium5 => {
-            vault.compliance_status.nist_fips_204_compliant = true;
-        }
-        _ => {
-            vault.compliance_status.nist_fips_205_compliant = true;
-        }
-    }
-    
-    vault.compliance_status.quantum_readiness_score = 75;
-    vault.compliance_status.last_audit = clock.unix_timestamp;
+    // Selecting an algorithm does not prove FIPS compliance or constitute an audit.
+    // Compliance/readiness fields remain at their conservative defaults until an
+    // independently verified process explicitly establishes them.
+    vault.compliance_status = ComplianceStatus::default();
     
     emit!(VaultCreatedEvent {
         vault: vault.key(),
