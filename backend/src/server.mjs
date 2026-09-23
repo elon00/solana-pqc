@@ -18,7 +18,7 @@ const hits = new Map();
 
 function cors(req, res) {
   const origin = req.headers.origin;
-  if (origin && (allowedOrigins.has(origin) || [...allowedOrigins].some((x) => origin.startsWith(x)))) {
+  if (origin && allowedOrigins.has(origin)) {
     res.setHeader("access-control-allow-origin", origin);
     res.setHeader("vary", "Origin");
   }
