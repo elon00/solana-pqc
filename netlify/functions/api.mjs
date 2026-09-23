@@ -168,3 +168,13 @@ export default async (request) => {
     return json(400, { error: error instanceof Error ? error.message : String(error) }, origin);
   }
 };
+
+
+export const config = {
+  path: ["/api/*", "/health"],
+  rateLimit: {
+    windowLimit: 60,
+    windowSize: 60,
+    aggregateBy: ["ip", "domain"]
+  }
+};
