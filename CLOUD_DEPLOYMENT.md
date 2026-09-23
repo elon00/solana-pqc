@@ -1,6 +1,6 @@
 # 🚀 Modern Cloud Deployment Guide
 
-This guide explains how to deploy your Solana PQC application using modern cloud-based tools and services, avoiding local environment setup issues.
+This guide explains how to deploy your SCSTOBCMinority AI application using modern cloud-based tools and services, avoiding local environment setup issues.
 
 ## 🎯 Quick Start
 
