@@ -21,6 +21,17 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
       - run: node scripts/check-branding.mjs
 
+  reality:
+    name: Reality Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Generate evidence scorecard
+        run: node scripts/reality-audit.mjs
+
   backend:
     name: Backend Testnet Service
     runs-on: ubuntu-latest
@@ -91,6 +102,6 @@ jobs:
   summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [branding, backend, frontend, rust]
+    needs: [branding, reality, backend, frontend, rust]
     steps:
-      - run: echo "Backend, frontend and Rust gates passed for the Testnet-first stack."
+      - run: echo "Branding, reality, backend, frontend and Rust gates completed for the Testnet-first stack."
