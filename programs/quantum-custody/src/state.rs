@@ -29,7 +29,7 @@ impl QuantumVault {
     
     pub fn is_key_rotation_required(&self, current_time: i64) -> bool {
         const ROTATION_PERIOD: i64 = 90 * 24 * 60 * 60;
-        current_time - self.last_key_rotation > ROTATION_PERIOD
+        current_time.saturating_sub(self.last_key_rotation) > ROTATION_PERIOD
     }
 }
 
