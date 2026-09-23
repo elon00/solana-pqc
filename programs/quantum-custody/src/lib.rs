@@ -6,7 +6,7 @@ pub mod state;
 
 use instructions::*;
 
-declare_id!("QCust1111111111111111111111111111111111111");
+declare_id!("D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm");
 
 #[program]
 pub mod quantum_custody {
