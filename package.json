@@ -1,5 +1,5 @@
 {
-  "name": "solana-quantum-custody",
+  "name": "scstobcminority-ai",
   "version": "0.1.0",
   "description": "Quantum-safe custody and transaction SDK for Solana",
   "main": "index.js",
@@ -31,7 +31,7 @@
     "wallet",
     "security"
   ],
-  "author": "Solana PQC Team",
+  "author": "SCSTOBCMinority AI Team",
   "license": "MIT",
   "dependencies": {
     "@solana/web3.js": "^1.87.6",
