@@ -16,7 +16,7 @@ pub mod solana_pqc_token {
         uri: String,
     ) -> Result<()> {
         let token_info = &mut ctx.accounts.token_info;
-        token_info.authority = ctx.accounts.authority.key();
+        token_info.authority = ctx.accounts.mint_authority.key();
         token_info.mint = ctx.accounts.mint.key();
         token_info.name = name;
         token_info.symbol = symbol;
@@ -31,7 +31,7 @@ pub mod solana_pqc_token {
 
         emit!(TokenInitializedEvent {
             mint: ctx.accounts.mint.key(),
-            authority: ctx.accounts.authority.key(),
+            authority: ctx.accounts.mint_authority.key(),
             supply_cap: None,
             timestamp: Clock::get()?.unix_timestamp,
         });
@@ -133,15 +133,15 @@ pub mod solana_pqc_token {
 pub struct InitializeToken<'info> {
     #[account(
         init,
-        payer = authority,
+        payer = payer,
         mint::decimals = DECIMALS,
-        mint::authority = authority,
+        mint::authority = mint_authority,
     )]
     pub mint: Account<'info, Mint>,
     
     #[account(
         init,
-        payer = authority,
+        payer = payer,
         space = 8 + TokenInfo::SPACE,
         seeds = [b"token-info", mint.key().as_ref()],
         bump
@@ -149,7 +149,10 @@ pub struct InitializeToken<'info> {
     pub token_info: Account<'info, TokenInfo>,
     
     #[account(mut)]
-    pub authority: Signer<'info>,
+    pub payer: Signer<'info>,
+
+    /// CHECK: This account is used only as the SPL mint authority public key.
+    pub mint_authority: UncheckedAccount<'info>,
     
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
