@@ -17,8 +17,8 @@ sh -c "$(curl -sSfL https://release.solana.com/stable/install)"
 ### Step 2: Configure Your Wallet
 
 ```powershell
-# Set to devnet
-solana config set --url devnet
+# Set to testnet
+solana config set --url testnet
 
 # Set your wallet (you'll need your keypair file)
 solana config set --keypair <path-to-your-keypair.json>
@@ -33,7 +33,7 @@ solana airdrop 2
 ### Step 3: Deploy
 
 ```powershell
-cd c:\Users\mahas\Downloads\solana-pqc
+cd scstobcminority-ai
 
 # Install dependencies
 npm install
@@ -41,8 +41,8 @@ npm install
 # Build programs
 anchor build
 
-# Deploy to devnet
-anchor deploy --provider.cluster devnet
+# Deploy to testnet
+anchor deploy --provider.cluster testnet
 ```
 
 ## 📋 What Will Happen
@@ -50,12 +50,12 @@ anchor deploy --provider.cluster devnet
 After deployment, you'll see:
 
 ```
-Deploying workspace: https://api.devnet.solana.com
+Deploying workspace: https://api.testnet.solana.com
 Upgrade authority: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
 Deploying program "quantum_custody"...
 Program Id: QCust... 
 
-Deploying program "solana_pqc_token"...
+Deploying program "scstobcminority_ai_token"...
 Program Id: SPQC...
 
 Deploy success
@@ -66,13 +66,13 @@ Deploy success
 1. **Copy the Program IDs** from the output
 2. **Update .env file** with the new IDs
 3. **View on Explorer**: 
-   - https://explorer.solana.com/address/[PROGRAM_ID]?cluster=devnet
+   - https://explorer.solana.com/address/[PROGRAM_ID]?cluster=testnet
 
 ## ⚠️ Important Notes
 
-- **Costs**: ~2-5 SOL for deployment (devnet is free)
+- **Costs**: ~2-5 SOL for deployment (testnet is free)
 - **Time**: Takes 2-5 minutes
-- **Network**: Make sure you're on devnet first
+- **Network**: Make sure you're on testnet first
 - **Backup**: Save the program IDs
 
 ## 🆘 Troubleshooting
