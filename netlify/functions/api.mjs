@@ -1,7 +1,7 @@
 import { runAgent } from "../../backend/src/agent.mjs";
 import { providerStatus } from "../../backend/src/providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "../../backend/src/solana.mjs";
-import { createWalletChallenge, getWalletSession, verifyWalletChallenge } from "../../backend/src/auth.mjs";
+import { createWalletChallenge, getWalletSession, verifyWalletChallenge, walletAuthStatus } from "../../backend/src/auth.mjs";
 import { readTestnetDeployment } from "../../backend/src/deployment.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "../../backend/src/payments.mjs";
 
@@ -51,6 +51,7 @@ export default async (request) => {
         environment: "testnet",
         ok: chain.ok,
         chain,
+        walletAuth: walletAuthStatus(),
         providers: providerStatus()
       }, origin);
     }
@@ -84,6 +85,7 @@ export default async (request) => {
         chain,
         programs,
         providers: providerStatus(),
+        walletAuth: walletAuthStatus(),
         deployment,
         walletSigning: "frontend-only",
         walletBackendServices: ["balance", "account-status", "transaction-status", "program-status"]
