@@ -7,7 +7,7 @@ import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 import { CryptoUtils } from '../sdk/typescript/src/crypto.js';
 
 console.log('=====================================================================');
-console.log('🛡️ SOLANA-PQC // OFFICIAL NIST & WYCHEPROOF TEST SUITE');
+console.log('🛡️ SCSTOBCMinority AI // OFFICIAL NIST & WYCHEPROOF TEST SUITE');
 console.log('=====================================================================\n');
 
 // [1/8] RFC 5869 HKDF-SHA256 Known Answer Test
@@ -119,5 +119,5 @@ console.log('  ✅ Dual Hybrid Conjunction: Valid ONLY when Ed25519 AND ML-DSA-6
 console.log('  ✅ Fail-Closed Security: Partial signature tampering strictly rejected\n');
 
 console.log('=====================================================================');
-console.log('🏆 ALL 8 SOLANA-PQC NIST, WYCHEPROOF & HYBRID CONJUNCTION TESTS PASSED');
+console.log('🏆 ALL 8 SCSTOBCMinority AI NIST, WYCHEPROOF & HYBRID CONJUNCTION TESTS PASSED');
 console.log('=====================================================================\n');
