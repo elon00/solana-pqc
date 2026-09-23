@@ -33,7 +33,7 @@ The most important release blockers are:
 
 ### HIGH — On-chain PQC verification is not implemented
 
-The custody `sign_transaction` and `rotate_keys` paths validate authorization, algorithm compatibility, signature length, and other structural constraints, but they do not cryptographically verify the PQC signature on-chain.
+The custody `sign_transaction` path now fails closed with `PqcVerificationUnavailable`; it does not record a successful signing event or increment the transaction counter. Other PQC-related paths still require a reviewed cryptographic verification design before any on-chain PQC claim can be enabled.
 
 The token instruction historically named `transfer_quantum_safe` also does not verify attached PQC evidence on-chain.
 
@@ -43,7 +43,8 @@ The token instruction historically named `transfer_quantum_safe` also does not v
 - the custom quantum-safe transfer path therefore fails closed until real verification exists;
 - transfer events explicitly record `quantum_verified_on_chain: false`;
 - custody vault creation no longer self-certifies FIPS compliance/readiness;
-- KEM-only algorithms are rejected from signature-oriented custody operations.
+- KEM-only algorithms are rejected from signature-oriented custody operations;
+- custody signing fails closed until cryptographic PQC verification is implemented.
 
 **Remaining work:** design and independently review a feasible verification architecture before enabling PQC-verified on-chain claims.
 
@@ -55,6 +56,8 @@ Missing verified evidence includes:
 
 - custody program account;
 - token program account;
+- Quantum Custody program deployment transaction signature;
+- Token Program deployment transaction signature;
 - SPQC mint;
 - TokenInfo PDA;
 - custody global-state PDA;
