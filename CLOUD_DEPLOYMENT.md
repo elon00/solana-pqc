@@ -91,14 +91,14 @@ railway deploy
 
 ```bash
 # Build image
-docker build -t solana-pqc .
+docker build -t scstobcminority-ai .
 
 # Run locally
-docker run -p 3000:80 solana-pqc
+docker run -p 3000:80 scstobcminority-ai
 
 # Push to registry
-docker tag solana-pqc your-registry/solana-pqc
-docker push your-registry/solana-pqc
+docker tag scstobcminority-ai your-registry/scstobcminority-ai
+docker push your-registry/scstobcminority-ai
 ```
 
 ### 4. GitHub Actions (CI/CD)
