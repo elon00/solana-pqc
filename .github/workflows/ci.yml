@@ -32,6 +32,17 @@ jobs:
       - name: Generate evidence scorecard
         run: node scripts/reality-audit.mjs
 
+  serverless:
+    name: Serverless Adapter Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - run: node --check netlify/functions/api.mjs
+      - run: node --check api/index.mjs
+
   backend:
     name: Backend Testnet Service
     runs-on: ubuntu-latest
