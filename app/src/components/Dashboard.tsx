@@ -3,6 +3,7 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import { LAMPORTS_PER_SOL } from '@solana/web3.js';
 import AgentChat from './AgentChat';
 import { API_BASE_URL, APP_NAME } from '../config';
+import { useBackendWallet } from '../context/BackendWalletContext';
 
 const Dashboard: React.FC = () => {
   const { publicKey, connected } = useWallet();
@@ -10,6 +11,13 @@ const Dashboard: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [backendWallet, setBackendWallet] = useState<{ sol?: number; accountExists?: boolean } | null>(null);
   const [backendStatus, setBackendStatus] = useState<string>('checking');
+  const {
+    authState,
+    sessionToken,
+    error: backendAuthError,
+    verifyWallet,
+    logoutBackendWallet
+  } = useBackendWallet();
 
   useEffect(() => {
     if (publicKey) {
@@ -25,16 +33,25 @@ const Dashboard: React.FC = () => {
         setBackendWallet(null);
         return;
       }
+      if (authState !== 'verified' || !sessionToken) {
+        setBackendStatus('wallet-not-verified');
+        setBackendWallet(null);
+        return;
+      }
       try {
-        const response = await fetch(`${API_BASE_URL}/api/wallet/${publicKey.toBase58()}`);
+        const response = await fetch(`${API_BASE_URL}/api/wallet/me`, {
+          headers: { authorization: `Bearer ${sessionToken}` }
+        });
         const data = await response.json();
-        if (!response.ok) throw new Error(data?.error || `HTTP ${response.status}`);
+        if (!response.ok || !data?.authenticated) {
+          throw new Error(data?.error || `HTTP ${response.status}`);
+        }
         if (!cancelled) {
-          setBackendWallet(data);
-          setBackendStatus('synchronized');
+          setBackendWallet(data.wallet);
+          setBackendStatus('authenticated-and-synchronized');
         }
       } catch {
-        if (!cancelled) setBackendStatus('backend-unreachable');
+        if (!cancelled) setBackendStatus('backend-session-unavailable');
       }
     };
     syncBackendWallet();
@@ -43,7 +60,7 @@ const Dashboard: React.FC = () => {
       cancelled = true;
       window.clearInterval(id);
     };
-  }, [publicKey]);
+  }, [publicKey, authState, sessionToken]);
 
   if (!connected) {
     return (
@@ -77,9 +94,41 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
+      <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-5 border border-gray-700">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div className="text-sm text-gray-400">Backend Wallet Authentication</div>
+            <div className={authState === 'verified' ? 'text-green-400 font-semibold' : 'text-yellow-300 font-semibold'}>
+              {authState === 'verified' ? '✓ Wallet cryptographically connected to backend' : `Wallet auth: ${authState}`}
+            </div>
+            {backendAuthError && <div className="mt-1 text-xs text-yellow-300">{backendAuthError}</div>}
+          </div>
+          <div className="flex gap-2">
+            {authState !== 'verified' ? (
+              <button
+                type="button"
+                onClick={verifyWallet}
+                disabled={authState === 'verifying' || authState === 'backend-offline' || authState === 'unsupported'}
+                className="rounded bg-purple-600 hover:bg-purple-700 disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white"
+              >
+                {authState === 'verifying' ? 'Verifying…' : 'Connect wallet to backend'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={logoutBackendWallet}
+                className="rounded bg-gray-700 hover:bg-gray-600 px-4 py-2 text-sm font-semibold text-white"
+              >
+                Disconnect backend session
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-          <div className="text-3xl mb-2">{backendStatus === 'synchronized' ? '✓' : '○'}</div>
+          <div className="text-3xl mb-2">{backendStatus === 'authenticated-and-synchronized' ? '✓' : '○'}</div>
           <div className="text-sm text-gray-400">Frontend ↔ Backend Wallet Sync</div>
           <div className="text-xs text-gray-500 mt-2">{backendStatus}</div>
         </div>
