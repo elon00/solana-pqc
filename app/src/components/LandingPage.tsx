@@ -104,7 +104,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp} 🚀`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp} 🚀`)
           });
           break;
 
@@ -172,7 +172,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp}`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp}`)
           });
       }
 
@@ -237,7 +237,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">Solana PQC</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
               <a
                 href="https://scstobcminority-ai.netlify.app"
                 target="_blank"
@@ -851,7 +851,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">Solana PQC</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -894,7 +894,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8">
               <p className="text-gray-400">
-                © 2026 Solana PQC. Built with post-quantum security for the future of blockchain.
+                © 2026 SCSTOBCMinority AI. Built with post-quantum security for the future of blockchain.
               </p>
             </div>
           </div>

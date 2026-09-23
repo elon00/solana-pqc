@@ -28,7 +28,7 @@ const AgentChat = () => {
   const [messages, setMessages] = useState<ChatLine[]>([
     {
       role: 'assistant',
-      text: 'Solana PQC Testnet assistant. I can use backend Testnet RPC context and configured model providers without accessing your private keys.'
+      text: 'SCSTOBCMinority AI Testnet assistant. I can use backend Testnet RPC context and configured model providers without accessing your private keys.'
     }
   ]);
 
