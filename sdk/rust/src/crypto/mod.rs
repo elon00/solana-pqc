@@ -65,12 +65,17 @@ impl Algorithm {
     }
 }
 
-#[derive(Clone, Zeroize)]
-#[zeroize(drop)]
+#[derive(Clone)]
 pub struct Keypair {
     pub public_key: Vec<u8>,
     pub secret_key: Vec<u8>,
     pub algorithm: Algorithm,
+}
+
+impl Drop for Keypair {
+    fn drop(&mut self) {
+        self.secret_key.zeroize();
+    }
 }
 
 impl Keypair {
