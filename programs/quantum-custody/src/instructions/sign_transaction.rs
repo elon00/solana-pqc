@@ -16,6 +16,11 @@ pub fn handler(
     );
     
     require!(
+        vault.algorithm.signature_size() > 0,
+        QuantumCustodyError::UnsupportedOperation
+    );
+
+    require!(
         signature.len() == vault.algorithm.signature_size(),
         QuantumCustodyError::InvalidSignatureSize
     );
