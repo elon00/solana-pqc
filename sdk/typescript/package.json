@@ -1,7 +1,7 @@
 {
   "name": "@scstobcminority-ai/sdk",
   "version": "0.1.0",
-  "description": "TypeScript SDK for Solana Quantum-Safe Custody",
+  "description": "TypeScript SDK for SCSTOBCMinority AI quantum-safe Solana custody.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
