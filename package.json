@@ -17,13 +17,14 @@
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "app:dev": "cd app && npm run dev",
-    "app:build": "cd app && npm run build",
+    "app:build": "npm run branding:check && cd app && npm run build",
     "sdk:build": "cd sdk/typescript && npm run build",
     "docs": "typedoc --out docs/api sdk/typescript/src",
     "testnet:backend": "cd backend && npm ci && npm run check && npm test",
     "testnet:frontend": "cd app && npm ci && npm run build",
     "testnet:stack": "docker compose -f docker-compose.testnet.yml up --build",
-    "testnet:stack:down": "docker compose -f docker-compose.testnet.yml down --remove-orphans"
+    "testnet:stack:down": "docker compose -f docker-compose.testnet.yml down --remove-orphans",
+    "branding:check": "node scripts/check-branding.mjs"
   },
   "keywords": [
     "solana",
