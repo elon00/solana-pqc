@@ -73,7 +73,8 @@ test("wallet auth verifies a real Ed25519 signature and creates a session", () =
   const verified = verifyWalletChallenge({
     walletAddress,
     message: challenge.message,
-    signature
+    signature,
+    challengeToken: challenge.challengeToken
   });
   assert.equal(verified.verified, true);
   assert.equal(verified.walletAddress, walletAddress);
