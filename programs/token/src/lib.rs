@@ -6,7 +6,7 @@ declare_id!("7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk");
 pub const DECIMALS: u8 = 9;
 
 #[program]
-pub mod solana_pqc_token {
+pub mod scstobcminority_ai_token {
     use super::*;
 
     pub fn initialize_token(
