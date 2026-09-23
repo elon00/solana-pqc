@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import { looksLikeBase58 } from "../src/solana.mjs";
 import { providerStatus } from "../src/providers.mjs";
 import { createWalletChallenge, getWalletSession, verifyWalletChallenge } from "../src/auth.mjs";
+import { buildSolanaPayRequest, parseSolanaPayRequest } from "../src/payments.mjs";
 
 test("wallet address validation rejects invalid characters", () => {
   assert.equal(looksLikeBase58("0OIl-not-base58", 32, 44), false);
@@ -80,4 +81,47 @@ test("wallet auth verifies a real Ed25519 signature and creates a session", () =
   assert.equal(verified.walletAddress, walletAddress);
   const session = getWalletSession(`Bearer ${verified.token}`);
   assert.equal(session?.walletAddress, walletAddress);
+});
+
+
+test("Solana Pay request round-trips recipient and amount", () => {
+  const recipient = "8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg";
+  const request = buildSolanaPayRequest({
+    recipient,
+    amount: "1.250000000",
+    label: "SCSTOBCMinority AI",
+    message: "Testnet receive"
+  });
+  assert.equal(request.network, "testnet");
+  assert.equal(request.recipient, recipient);
+  assert.equal(request.amount, "1.25");
+  assert.match(request.uri, /^solana:/);
+
+  const parsed = parseSolanaPayRequest(request.uri);
+  assert.equal(parsed.recipient, recipient);
+  assert.equal(parsed.amount, "1.25");
+  assert.equal(parsed.label, "SCSTOBCMinority AI");
+});
+
+test("Solana Pay rejects malformed recipients and amounts", () => {
+  assert.throws(
+    () => buildSolanaPayRequest({ recipient: "not-a-wallet", amount: "1" }),
+    /Invalid Solana recipient address/
+  );
+  assert.throws(
+    () => buildSolanaPayRequest({
+      recipient: "8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg",
+      amount: "-1"
+    }),
+    /Invalid SOL amount/
+  );
+});
+
+test("SPL-token QR is blocked until SPQC mint is verified", () => {
+  assert.throws(
+    () => parseSolanaPayRequest(
+      "solana:8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg?amount=1&spl-token=So11111111111111111111111111111111111111112"
+    ),
+    /not enabled until the SPQC mint is verified/
+  );
 });
