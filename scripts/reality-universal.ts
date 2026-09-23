@@ -34,7 +34,7 @@ interface GateResult {
 const gates: GateResult[] = [];
 
 console.log('╔══════════════════════════════════════════════════════════════════════════╗');
-console.log('║       SOLANA-PQC — UNIVERSAL REALITY SYSTEM (URS v1.0)                   ║');
+console.log('║       SCSTOBCMinority AI — UNIVERSAL REALITY SYSTEM (URS v1.0)                   ║');
 console.log('║       "Reality cannot be claimed; reality must be executed & proven."    ║');
 console.log('╚══════════════════════════════════════════════════════════════════════════╝\n');
 
@@ -290,7 +290,7 @@ console.log('▶ [URS GATE 10/10] Multiplicative Reality & Universal 10/10 Law C
 console.log(`  ✅ URS_10 = min(all_gates) * 10 = ${finalURSScore.toFixed(1)} / 10 (Internal Automated Gates)\n`);
 
 console.log('══════════════════════════════════════════════════════════════════════════');
-console.log('🏆 SOLANA-PQC — URS v1.0 FINAL VERDICT');
+console.log('🏆 SCSTOBCMinority AI — URS v1.0 FINAL VERDICT');
 console.log('══════════════════════════════════════════════════════════════════════════');
 console.log(`  Total Reality Gates:       ${gates.filter(g => g.passed).length} / 10 PASSED`);
 console.log(`  Weakest-Link Gate Score:   ${finalURSScore.toFixed(1)} / 10`);
