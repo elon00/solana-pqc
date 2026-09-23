@@ -45,6 +45,8 @@ No verified evidence is currently recorded for:
 
 - custody program account;
 - token program account;
+- Quantum Custody program deployment transaction signature;
+- Token Program deployment transaction signature;
 - SPQC mint;
 - custody global-state PDA;
 - TokenInfo PDA;
@@ -69,7 +71,8 @@ Audit hardening changed the code to fail closed rather than self-certify:
 - the custom quantum-safe token transfer is disabled until verification exists;
 - events state `quantum_verified_on_chain: false`;
 - vault creation no longer marks itself FIPS-compliant/audited;
-- KEM-only algorithms are blocked from signature-only custody operations.
+- KEM-only algorithms are blocked from signature-only custody operations;
+- custody `sign_transaction` fails closed until cryptographic PQC verification exists.
 
 ## Security reality
 
@@ -100,7 +103,7 @@ See [../../SECURITY_AUDIT.md](../../SECURITY_AUDIT.md).
 
 1. funded dedicated Testnet-only deployer;
 2. verified on-chain custom program deployment;
-3. SPQC mint/PDA/init-signature evidence;
+3. program deployment signatures plus SPQC mint/PDA/init-signature evidence;
 4. independent smart-contract review;
 5. independent cryptographic review;
 6. on-chain PQC verification design if quantum-safe on-chain claims are desired.
