@@ -13,7 +13,9 @@
       "custodyGlobalStatePda",
       "tokenInfoPda",
       "custodyInitializeSignature",
-      "tokenInitializeSignature"
+      "tokenInitializeSignature",
+      "quantumCustodyDeploySignature",
+      "spqcTokenDeploySignature"
     ],
     "currentStatus": "PENDING"
   },
@@ -61,7 +63,7 @@
   },
   "knownLimitations": [
     "Custom Testnet program deployment evidence is pending",
-    "SPQC mint and initialization signatures are not yet recorded",
+    "Program deployment signatures, SPQC mint, PDAs and initialization signatures are not yet recorded",
     "Custody/signature paths do not perform full PQC verification on-chain",
     "External AI providers require server-side credentials",
     "Independent smart-contract and cryptographic reviews are pending"
