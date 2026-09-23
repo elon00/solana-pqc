@@ -5,8 +5,8 @@
 **DO NOT** create public issues for security vulnerabilities.
 
 ### Report To
-- **Email**: security@solana-pqc.io
-- **Bug Bounty**: https://solana-pqc.io/bug-bounty
+- **Email**: Not configured
+- **Bug Bounty**: Not configured
 
 ### Include
 1. Description of vulnerability
@@ -76,7 +76,7 @@
 
 ## 📞 Contact
 
-- **Security Team**: security@solana-pqc.io
+- **Security Team**: Not configured
 - **Emergency**: Available 24/7
 
 ---
