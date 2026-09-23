@@ -3,7 +3,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { looksLikeBase58 } from "../src/solana.mjs";
 import { providerStatus } from "../src/providers.mjs";
-import { createWalletChallenge, getWalletSession, verifyWalletChallenge } from "../src/auth.mjs";
+import { createWalletChallenge, getWalletSession, verifyWalletChallenge, walletAuthStatus } from "../src/auth.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "../src/payments.mjs";
 
 test("wallet address validation rejects invalid characters", () => {
@@ -124,4 +124,34 @@ test("SPL-token QR is blocked until SPQC mint is verified", () => {
     ),
     /not enabled until the SPQC mint is verified/
   );
+});
+
+
+test("hosted production refuses the local wallet-auth fallback", () => {
+  const previous = {
+    NODE_ENV: process.env.NODE_ENV,
+    NETLIFY: process.env.NETLIFY,
+    VERCEL: process.env.VERCEL,
+    CONTEXT: process.env.CONTEXT,
+    WALLET_AUTH_SECRET: process.env.WALLET_AUTH_SECRET
+  };
+  try {
+    delete process.env.NODE_ENV;
+    process.env.NETLIFY = "true";
+    delete process.env.VERCEL;
+    delete process.env.CONTEXT;
+    delete process.env.WALLET_AUTH_SECRET;
+    const status = walletAuthStatus();
+    assert.equal(status.configured, false);
+    assert.equal(status.mode, "unavailable");
+    assert.throws(
+      () => createWalletChallenge("8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg"),
+      /WALLET_AUTH_SECRET is not configured/
+    );
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });
