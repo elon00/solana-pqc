@@ -146,3 +146,13 @@ export function revokeWalletSession(authorization) {
   void authorization;
   return false;
 }
+
+
+export function walletAuthStatus() {
+  const configured = String(process.env.WALLET_AUTH_SECRET || "").length >= 32;
+  return {
+    configured: configured || process.env.NODE_ENV !== "production",
+    productionSecretConfigured: configured,
+    mode: configured ? "configured-secret" : (process.env.NODE_ENV === "production" ? "unavailable" : "local-test-fallback")
+  };
+}
