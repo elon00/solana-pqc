@@ -4,6 +4,11 @@ export default {
   theme: {
     extend: {
       colors: {
+        border: '#374151',
+        background: '#111827',
+        foreground: '#f9fafb',
+        card: '#1f2937',
+        'card-foreground': '#f9fafb',
         quantum: {
           50: '#f0f9ff',
           100: '#e0f2fe',
