@@ -89,6 +89,20 @@ export default async (request) => {
       }, origin);
     }
 
+    if (request.method === "GET" && path === "/api/wallet/me") {
+      const session = getWalletSession(request.headers.get("authorization"));
+      if (!session) return json(401, { error: "verified wallet session required" }, origin);
+      return json(200, {
+        authenticated: true,
+        session: {
+          walletAddress: session.walletAddress,
+          network: session.network,
+          expiresAt: session.expiresAt
+        },
+        wallet: await walletStatus(session.walletAddress)
+      }, origin);
+    }
+
     if (request.method === "GET" && path.startsWith("/api/wallet/")) {
       return json(200, await walletStatus(decodeURIComponent(path.slice("/api/wallet/".length))), origin);
     }
