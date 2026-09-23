@@ -99,7 +99,16 @@ jobs:
 
       - name: Deploy programs to Solana Testnet
         run: |
-          anchor deploy --provider.cluster testnet
+          solana program deploy target/deploy/quantum_custody.so             --program-id target/deploy/quantum_custody-keypair.json             --url "$SOLANA_URL" | tee /tmp/quantum-custody-deploy.txt
+          QUANTUM_CUSTODY_DEPLOY_SIGNATURE="$(awk '/^Signature:/ {print $2}' /tmp/quantum-custody-deploy.txt | tail -n 1)"
+          test -n "$QUANTUM_CUSTODY_DEPLOY_SIGNATURE"
+          echo "QUANTUM_CUSTODY_DEPLOY_SIGNATURE=$QUANTUM_CUSTODY_DEPLOY_SIGNATURE" >> "$GITHUB_ENV"
+
+          solana program deploy target/deploy/scstobcminority_ai_token.so             --program-id target/deploy/scstobcminority_ai_token-keypair.json             --url "$SOLANA_URL" | tee /tmp/token-program-deploy.txt
+          SPQC_TOKEN_DEPLOY_SIGNATURE="$(awk '/^Signature:/ {print $2}' /tmp/token-program-deploy.txt | tail -n 1)"
+          test -n "$SPQC_TOKEN_DEPLOY_SIGNATURE"
+          echo "SPQC_TOKEN_DEPLOY_SIGNATURE=$SPQC_TOKEN_DEPLOY_SIGNATURE" >> "$GITHUB_ENV"
+
           solana program show "$QUANTUM_CUSTODY_PROGRAM_ID" --url "$SOLANA_URL"
           solana program show "$SPQC_TOKEN_PROGRAM_ID" --url "$SOLANA_URL"
 
@@ -140,6 +149,11 @@ jobs:
           - **Token Info PDA:** `$SPQC_TOKEN_INFO`
           - **Custody Global State PDA:** `$QUANTUM_CUSTODY_GLOBAL_STATE`
 
+          ## Program deployment transactions
+
+          - **Quantum Custody deployment signature:** `$QUANTUM_CUSTODY_DEPLOY_SIGNATURE`
+          - **Token Program deployment signature:** `$SPQC_TOKEN_DEPLOY_SIGNATURE`
+
           ## Initialization transactions
 
           - **Custody initialization signature:** `$CUSTODY_INITIALIZE_SIGNATURE`
@@ -166,6 +180,8 @@ jobs:
             quantumCustodyProgramId: process.env.QUANTUM_CUSTODY_PROGRAM_ID,
             spqcTokenProgramId: process.env.SPQC_TOKEN_PROGRAM_ID,
             spqcMint: process.env.SPQC_MINT,
+            quantumCustodyDeploySignature: process.env.QUANTUM_CUSTODY_DEPLOY_SIGNATURE,
+            spqcTokenDeploySignature: process.env.SPQC_TOKEN_DEPLOY_SIGNATURE,
             tokenInfoPda: process.env.SPQC_TOKEN_INFO,
             custodyGlobalStatePda: process.env.QUANTUM_CUSTODY_GLOBAL_STATE,
             custodyInitializeSignature: process.env.CUSTODY_INITIALIZE_SIGNATURE,
@@ -197,6 +213,8 @@ jobs:
             echo "- Quantum Custody Program: $QUANTUM_CUSTODY_PROGRAM_ID"
             echo "- Token Program: $SPQC_TOKEN_PROGRAM_ID"
             echo "- SPQC Mint: $SPQC_MINT"
+            echo "- Quantum Custody deploy signature: $QUANTUM_CUSTODY_DEPLOY_SIGNATURE"
+            echo "- Token Program deploy signature: $SPQC_TOKEN_DEPLOY_SIGNATURE"
             echo "- Token Info PDA: $SPQC_TOKEN_INFO"
             echo "- Custody Global State PDA: $QUANTUM_CUSTODY_GLOBAL_STATE"
             echo "- Custody init signature: $CUSTODY_INITIALIZE_SIGNATURE"
