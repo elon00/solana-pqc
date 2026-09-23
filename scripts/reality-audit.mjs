@@ -60,21 +60,25 @@ add(
 add(
   "On-chain PQC verification",
   8,
-  custodySign.includes("SignatureVerificationFailed") && !custodySign.includes("signature.len() ==") ? 8 : 1,
-  "Current custody path validates signature size but does not cryptographically verify PQC on-chain",
+  1,
+  custodySign.includes("PqcVerificationUnavailable")
+    ? "Custody signing fails closed because cryptographic PQC verification is not implemented on-chain"
+    : "Cryptographic PQC verification is not established on-chain",
   true
 );
+const requiredDeploymentEvidence = manifest.deploymentEvidence?.requiredForVerifiedStatus || [];
+const completeDeploymentEvidence =
+  deployment.status === "verified" &&
+  requiredDeploymentEvidence.length > 0 &&
+  requiredDeploymentEvidence.every((field) => Boolean(deployment[field]));
+
 add(
   "Verified Testnet deployment evidence",
   15,
-  deployment.status === "verified" &&
-    deployment.quantumCustodyProgramId &&
-    deployment.spqcTokenProgramId &&
-    deployment.custodyInitializeSignature &&
-    deployment.tokenInitializeSignature ? 15 : 0,
-  deployment.status === "verified"
-    ? "Machine deployment record is verified"
-    : "Deployment record is pending; program/mint/init signatures are not recorded",
+  completeDeploymentEvidence ? 15 : 0,
+  completeDeploymentEvidence
+    ? "Machine deployment record contains every required program/mint/PDA/deployment/init signature field"
+    : "Deployment evidence is incomplete; every manifest-required field must be recorded before verified status",
   true
 );
 add(
