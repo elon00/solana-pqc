@@ -14,7 +14,7 @@
 
 ## 🌟 Overview
 
-SOLANA-PQC protects digital assets against quantum computing threats through:
+SCSTOBCMinority AI protects digital assets against quantum computing threats through:
 
 - **Research target: NIST FIPS 203** (ML-KEM) - implementation requires cryptographic test evidence
 - **Research target: NIST FIPS 204** (ML-DSA) - implementation requires cryptographic test evidence
@@ -50,8 +50,8 @@ SOLANA-PQC protects digital assets against quantum computing threats through:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/solana-pqc.git
-cd solana-pqc
+git clone https://github.com/yourusername/scstobcminority-ai.git
+cd scstobcminority-ai
 
 # Install dependencies
 npm install
@@ -236,4 +236,4 @@ This software is provided for research and development purposes. While it implem
 
 **Built with ❤️ for a quantum-safe future**
 
-[![Star on GitHub](https://img.shields.io/github/stars/yourusername/solana-pqc?style=social)](https://github.com/yourusername/solana-pqc)
+[![Star on GitHub](https://img.shields.io/github/stars/yourusername/solana-pqc?style=social)](https://github.com/yourusername/scstobcminority-ai)
