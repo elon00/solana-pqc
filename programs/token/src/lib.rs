@@ -25,7 +25,8 @@ pub mod scstobcminority_ai_token {
         token_info.circulating_supply = 0;
         token_info.decimals = DECIMALS;
         token_info.is_paused = false;
-        token_info.is_quantum_secured = true;
+        // On-chain PQC verification is not implemented yet; fail closed.
+        token_info.is_quantum_secured = false;
         token_info.created_at = Clock::get()?.unix_timestamp;
         token_info.bump = ctx.bumps.token_info;
 
@@ -265,7 +266,7 @@ pub enum TokenError {
     #[msg("Minting would overflow the SPL Token u64 supply counter")]
     SupplyOverflow,
     
-    #[msg("Quantum security verification required")]
+    #[msg("On-chain PQC verification is not implemented; quantum-safe transfer is disabled")]
     QuantumSecurityRequired,
     
     #[msg("Attached PQC evidence is too short")]
