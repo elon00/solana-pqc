@@ -53,7 +53,7 @@ async function readJson(req) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
 
-async function handler(req, res) {
+export async function handler(req, res) {
   cors(req, res);
   if (req.method === "OPTIONS") return send(res, 204, {});
   if (!rateLimit(req)) return send(res, 429, { error: "rate limit exceeded" });
