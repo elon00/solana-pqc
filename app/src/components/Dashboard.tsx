@@ -19,7 +19,7 @@ const Dashboard: React.FC = () => {
         <div className="text-center space-y-6">
           <div className="text-6xl">🛡️</div>
           <div>
-            <h2 className="text-3xl font-bold text-white mb-2">Welcome to SOLANA-PQC</h2>
+            <h2 className="text-3xl font-bold text-white mb-2">Welcome to SCSTOBCMinority AI</h2>
             <p className="text-gray-400 text-lg mb-6">Secure your Solana assets with post-quantum cryptography</p>
             <div className="flex items-center justify-center space-x-2 text-sm text-gray-500">
               <span>✅ NIST FIPS 203/204/205 Compliant</span>
