@@ -85,7 +85,38 @@ jobs:
       - name: Initialize custody and uncapped SPQC mint
         run: |
           node scripts/initialize-devnet.mjs | tee /tmp/devnet-init.txt
-          cat /tmp/devnet-init.txt >> "$GITHUB_ENV"
+          grep -E '^[A-Z_]+=[A-Za-z0-9]+
+
+      - name: Transfer upgrade authority to project owner
+        run: |
+          solana program set-upgrade-authority "$QUANTUM_CUSTODY_PROGRAM_ID"             --new-upgrade-authority "$PROJECT_AUTHORITY"             --skip-new-upgrade-authority-signer-check             --url "$SOLANA_URL"
+          solana program set-upgrade-authority "$SPQC_TOKEN_PROGRAM_ID"             --new-upgrade-authority "$PROJECT_AUTHORITY"             --skip-new-upgrade-authority-signer-check             --url "$SOLANA_URL"
+
+      - name: Verify final on-chain state
+        run: |
+          solana program show "$QUANTUM_CUSTODY_PROGRAM_ID" --url "$SOLANA_URL"
+          solana program show "$SPQC_TOKEN_PROGRAM_ID" --url "$SOLANA_URL"
+          solana account "$SPQC_MINT" --url "$SOLANA_URL"
+
+      - name: Publish deployment summary
+        if: success()
+        run: |
+          {
+            echo "## SCSTOBCMinority AI — Solana Devnet Deployment"
+            echo
+            echo "- Network: devnet"
+            printf '%s\n' "- Project authority: $PROJECT_AUTHORITY"
+            printf '%s\n' "- Quantum Custody Program: $QUANTUM_CUSTODY_PROGRAM_ID"
+            printf '%s\n' "- SPQC Token Program: $SPQC_TOKEN_PROGRAM_ID"
+            printf '%s\n' "- SPQC Mint: $SPQC_MINT"
+            printf '%s\n' "- Token Info PDA: $SPQC_TOKEN_INFO"
+            printf '%s\n' "- Custody Global State PDA: $QUANTUM_CUSTODY_GLOBAL_STATE"
+            printf '%s\n' "- Custody initialization signature: $CUSTODY_INITIALIZE_SIGNATURE"
+            printf '%s\n' "- Token initialization signature: $TOKEN_INITIALIZE_SIGNATURE"
+            echo
+            echo "Supply policy: uncapped at the application layer; SPL Token's u64 raw supply counter remains the protocol ceiling."
+          } >> "$GITHUB_STEP_SUMMARY"
+ /tmp/devnet-init.txt >> "$GITHUB_ENV"
 
       - name: Transfer upgrade authority to project owner
         run: |
