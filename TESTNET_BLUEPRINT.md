@@ -111,6 +111,14 @@ Checks the current authenticated wallet session.
 
 Revokes the current wallet session.
 
+### `POST /api/payments/request`
+
+Builds and validates a Solana Pay-style receive request for native Testnet SOL.
+
+### `POST /api/payments/parse`
+
+Parses and validates a Solana Pay URI. SPL-token QR requests are rejected until the SPQC mint is verified on Testnet.
+
 ### `POST /api/chat`
 
 Runs the agent planner with live Testnet chain context. Authenticated wallet context is accepted from the verified backend session rather than trusting a client-supplied address.
@@ -174,21 +182,13 @@ The pipeline executes:
 
 ## Public Web Deployment
 
-GitHub Pages hosts the frontend. A persistent Node backend must be hosted separately.
+**Primary full-stack target:** Netlify.
 
-The repository is prepared for Railway using:
+The repository contains `netlify.toml` and `netlify/functions/api.mjs`, so the frontend and backend API can share the same Netlify origin.
 
-- `Dockerfile`
-- `railway.toml`
-- backend `/health` endpoint.
+**GitHub Pages** is the static mirror. Its frontend is configured to use the Netlify origin for backend calls.
 
-Once a public backend is deployed, configure repository variable:
-
-```
-TESTNET_BACKEND_URL=https://<backend-origin>
-```
-
-The GitHub Pages workflow injects this URL as `VITE_API_BASE_URL`.
+A public runtime should only be shown as healthy when `/health` and `/api/status` actually respond successfully.
 
 ## Model Secrets
 
@@ -260,12 +260,8 @@ This closes the evidence loop from UI → wallet → backend → chain and chain
 
 ## Public Backend Requirement
 
-GitHub Pages hosts only static frontend assets. The Node backend requires a persistent HTTPS host such as Railway, Vercel-compatible server infrastructure, or another container/Node host.
+GitHub Pages remains static-only, so its API calls depend on the Netlify backend origin configured by the frontend.
 
-Until `TESTNET_BACKEND_URL` points to a deployed backend:
+Netlify Functions must expose `/health`, `/api/status`, wallet-auth, payments, transaction verification, and chat endpoints. External model providers remain optional and require server-side credentials.
 
-- frontend wallet/Testnet RPC functionality can work directly;
-- GitHub Pages chat correctly reports that its backend is not configured;
-- external multi-model providers are not publicly reachable from the Pages frontend.
-
-A public backend must expose `/health` and `/api/status` successfully before the project UI should represent backend chat as online.
+A cloud build alone is not runtime evidence; backend health must be verified through the deployed endpoints.
