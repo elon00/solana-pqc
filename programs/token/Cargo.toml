@@ -1,12 +1,12 @@
 [package]
-name = "solana-pqc-token"
+name = "scstobcminority-ai-token"
 version = "0.1.0"
-description = "SOLANA-PQC Token with quantum-safe features"
+description = "SCSTOBCMinority AI Token with quantum-safe features"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "solana_pqc_token"
+name = "scstobcminority_ai_token"
 
 [features]
 no-entrypoint = []
