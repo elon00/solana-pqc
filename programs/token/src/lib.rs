@@ -231,7 +231,7 @@ pub struct TokenInfo {
 }
 
 impl TokenInfo {
-    pub const SPACE: usize = 32 + 32 + 64 + 16 + 256 + 9 + 8 + 1 + 1 + 1 + 8 + 1;
+    pub const SPACE: usize = 32 + 32 + (4 + 64) + (4 + 16) + (4 + 256) + 9 + 8 + 1 + 1 + 1 + 8 + 1;
 }
 
 #[error_code]
