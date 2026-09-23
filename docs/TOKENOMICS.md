@@ -1,26 +1,27 @@
-# SOLANA-PQC Tokenomics
+# SCSTOBCMinority AI Tokenomics
 
 ## Token Overview
 
-**Name**: SOLANA-PQC  
+**Name**: SCSTOBCMinority AI  
 **Symbol**: SPQC  
 **Network**: Solana  
 **Standard**: SPL Token with Quantum-Safe Extensions  
-**Total Supply**: 2,100,000,000,000,000 (2.1 Quadrillion)  
+**Supply Policy**: Uncapped minting (no application-level fixed supply cap)  
+**Technical Limit**: SPL Token supply is stored as `u64` raw units  
 **Decimals**: 9  
 **Your Wallet**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
 
 ## Token Distribution
 
-| Category | Allocation | Tokens (Trillions) | Vesting | Purpose |
+| Category | Allocation | Emission Basis | Vesting | Purpose |
 |----------|-----------|-------------------|---------|---------|
-| **Public Sale** | 30% | 630 | None | Initial distribution |
-| **Ecosystem & Development** | 25% | 525 | 4 years linear | Grants, partnerships |
-| **Team & Advisors** | 15% | 315 | 4 years, 1yr cliff | Core contributors |
-| **Strategic Partners** | 10% | 210 | 2 years linear | Partnerships |
-| **Liquidity Provision** | 10% | 210 | Immediate | DEX/CEX liquidity |
-| **Community Rewards** | 5% | 105 | 3 years linear | Staking, participation |
-| **Reserve Fund** | 5% | 105 | Governance | Emergency fund |
+| **Public Sale** | 30% | Emission-based | None | Initial distribution |
+| **Ecosystem & Development** | 25% | Emission-based | 4 years linear | Grants, partnerships |
+| **Team & Advisors** | 15% | Emission-based | 4 years, 1yr cliff | Core contributors |
+| **Strategic Partners** | 10% | Emission-based | 2 years linear | Partnerships |
+| **Liquidity Provision** | 10% | Emission-based | Immediate | DEX/CEX liquidity |
+| **Community Rewards** | 5% | Emission-based | 3 years linear | Staking, participation |
+| **Reserve Fund** | 5% | Emission-based | Governance | Emergency fund |
 
 ## Token Utility
 
