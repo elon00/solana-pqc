@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Standalone Cryptographic Auditor for Solana-PQC
+ * Standalone Cryptographic Auditor for SCSTOBCMinority AI
  * Verifies 23 Invariants across:
  * - RFC 5869 HKDF-SHA256
  * - Solana Quantum PDA Commitments
