@@ -1,6 +1,6 @@
-# Contributing to SOLANA-PQC
+# Contributing to SCSTOBCMinority AI
 
-Thank you for your interest in contributing to SOLANA-PQC!
+Thank you for your interest in contributing to SCSTOBCMinority AI!
 
 ## 🚀 Getting Started
 
@@ -13,8 +13,8 @@ Thank you for your interest in contributing to SOLANA-PQC!
 ### Setup
 
 ```bash
-git clone https://github.com/elon00/solana-pqc.git
-cd solana-pqc
+git clone https://github.com/elon00/scstobcminority-ai.git
+cd scstobcminority-ai
 npm install
 anchor build
 anchor test
@@ -94,4 +94,4 @@ Contributors may receive SPQC tokens and recognition!
 
 ---
 
-**Questions?** dev@solana-pqc.io
+**Questions?** Not configured
