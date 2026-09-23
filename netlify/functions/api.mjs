@@ -1,9 +1,11 @@
 import { runAgent } from "../../backend/src/agent.mjs";
 import { providerStatus } from "../../backend/src/providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "../../backend/src/solana.mjs";
-import { createWalletChallenge, getWalletSession, verifyWalletChallenge, walletAuthStatus } from "../../backend/src/auth.mjs";
+import { requireHostedWalletAuth, createWalletChallenge, getWalletSession, verifyWalletChallenge, walletAuthStatus } from "../../backend/src/auth.mjs";
 import { readTestnetDeployment } from "../../backend/src/deployment.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "../../backend/src/payments.mjs";
+
+requireHostedWalletAuth();
 
 const allowedOrigins = new Set(
   (process.env.ALLOWED_ORIGINS || "https://scstobcminority-ai.netlify.app,https://elon00.github.io")

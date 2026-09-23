@@ -5,8 +5,15 @@ const CHALLENGE_TTL_MS = Number(process.env.WALLET_CHALLENGE_TTL_MS || 5 * 60_00
 const SESSION_TTL_MS = Number(process.env.WALLET_SESSION_TTL_MS || 30 * 60_000);
 const ED25519_SPKI_PREFIX = Buffer.from("302a300506032b6570032100", "hex");
 
+let hostedRuntime = false;
+
+// Serverless entrypoints enforce this even when provider environment flags are absent.
+export function requireHostedWalletAuth() {
+  hostedRuntime = true;
+}
+
 function isHostedProduction() {
-  return process.env.NODE_ENV === "production" ||
+  return hostedRuntime || process.env.NODE_ENV === "production" ||
     Boolean(process.env.NETLIFY) ||
     Boolean(process.env.VERCEL) ||
     process.env.CONTEXT === "production";
