@@ -1,5 +1,5 @@
 /**
- * Solana-PQC — URS Evidence Certificate Generator
+ * SCSTOBCMinority AI — URS Evidence Certificate Generator
  * Runs the complete preflight verification, computes the Master Reality Hash,
  * and signs the certificate using NIST FIPS 204 ML-DSA-65.
  */
@@ -93,7 +93,7 @@ fs.mkdirSync('docs/reality', { recursive: true });
 
 fs.writeFileSync('reality/URS_EVIDENCE_CERTIFICATE.json', JSON.stringify(finalCertificate, null, 2));
 
-const markdownSummary = `# 🛡️ Solana-PQC — Universal Reality Evidence Certificate
+const markdownSummary = `# 🛡️ SCSTOBCMinority AI — Universal Reality Evidence Certificate
 
 **Sealed Timestamp**: \`${finalCertificate.timestamp}\`  
 **Master Reality Hash (SHA-256)**: \`${masterHash}\`  
