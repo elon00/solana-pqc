@@ -10,7 +10,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center space-x-3">
             <div className="text-2xl">🛡️</div>
             <div>
-              <h1 className="text-xl font-bold text-white">SOLANA-PQC</h1>
+              <h1 className="text-xl font-bold text-white">SCSTOBCMinority AI</h1>
               <p className="text-xs text-gray-400">Quantum-Safe Custody</p>
             </div>
           </Link>
