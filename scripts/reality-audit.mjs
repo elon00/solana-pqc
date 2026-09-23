@@ -88,7 +88,7 @@ add(
   "Documentation honesty",
   5,
   !readme.includes("$1,000,000 SPQC") &&
-    readme.includes("Verified on-chain Testnet program deployment") ? 5 : 2,
+    readme.toLowerCase().includes("verified on-chain testnet deployment") ? 5 : 2,
   "README distinguishes implemented, pending, and release-gated items"
 );
 
@@ -111,11 +111,49 @@ const grade =
 const blockers = checks.filter((item) => item.blocking && item.earned < item.weight)
   .map((item) => item.name);
 
+const gradeFor = (value) =>
+  value >= 93 ? "A" :
+  value >= 90 ? "A-" :
+  value >= 87 ? "B+" :
+  value >= 83 ? "B" :
+  value >= 80 ? "B-" :
+  value >= 77 ? "C+" :
+  value >= 73 ? "C" :
+  value >= 70 ? "C-" :
+  value >= 67 ? "D+" :
+  value >= 63 ? "D" :
+  value >= 60 ? "D-" : "F";
+
+const engineeringNames = new Set([
+  "Canonical identity and truth guard",
+  "Frontend / wallet integration",
+  "Backend API and wallet authentication",
+  "Send / receive payment implementation",
+  "Automated payment tests",
+  "Smart-contract defensive constraints",
+  "On-chain PQC verification",
+  "Documentation honesty"
+]);
+const engineeringChecks = checks.filter((item) => engineeringNames.has(item.name));
+const engineeringScore = Math.round(
+  engineeringChecks.reduce((sum, item) => sum + item.earned, 0) /
+  engineeringChecks.reduce((sum, item) => sum + item.weight, 0) * 100
+);
+const releaseChecks = checks.filter((item) => !engineeringNames.has(item.name));
+const releaseAssuranceScore = Math.round(
+  releaseChecks.reduce((sum, item) => sum + item.earned, 0) /
+  releaseChecks.reduce((sum, item) => sum + item.weight, 0) * 100
+);
+
 const report = {
   system: "SCSTOBCMinority AI",
   generatedAt: new Date().toISOString(),
   score: percentage,
   grade,
+  engineeringImplementationScore: engineeringScore,
+  engineeringImplementationGrade: gradeFor(engineeringScore),
+  releaseAssuranceScore,
+  releaseAssuranceGrade: gradeFor(releaseAssuranceScore),
   releaseStatus: blockers.length ? "NOT_MAINNET_READY" : "RELEASE_GATES_PASSED",
   deploymentStatus: deployment.status,
   checks,
