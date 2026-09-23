@@ -112,11 +112,7 @@ const LandingPage = () => {
           setTransactionStatus(`💰 Requesting airdrop...`);
           try {
             const signature = await connection.requestAirdrop(publicKey, LAMPORTS_PER_SOL);
-            await connection.confirmTransaction({
-        signature,
-        blockhash,
-        lastValidBlockHeight
-      }, 'confirmed');
+            await connection.confirmTransaction(signature, 'confirmed');
             setTransactionStatus(`✅ Airdrop received! +1 SOL`);
             setBalance(prev => (prev || 0) + 1);
             setIsLoading(false);
@@ -193,8 +189,12 @@ const LandingPage = () => {
       setTransactionStatus(`✅ Transaction sent! Signature: ${signature.slice(0, 8)}...${signature.slice(-8)}`);
       setTransactionStatus(`⏳ Waiting for confirmation...`);
 
-      // Wait for wallet/RPC confirmation.
-      await connection.confirmTransaction(signature, 'confirmed');
+      // Wait for wallet/RPC confirmation using the same blockhash lifetime.
+      await connection.confirmTransaction({
+        signature,
+        blockhash,
+        lastValidBlockHeight
+      }, 'confirmed');
 
       // Independently mirror the same signature through the backend when configured.
       if (API_BASE_URL) {
