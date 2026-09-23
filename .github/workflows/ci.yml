@@ -1,4 +1,4 @@
-name: Solana-PQC CI
+name: SCSTOBCMinority AI CI
 
 on:
   push:
@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [frontend, rust]
     steps:
-      - run: echo "Solana-PQC build and Rust checks passed."
+      - run: echo "SCSTOBCMinority AI build and Rust checks passed."
 
 # Deployments are intentionally separate from CI.
 # Configure Vercel/Solana/Docker/Railway workflows explicitly with required secrets.
