@@ -1,3 +1,6 @@
+export const APP_NAME = "SCSTOBCMinority AI";
+export const APP_TAGLINE = "Quantum-Safe Custody · Testnet";
+
 export const SOLANA_NETWORK = "testnet";
 export const SOLANA_RPC_URL =
   import.meta.env.VITE_SOLANA_RPC_URL || "https://api.testnet.solana.com";
