@@ -140,5 +140,9 @@ export function getWalletSession(authorization) {
 }
 
 export function revokeWalletSession(authorization) {
-  return Boolean(getWalletSession(authorization));
+  // Sessions are stateless signed tokens, so the backend cannot revoke an
+  // individual token without a revocation store. Client logout should discard
+  // the token locally; this function therefore never claims server revocation.
+  void authorization;
+  return false;
 }
