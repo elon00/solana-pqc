@@ -8,15 +8,15 @@ skip-lint = false
 
 [programs.localnet]
 quantum_custody = "D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm"
-solana_pqc_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
+scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 
 [programs.devnet]
 quantum_custody = "D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm"
-solana_pqc_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
+scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 
 [programs.mainnet]
 quantum_custody = "D3Zv3zMsqHAhCeNvezUkz2LFcrhVFTFb94fuQh8yMYPm"
-solana_pqc_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
+scstobcminority_ai_token = "7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk"
 
 [registry]
 url = "https://api.apr.dev"
