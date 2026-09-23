@@ -28,7 +28,7 @@ const custodyIdl = JSON.parse(
   fs.readFileSync("target/idl/quantum_custody.json", "utf8"),
 );
 const tokenIdl = JSON.parse(
-  fs.readFileSync("target/idl/solana_pqc_token.json", "utf8"),
+  fs.readFileSync("target/idl/scstobcminority_ai_token.json", "utf8"),
 );
 
 const custody = new anchor.Program(custodyIdl, custodyId, provider);
