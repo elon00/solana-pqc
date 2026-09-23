@@ -22,6 +22,8 @@ env:
   PROJECT_AUTHORITY: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
   ANCHOR_PROVIDER_URL: https://api.devnet.solana.com
   SOLANA_URL: https://api.devnet.solana.com
+  RUSTUP_HOME: /root/.rustup
+  CARGO_HOME: /root/.cargo
 
 jobs:
   deploy:
