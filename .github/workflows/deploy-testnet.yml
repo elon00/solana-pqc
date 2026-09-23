@@ -100,12 +100,12 @@ jobs:
       - name: Deploy programs to Solana Testnet
         run: |
           solana program deploy target/deploy/quantum_custody.so             --program-id target/deploy/quantum_custody-keypair.json             --url "$SOLANA_URL" 2>&1 | tee /tmp/quantum-custody-deploy.txt
-          QUANTUM_CUSTODY_DEPLOY_SIGNATURE="$(node -e 'const fs=require("fs"); const t=fs.readFileSync(process.argv[1],"utf8"); const m=t.match(/Signature:\\s*([1-9A-HJ-NP-Za-km-z]{64,})/); if(!m) process.exit(1); process.stdout.write(m[1]);' /tmp/quantum-custody-deploy.txt)"
+          QUANTUM_CUSTODY_DEPLOY_SIGNATURE="$(node -e 'const fs=require("fs"); const t=fs.readFileSync(process.argv[1],"utf8"); const m=t.match(/Signature:\s*([1-9A-HJ-NP-Za-km-z]{64,})/); if(!m) process.exit(1); process.stdout.write(m[1]);' /tmp/quantum-custody-deploy.txt)"
           test -n "$QUANTUM_CUSTODY_DEPLOY_SIGNATURE"
           echo "QUANTUM_CUSTODY_DEPLOY_SIGNATURE=$QUANTUM_CUSTODY_DEPLOY_SIGNATURE" >> "$GITHUB_ENV"
 
           solana program deploy target/deploy/scstobcminority_ai_token.so             --program-id target/deploy/scstobcminority_ai_token-keypair.json             --url "$SOLANA_URL" 2>&1 | tee /tmp/token-program-deploy.txt
-          SPQC_TOKEN_DEPLOY_SIGNATURE="$(node -e 'const fs=require("fs"); const t=fs.readFileSync(process.argv[1],"utf8"); const m=t.match(/Signature:\\s*([1-9A-HJ-NP-Za-km-z]{64,})/); if(!m) process.exit(1); process.stdout.write(m[1]);' /tmp/token-program-deploy.txt)"
+          SPQC_TOKEN_DEPLOY_SIGNATURE="$(node -e 'const fs=require("fs"); const t=fs.readFileSync(process.argv[1],"utf8"); const m=t.match(/Signature:\s*([1-9A-HJ-NP-Za-km-z]{64,})/); if(!m) process.exit(1); process.stdout.write(m[1]);' /tmp/token-program-deploy.txt)"
           test -n "$SPQC_TOKEN_DEPLOY_SIGNATURE"
           echo "SPQC_TOKEN_DEPLOY_SIGNATURE=$SPQC_TOKEN_DEPLOY_SIGNATURE" >> "$GITHUB_ENV"
 
