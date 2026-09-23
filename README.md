@@ -1,269 +1,264 @@
-# 🛡️ SCSTOBCMinority AI: Quantum-Safe Custody & Transaction Protocol
+# SCSTOBCMinority AI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Solana](https://img.shields.io/badge/Solana-14F195?style=flat&logo=solana&logoColor=white)](https://solana.com)
-[![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![NIST PQC](https://img.shields.io/badge/NIST%20PQC-Research%20Target-lightgrey)](https://csrc.nist.gov/projects/post-quantum-cryptography)
-[![ISO 20022](https://img.shields.io/badge/ISO%2020022-Design%20Reference-lightgrey)](https://www.iso20022.org/)
-[![MiCA](https://img.shields.io/badge/MiCA-Legal%20Review%20Required-lightgrey)](https://www.esma.europa.eu/)
+**Testnet-first Solana research prototype for wallet infrastructure, post-quantum cryptography experiments, AI-assisted chain tooling, and an uncapped application-level SPQC token model.**
 
-> **Research and prototype project for quantum-resistant custody concepts on Solana. Claims of implemented FIPS algorithms, production security, and regulatory compliance require independent cryptographic, deployment, and legal verification.**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Network](https://img.shields.io/badge/Solana-Testnet-blue)](https://explorer.solana.com/?cluster=testnet)
+[![Status](https://img.shields.io/badge/status-research%20prototype-orange)](./TESTNET_DEPLOYMENT.md)
 
-## 🔗 Project Links
+> This repository is **not production-ready, independently audited, or verified on Mainnet**. Testnet program deployment evidence is still pending until `TESTNET_DEPLOYMENT.md` and the machine-readable deployment files record real on-chain program IDs, mint address, PDAs, and transaction signatures.
 
-- **Live Full-Stack App (Netlify)**: https://scstobcminority-ai.netlify.app
-- **Static Web Mirror (GitHub Pages)**: https://elon00.github.io/scstobcminority-ai/
-- **GitHub Repository**: https://github.com/elon00/scstobcminority-ai
-- **Network Target**: Solana Testnet (`https://api.testnet.solana.com`)
-- **Token Policy**: Uncapped application-level minting; SPL Token raw supply remains bounded by Solana's `u64` counter.
-- **Full-stack Testnet Blueprint**: [TESTNET_BLUEPRINT.md](./TESTNET_BLUEPRINT.md)
-- **Testnet Deployment Evidence**: [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md)
+## Project links
 
+- Repository: https://github.com/elon00/scstobcminority-ai
+- Netlify full-stack deployment target: https://scstobcminority-ai.netlify.app
+- GitHub Pages mirror: https://elon00.github.io/scstobcminority-ai/
+- Network target: Solana Testnet
+- Reality scorecard: [reality/REALITY_SCORECARD.json](./reality/REALITY_SCORECARD.json)
+- Testnet evidence: [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md)
 
----
+For runtime backend status, use the deployed app's `/health` and `/api/status` endpoints. Repository configuration alone is not proof that an external hosting provider is currently healthy.
 
-## ❤️ Core Purpose
+## Reality snapshot
 
-SCSTOBCMinority AI combines quantum-safe Solana research with a human-development mission focused on the dignity, empowerment and upliftment of **SC, ST, OBC, minority and other underserved communities**.
+### Implemented in source
 
-Its guiding values are **love, peace, joy, harmony, truth, charity, unity, equality, dignity, liberty, consent, knowledge, service and justice**.
+- Anchor-based custody and SPQC token programs
+- React/Vite Testnet dApp
+- Phantom and Solflare wallet adapters
+- client-side wallet signing
+- Ed25519 `signMessage` wallet-to-backend authentication
+- authenticated backend wallet session
+- Solana Testnet RPC health, wallet, transaction, and program queries
+- AI agent intent router
+- OpenAI-compatible, Anthropic, Gemini, and deterministic local provider routing
+- Netlify Functions backend adapter
+- GitHub Pages frontend deployment
+- Solana Pay-style receive QR generation/parsing
+- QR image decoding
+- wallet-signed native Testnet SOL transfers
+- backend transaction-status verification
+- TypeScript and Rust PQC research SDKs
+- branding/reality CI gates
 
-The intended long-term use of SPQC is to support transparent, lawful community programs such as scholarships, education, health and nutrition support, housing assistance, jobs and livelihood programs, entrepreneurship, technology access, scientific learning, charitable grants, productive assets and accountable community treasuries.
+### Not yet established
 
-The token does **not** guarantee wealth, jobs, housing, land, health outcomes, precious metals, marriage, political influence, religious status or supernatural knowledge. Aid must not be conditioned on political allegiance, religious conversion or personal relationships.
+- verified on-chain Testnet deployment of the custom Anchor programs
+- verified SPQC mint address
+- verified custody/token initialization transaction signatures
+- cryptographic PQC signature verification inside the Solana programs
+- independent smart-contract audit
+- independent cryptographic implementation audit
+- penetration testing, fuzzing, or formal verification
+- production treasury/governance controls
+- Mainnet readiness
+- regulatory certification or universal legal compliance
 
-See **[CORE_PURPOSE.md](./CORE_PURPOSE.md)** and **[WHITEPAPER.md](./WHITEPAPER.md)** for the complete mission, safeguards and technical model.
+## Send and receive semantics
 
----
+### Receive
 
-## 🌟 Overview
+The dApp can generate a Solana Pay-style QR for the connected Testnet wallet, optionally including a SOL amount and message.
 
-SCSTOBCMinority AI protects digital assets against quantum computing threats through:
+Generating a receive QR **does not create a blockchain transaction or transaction hash**. A transaction signature is created only when a sender signs and submits a payment.
 
-- **Research target: NIST FIPS 203** (ML-KEM) - implementation requires cryptographic test evidence
-- **Research target: NIST FIPS 204** (ML-DSA) - implementation requires cryptographic test evidence
-- **Research target: NIST FIPS 205** (SLH-DSA) - implementation requires cryptographic test evidence
-- **ISO 20022** - design/reference area; implementation and certification require separate validation
-- **MiCA legal review required** - this repository is not a compliance certificate
-- **FATF Travel Rule** - compliance consideration; no compliance certification is claimed
-- **Cross-chain bridge** - roadmap concept; not represented as production-ready
+### Send
 
-### 🪙 SPQC Token
+The QR payment panel parses and validates a Solana payment request, then creates a native SOL transfer using Solana's **System Program**. The connected wallet signs the transaction client-side.
 
-**Supply Policy**: Uncapped minting (no application-level fixed supply cap)  
-**Technical Limit**: Solana SPL Token uses a `u64` raw supply counter  
-**Symbol**: SPQC  
-**Decimals**: 9  
-**Standard**: SPL Token with Quantum-Safe Extensions
+A successful Testnet send produces a Solana **transaction signature**. That signature is different from:
 
----
+- a custom smart-contract program ID;
+- a program deployment signature;
+- an SPQC mint address;
+- a custody/token initialization signature.
 
-## 🚀 Quick Start
+SPQC QR transfers are intentionally disabled until the SPQC mint is verified on Testnet.
 
-### Prerequisites
+## Smart-contract reality
 
-```bash
-# Required software
-- Rust 1.75+
-- Solana CLI 1.18+
-- Anchor 0.29+
-- Node.js 18+
+### SPQC token program
+
+Current application model:
+
+- symbol: `SPQC`
+- decimals: `9`
+- application-level supply policy: uncapped
+- raw SPL Token accounting: bounded by `u64`
+- minting controlled by the configured mint authority
+- checked supply arithmetic
+- token/mint relationship constraints
+
+The instruction named `transfer_quantum_safe` **does not cryptographically verify PQC signatures on-chain**. Attached PQC bytes are prototype evidence only, and the emitted event explicitly records that PQC was not verified on-chain.
+
+### Custody program
+
+The custody program validates algorithm selection, public-key sizes, signature sizes, owner authorization, message size, and key-rotation timing.
+
+It does **not** currently perform full cryptographic PQC signature verification on-chain. Selecting an algorithm no longer self-certifies a vault as FIPS-compliant or audited.
+
+## Post-quantum cryptography status
+
+The repository includes TypeScript/Rust research integrations targeting NIST-standardized PQC families, including ML-KEM and ML-DSA-family operations.
+
+Local automated tests are useful engineering evidence, but they are **not an independent security audit, FIPS validation certificate, or proof that the full dApp is quantum-safe end-to-end**.
+
+Legacy self-generated "URS 10/10" artifacts are deprecated. The current evidence-based scorecard is the authoritative internal reality report.
+
+## SPQC token policy
+
+SPQC is a research/community-utility token prototype.
+
+- supply cap: none at the application layer
+- raw accounting limit: Solana SPL Token `u64`
+- mint authority: authority-controlled
+- no guaranteed price, return, yield, aid, job, housing, health outcome, political influence, religious status, or other personal outcome
+
+See [docs/TOKENOMICS.md](./docs/TOKENOMICS.md).
+
+## Core purpose
+
+SCSTOBCMinority AI includes a human-development mission focused on dignity, opportunity, education, health, livelihood, technology access, research, and accountable community programs for SC, ST, OBC, minority, and other underserved communities.
+
+Programs must remain lawful, voluntary, rights-respecting, and non-coercive. Benefits must not be conditioned on voting behavior, party allegiance, religious conversion, or personal relationships.
+
+See:
+
+- [CORE_PURPOSE.md](./CORE_PURPOSE.md)
+- [WHITEPAPER.md](./WHITEPAPER.md)
+
+## Architecture
+
+```text
+Phantom / Solflare
+       |
+       | wallet connect + signMessage + transaction signing
+       v
+React / Vite frontend
+       |
+       | HTTPS JSON API
+       v
+Node / Netlify Functions backend
+       |
+       | Solana JSON-RPC
+       v
+Solana Testnet
 ```
 
-### Installation
+External AI providers remain server-side. Private wallet keys and seed phrases must never be sent to the backend or AI providers.
+
+## Development
+
+### Pinned project expectations
+
+- Node.js 20 for CI/backend/frontend
+- Anchor CLI 0.29.0
+- Solana CLI 1.17.0 in the deployment container
+- Rust 2021 workspace with a conservative `rust-version = 1.68` for Solana SBF compatibility
+- modern stable Rust may be used for host-side workspace checks
+
+Prefer the repository CI/container configuration over ad-hoc toolchain upgrades.
+
+### Install and verify
 
 ```bash
-# Clone the repository
 git clone https://github.com/elon00/scstobcminority-ai.git
 cd scstobcminority-ai
 
-# Install dependencies
 npm install
+npm run branding:check
+npm run test:nist
+npm run audit:crypto
+npm run reality:audit
 
-# Build Solana programs
+cargo check --workspace
+cargo test --workspace
+
+cd backend
+npm ci
+npm run check
+npm test
+
+cd ../app
+npm ci
+npm run build
+```
+
+### Build Anchor programs
+
+```bash
 anchor build
-
-# Run tests
-anchor test
-
-# Deploy to Testnet after configuring a funded Testnet signer
-anchor deploy --provider.cluster testnet
-
-# Initialize programs
-ANCHOR_PROVIDER_URL=https://api.testnet.solana.com node scripts/initialize-devnet.mjs
-
-# Start dApp
-cd app && npm run dev
 ```
 
----
+### Testnet initialization
 
-## 📚 Documentation
+Only after a funded Testnet deployer and successful program deployment:
 
-- **[📄 Whitepaper](./WHITEPAPER.md)** - Complete technical documentation
-- **[🏗️ Architecture](./docs/ARCHITECTURE.md)** - System design and components
-- **[📖 API Reference](./docs/API_REFERENCE.md)** - Developer APIs
-- **[💰 Tokenomics](./docs/TOKENOMICS.md)** - Token distribution and economics
-- **[🌐 Token Standards](./docs/TOKEN_STANDARDS.md)** - Global compliance
-- **[✅ Compliance](./docs/COMPLIANCE.md)** - Regulatory framework
-- **[🚀 Deployment](./docs/DEPLOYMENT.md)** - Deployment guide
-- **[🔒 Security](./docs/SECURITY.md)** - Security best practices
-
----
-
-## 💻 Usage Examples
-
-### Rust SDK
-
-```rust
-use scstobcminority_ai_sdk::{QuantumVault, Algorithm};
-
-// Create quantum-safe vault
-let vault = QuantumVault::new(
-    owner_pubkey,
-    Algorithm::Dilithium3,
-    &keypair
-)?;
-
-// Sign transaction
-let signature = vault.sign_transaction(&transaction, &keypair)?;
-
-// Verify signature
-let valid = vault.verify_signature(&transaction, &signature)?;
+```bash
+export ANCHOR_PROVIDER_URL=https://api.testnet.solana.com
+node scripts/initialize-testnet.mjs
 ```
 
-### TypeScript SDK
+### Mainnet
 
-```typescript
-import { QuantumVaultClient, Algorithm } from '@scstobcminority-ai/sdk';
+Mainnet commands are intentionally disabled in the root package scripts until Testnet evidence and release gates are complete.
 
-// Initialize client
-const client = new QuantumVaultClient(connection, wallet, programId, idl);
+## Environment safety
 
-// Create vault
-const vault = await client.createVault({
-  algorithm: Algorithm.DILITHIUM3
-}, publicKey);
+Never commit or paste:
 
-// Sign transaction
-const signature = await client.signTransaction(vaultAddress, message, sig);
+- wallet seed phrases;
+- wallet private keys;
+- production API keys;
+- deployer keypairs;
+- `WALLET_AUTH_SECRET`.
 
-// Check quantum readiness
-const score = await client.getQuantumReadiness(vaultAddress);
-console.log(`Quantum Readiness: ${score}%`);
-```
+For GitHub Actions deployment, use a dedicated **Testnet-only** funded signer secret. Do not reuse a personal wallet secret.
 
----
+## Documentation
 
-## 🤖 Testnet Application Integration
+- [Project Summary](./PROJECT_SUMMARY.md)
+- [Core Purpose](./CORE_PURPOSE.md)
+- [Whitepaper](./WHITEPAPER.md)
+- [Tokenomics](./docs/TOKENOMICS.md)
+- [Security Policy](./SECURITY.md)
+- [Security Reality Review](./SECURITY_AUDIT.md)
+- [Testnet Blueprint](./TESTNET_BLUEPRINT.md)
+- [Testnet Deployment Evidence](./TESTNET_DEPLOYMENT.md)
+- [Reality Audit](./docs/reality/REALITY_AUDIT.md)
+- [Reality Scorecard](./reality/REALITY_SCORECARD.json)
 
-Implemented in the repository:
+## Current release gates
 
-- **Frontend wallet layer:** Phantom + Solflare adapters on Solana Testnet
-- **Backend wallet layer:** public account/balance/transaction/program verification
-- **Wallet ownership auth:** Ed25519 `signMessage` challenge verification with short-lived backend sessions
-- **AI agentic layer:** intent routing grounded in live Testnet chain state
-- **Multi-model router:** OpenAI-compatible, Anthropic and Gemini adapters when server-side credentials are configured
-- **Local fallback:** deterministic safe backend agent when external providers are not configured
-- **Bidirectional evidence:** frontend → wallet → backend → chain and chain → backend → frontend
-- **One-click local stack:** `npm run testnet:stack`
-- **One-click GitHub pipeline:** `One-Click Full Stack Testnet`
+| Gate | Status |
+|---|---|
+| Frontend CI | Implemented / CI-checked |
+| Backend CI | Implemented / CI-checked |
+| Rust workspace CI | Implemented / CI-checked |
+| Branding guard | Implemented |
+| Wallet-to-backend authentication | Implemented |
+| QR receive / native SOL send | Implemented in source |
+| Payment boundary tests | Implemented |
+| Anchor/SBF build | Previously passed in Testnet deployment workflow |
+| Funded Testnet deployer | Required |
+| Custom programs verified on Testnet | **Pending** |
+| SPQC mint verified | **Pending** |
+| Initialization signatures recorded | **Pending** |
+| Independent security audit | **Pending** |
+| Mainnet | **Disabled** |
 
-External model providers are not represented as online unless their server-side credentials and model names are actually configured.
+## Security
 
-## 🌐 Standards & Compliance Position
+Read [SECURITY.md](./SECURITY.md) before testing.
 
-The project may reference standards and regulatory frameworks for design research, but **does not claim certification or automatic legal compliance**.
+There is currently no funded bug-bounty program, no 24/7 security-response commitment, and no independent professional audit recorded in this repository.
 
-- **NIST FIPS 203/204/205:** cryptographic research targets; independent end-to-end review required
-- **ISO 20022:** design/reference area, not a certification claim
-- **MiCA / securities laws / MAS / FINMA:** jurisdiction-specific legal review required
-- **FATF / AML / sanctions controls:** future compliance-design areas where applicable
-- **GDPR / CCPA:** privacy-design considerations; sensitive beneficiary data should not be placed openly on-chain
-- **Cross-chain bridges:** roadmap concepts, not production-ready features
+## License
 
----
-
-## 📊 Token Distribution
-
-| Category | Allocation | Tokens | Vesting |
-|----------|-----------|--------|---------|
-| Public Sale | 30% | Emission-based | None |
-| Ecosystem | 25% | Emission-based | 4 years |
-| Team | 15% | Emission-based | 4 years, 1yr cliff |
-| Partners | 10% | Emission-based | 2 years |
-| Liquidity | 10% | Emission-based | Immediate |
-| Community | 5% | Emission-based | 3 years |
-| Reserve | 5% | Emission-based | Governance |
+MIT — see [LICENSE](./LICENSE).
 
 ---
 
-## 🔐 Security
-
-### Audits
-- [ ] Independent smart-contract audit
-- [ ] Independent cryptographic implementation review
-- [ ] Full-stack security review
-- [ ] Governance/economic review before production use
-
-### Bug Bounty
-- **Pool**: $1,000,000 SPQC
-- **Scope**: Smart contracts, cryptography, infrastructure
-- **Rewards**: Up to $100,000 for critical vulnerabilities
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md).
-
----
-
-## 📜 License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
-
----
-
-## 🌍 Community
-
-- **Website**: https://elon00.github.io/scstobcminority-ai/
-- **Documentation**: https://github.com/elon00/scstobcminority-ai
-- **Twitter**: Not configured
-- **Discord**: Not configured
-- **Email**: Not configured
-
----
-
-## 🗺️ Roadmap
-
-### Current Testnet phase
-- [x] Core Solana/Anchor programs
-- [x] PQC research SDKs and evidence tooling
-- [x] Uncapped application-level SPQC token model
-- [x] Testnet frontend wallet integration
-- [x] Testnet backend API and wallet verification
-- [x] Agentic multi-model routing layer
-- [x] CI/CD and one-click Testnet blueprint
-- [ ] Verified on-chain Testnet program deployment
-- [ ] Independent security review
-
-### Mainnet release gate
-- [ ] Testnet programs verified executable
-- [ ] SPQC mint + initialization signatures recorded
-- [ ] Public backend health verified
-- [ ] Security/readiness review completed
-- [ ] Mainnet deployment explicitly approved
-
----
-
-## ⚠️ Disclaimer
-
-This software is provided for research and development purposes. While it implements NIST-standardized post-quantum algorithms, it should undergo thorough security audits before production use with real assets.
-
----
-
-**Built with ❤️ for a quantum-safe future**
-
-[![Star on GitHub](https://img.shields.io/github/stars/elon00/scstobcminority-ai?style=social)](https://github.com/elon00/scstobcminority-ai)
+**Canonical project name:** SCSTOBCMinority AI  
+**Current network target:** Solana Testnet  
+**Current status:** research prototype / not Mainnet-ready
