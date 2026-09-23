@@ -136,7 +136,8 @@ export async function handler(req, res) {
       const session = verifyWalletChallenge({
         walletAddress: body.walletAddress,
         message: body.message,
-        signature: body.signature
+        signature: body.signature,
+        challengeToken: body.challengeToken
       });
       return send(res, 200, session);
     }
