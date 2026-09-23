@@ -74,7 +74,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp} 🚀`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp} 🚀`)
           });
           break;
 
@@ -142,7 +142,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`Solana PQC ${transactionType} - ${timestamp}`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp}`)
           });
       }
 
@@ -192,7 +192,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">Solana PQC</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -531,7 +531,7 @@ const LandingPage = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white">GitHub Repository</h3>
-                  <p className="text-gray-400">elon00/solana-pqc</p>
+                  <p className="text-gray-400">elon00/scstobcminority-ai</p>
                 </div>
               </div>
 
@@ -553,7 +553,7 @@ const LandingPage = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://github.com/elon00/solana-pqc"
+                href="https://github.com/elon00/scstobcminority-ai"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-gray-700 border border-gray-600 px-6 py-3 rounded-lg font-semibold text-white transition-all flex items-center justify-center space-x-2"
@@ -647,7 +647,7 @@ const LandingPage = () => {
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => window.open('https://github.com/elon00/solana-pqc/actions', '_blank')}
+                        onClick={() => window.open('https://github.com/elon00/scstobcminority-ai/actions', '_blank')}
                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 px-3 rounded-lg text-sm font-semibold text-white transition-all"
                       >
                         🚀 Deploy via GitHub Actions (Automated)
@@ -732,7 +732,7 @@ const LandingPage = () => {
                       <p>✅ Production-ready pipeline</p>
                     </div>
                     <button
-                      onClick={() => window.open('https://github.com/elon00/solana-pqc/actions', '_blank')}
+                      onClick={() => window.open('https://github.com/elon00/scstobcminority-ai/actions', '_blank')}
                       className="mt-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 px-4 rounded-lg text-sm font-semibold text-white transition-all"
                     >
                       Open GitHub Actions →
@@ -794,7 +794,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">Solana PQC</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -819,7 +819,7 @@ const LandingPage = () => {
               <div>
                 <h5 className="text-white font-semibold mb-3">Community</h5>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href="https://github.com/elon00/solana-pqc" className="hover:text-purple-400 transition-colors">GitHub</a></li>
+                  <li><a href="https://github.com/elon00/scstobcminority-ai" className="hover:text-purple-400 transition-colors">GitHub</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Discord</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Twitter</a></li>
                 </ul>
@@ -837,7 +837,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8">
               <p className="text-gray-400">
-                © 2024 Solana PQC. Built with post-quantum security for the future of blockchain.
+                © 2024 SCSTOBCMinority AI. Built with post-quantum security for the future of blockchain.
               </p>
             </div>
           </div>
