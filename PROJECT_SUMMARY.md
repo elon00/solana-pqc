@@ -127,7 +127,7 @@
 ### 1. Install Dependencies
 
 ```bash
-cd c:\Users\mahas\Downloads\solana-pqc
+cd scstobcminority-ai
 npm install
 cd sdk/typescript && npm install && cd ../..
 cd app && npm install && cd ..
