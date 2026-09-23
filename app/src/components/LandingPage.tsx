@@ -235,7 +235,7 @@ const LandingPage = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SP</span>
+                <span className="text-white font-bold text-sm">AI</span>
               </div>
               <span className="text-white font-bold text-xl">{APP_NAME}</span>
               <a
@@ -849,7 +849,7 @@ const LandingPage = () => {
           <div className="max-w-6xl mx-auto text-center">
             <div className="flex items-center justify-center space-x-2 mb-6">
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SP</span>
+                <span className="text-white font-bold text-sm">AI</span>
               </div>
               <span className="text-white font-bold text-xl">{APP_NAME}</span>
             </div>
