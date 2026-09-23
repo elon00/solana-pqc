@@ -58,7 +58,7 @@ const tokenSignature = await token.methods
   .initializeToken(
     "SCSTOBCMinority AI",
     "SPQC",
-    "https://github.com/elon00/solana-pqc",
+    "https://github.com/elon00/scstobcminority-ai",
   )
   .accounts({
     mint: mint.publicKey,
