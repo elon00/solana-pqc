@@ -1,36 +1,30 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-echo "🚀 SOLANA-PQC Complete Deployment"
-echo "=================================="
-echo ""
+echo "SCSTOBCMinority AI — local Solana Testnet deploy helper"
 
-NETWORK=${1:-devnet}
+NETWORK="${1:-testnet}"
+if [[ "$NETWORK" != "testnet" ]]; then
+  echo "Refusing network '$NETWORK'. This helper is Testnet-only; Mainnet is release-gated." >&2
+  exit 1
+fi
 
-echo "📋 Configuration:"
-echo "   Network: $NETWORK"
-echo "   Wallet: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg"
-echo ""
+command -v solana >/dev/null || { echo "solana CLI is required" >&2; exit 1; }
+command -v anchor >/dev/null || { echo "Anchor CLI 0.29.x is required" >&2; exit 1; }
 
-echo "⚙️  Configuring Solana..."
-solana config set --url $NETWORK
+solana config set --url https://api.testnet.solana.com
+echo "Deployer: $(solana address)"
+echo "Balance: $(solana balance --url https://api.testnet.solana.com)"
 
-echo ""
-echo "🔨 Building programs..."
 anchor build
+anchor keys sync
+anchor build
+anchor deploy --provider.cluster testnet
 
-echo ""
-echo "🌐 Deploying to $NETWORK..."
-anchor deploy --provider.cluster $NETWORK
+CUSTODY_ID="$(solana address -k target/deploy/quantum_custody-keypair.json)"
+TOKEN_ID="$(solana address -k target/deploy/scstobcminority_ai_token-keypair.json)"
 
-CUSTODY_ID=$(solana address -k target/deploy/quantum_custody-keypair.json)
-TOKEN_ID=$(solana address -k target/deploy/solana_pqc_token-keypair.json)
-
-echo ""
-echo "✅ Deployed!"
-echo "   Quantum Custody: $CUSTODY_ID"
-echo "   Token: $TOKEN_ID"
-echo ""
-echo "🔗 Explorer:"
-echo "   https://explorer.solana.com/address/$CUSTODY_ID?cluster=$NETWORK"
-echo "   https://explorer.solana.com/address/$TOKEN_ID?cluster=$NETWORK"
+echo "Quantum Custody program candidate: $CUSTODY_ID"
+echo "SPQC token program candidate: $TOKEN_ID"
+echo "Verify both accounts on Testnet before claiming deployment success."
+echo "Then initialize with: ANCHOR_PROVIDER_URL=https://api.testnet.solana.com node scripts/initialize-testnet.mjs"
