@@ -5,7 +5,7 @@
 **Repository:** https://github.com/elon00/scstobcminority-ai  
 **Web app:** https://elon00.github.io/scstobcminority-ai/  
 **Token symbol:** SPQC  
-**Primary network target:** Solana Devnet
+**Primary network target:** Solana Testnet
 
 > **Status notice:** SCSTOBCMinority AI is a research and development project. The repository contains working software components, but it is not represented here as independently audited, production-ready financial infrastructure, a guaranteed investment, a government program, a political organization, a religious authority, or a provider of guaranteed material outcomes. Features are explicitly separated below into implemented, prototype, and planned capabilities.
 
@@ -87,7 +87,7 @@ The current token program is an Anchor/Rust Solana program integrated with the S
 - **Protocol ceiling:** SPL Token supply accounting ultimately uses a `u64` raw-unit counter
 - **Mint authority:** authority-controlled
 - **Implemented token operations:** initialization, minting, burning and token transfers
-- **Research extension:** a transfer path that requires a supplied quantum-signature byte payload, while full cryptographic verification must be independently validated before security claims are made
+- **Research extension:** a transfer instruction carrying PQC evidence bytes; it is fail-closed because full cryptographic PQC verification is not implemented on-chain
 
 “Uncapped” therefore means **no project-defined fixed total-supply cap**, not mathematically infinite supply.
 
@@ -148,7 +148,7 @@ The repository uses:
 - Program Derived Addresses (PDAs);
 - on-chain Rust programs;
 - Solana wallet adapters;
-- Devnet-oriented deployment workflows.
+- Testnet-oriented deployment workflows.
 
 ### 4.2 Anchor Framework
 
@@ -218,11 +218,24 @@ The web application uses:
 - React Router;
 - Solana wallet-adapter packages;
 - Phantom and Solflare wallet adapters;
-- GitHub Pages deployment.
+- Netlify full-stack deployment configuration and GitHub Pages static mirror.
 
-### 4.7 Wallet Layer
+### 4.7 Wallet and Payment Layer
 
 Current UI support includes multiple wallet **providers** such as Phantom and Solflare.
+
+Wallet ownership can be proven to the backend with a non-transaction Ed25519 `signMessage` challenge. Seed phrases and private keys remain outside the backend.
+
+The Testnet dApp also includes:
+
+- Solana Pay-style receive QR generation;
+- QR image decoding and payment-request parsing;
+- wallet-signed native SOL transfers through Solana's System Program;
+- backend transaction-status verification.
+
+Generating a receive QR does not itself create a blockchain transaction or signature. A send transaction creates a Solana transaction signature only after the user signs and submits it.
+
+SPQC QR/token payments remain disabled until the SPQC mint is verified on Testnet.
 
 This should not be confused with a completed simultaneous multi-wallet treasury or multi-signer orchestration system. Such functionality requires additional implementation and security design.
 
@@ -404,16 +417,20 @@ Recommended controls:
 - React/Vite web application;
 - Phantom and Solflare wallet-provider support;
 - GitHub CI/CD;
+- Netlify Functions/full-stack configuration;
 - GitHub Pages deployment workflow;
-- Devnet deployment automation.
+- Testnet deployment automation.
 
 ### Prototype / requires independent validation
 
 - end-to-end post-quantum security claims;
 - hybrid-signature security properties;
+- **on-chain PQC signature verification is not implemented**;
+- verified custom-program Testnet deployment evidence;
 - deployment hardening;
 - economic design;
-- community treasury mechanisms.
+- community treasury mechanisms;
+- independent smart-contract and cryptographic audits.
 
 ### Implemented application-layer capabilities
 
@@ -491,7 +508,7 @@ Any fundraising, public sale, grant program, custody service or beneficiary prog
 
 - keep repository claims aligned with verifiable code;
 - complete CI and reproducible builds;
-- complete Devnet verification;
+- complete Testnet verification;
 - publish real program IDs and transaction signatures;
 - obtain independent cryptographic and smart-contract review.
 
@@ -550,8 +567,8 @@ That is the standard against which SCSTOBCMinority AI should be evaluated: **ver
 | Wallet adapters | Phantom, Solflare |
 | PQC research | ML-KEM/ML-DSA/SLH-DSA family tooling |
 | CI/CD | GitHub Actions |
-| Web hosting | GitHub Pages |
-| Primary public environment | Devnet-oriented |
+| Web hosting | Netlify full-stack target + GitHub Pages mirror |
+| Primary public environment | Solana Testnet |
 
 ## Appendix B — Core Values
 
