@@ -244,4 +244,4 @@ This software is provided for research and development purposes. While it implem
 
 **Built with ❤️ for a quantum-safe future**
 
-[![Star on GitHub](https://img.shields.io/github/stars/yourusername/solana-pqc?style=social)](https://github.com/yourusername/scstobcminority-ai)
+[![Star on GitHub](https://img.shields.io/github/stars/elon00/scstobcminority-ai?style=social)](https://github.com/yourusername/scstobcminority-ai)
