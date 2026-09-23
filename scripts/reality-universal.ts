@@ -1,5 +1,5 @@
 /**
- * Solana-PQC — Universal Reality System (URS v1.0) Execution Engine
+ * SCSTOBCMinority AI — Universal Reality System (URS v1.0) Execution Engine
  * Evaluates the 10 Universal Reality Gates:
  * Gate 1: Claim Freeze & Manifest Registration
  * Gate 2: Simulation Scanner in Cryptographic Code
