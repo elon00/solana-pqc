@@ -453,12 +453,12 @@ As quantum computing advances, SCSTOBCMinority AI will evolve to remain at the f
 
 ### Appendix D: Contact Information
 
-**Website**: https://solana-pqc.io  
-**Documentation**: https://docs.solana-pqc.io  
+**Website**: https://elon00.github.io/scstobcminority-ai/  
+**Documentation**: https://github.com/elon00/scstobcminority-ai  
 **GitHub**: https://github.com/elon00/scstobcminority-ai  
-**Email**: info@solana-pqc.io  
+**Email**: Not configured  
 **Twitter**: @solana_pqc  
-**Discord**: discord.gg/solana-pqc  
+**Discord**: Not configured  
 
 ---
 
