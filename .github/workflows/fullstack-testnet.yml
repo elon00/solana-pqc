@@ -79,18 +79,22 @@ jobs:
           git pull --ff-only origin master
           test -f TESTNET_DEPLOYMENT.md
           grep -q "VERIFIED ON-CHAIN" TESTNET_DEPLOYMENT.md
-          grep -q "Quantum Custody Program" TESTNET_DEPLOYMENT.md
-          grep -q "SPQC Mint" TESTNET_DEPLOYMENT.md
-      - name: Verify public backend when configured
+          node - <<'NODE'
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('REALITY_MANIFEST.json', 'utf8'));
+          const deployment = JSON.parse(fs.readFileSync('backend/testnet-deployment.json', 'utf8'));
+          if (deployment.status !== 'verified') throw new Error('deployment status is not verified');
+          const required = manifest.deploymentEvidence?.requiredForVerifiedStatus || [];
+          const missing = required.filter((field) => !deployment[field]);
+          if (missing.length) throw new Error('missing deployment evidence: ' + missing.join(', '));
+          console.log('Verified machine deployment evidence:', required.join(', '));
+          NODE
+      - name: Verify public Netlify backend
         env:
-          TESTNET_BACKEND_URL: ${{ vars.TESTNET_BACKEND_URL }}
+          TESTNET_BACKEND_URL: ${{ vars.TESTNET_BACKEND_URL || 'https://scstobcminority-ai.netlify.app' }}
         run: |
-          if [ -n "$TESTNET_BACKEND_URL" ]; then
-            curl -fsS "$TESTNET_BACKEND_URL/health"
-            curl -fsS "$TESTNET_BACKEND_URL/api/status"
-          else
-            echo "::warning::TESTNET_BACKEND_URL is not configured. Code/CI backend is verified, but public GitHub Pages chat cannot reach it yet."
-          fi
+          curl -fsS "$TESTNET_BACKEND_URL/health"
+          curl -fsS "$TESTNET_BACKEND_URL/api/status"
       - name: Publish system result
         run: |
           {
@@ -102,6 +106,8 @@ jobs:
             echo "✅ Wallet adapter configured for Testnet"
             echo "✅ Solana program deployment evidence gate"
             echo "✅ SPQC mint evidence gate"
+            echo "✅ Program deployment signatures evidence gate"
+            echo "✅ Public Netlify backend health"
             echo
             echo "Mainnet remains intentionally disabled."
           } >> "$GITHUB_STEP_SUMMARY"
