@@ -112,7 +112,11 @@ const LandingPage = () => {
           setTransactionStatus(`💰 Requesting airdrop...`);
           try {
             const signature = await connection.requestAirdrop(publicKey, LAMPORTS_PER_SOL);
-            await connection.confirmTransaction(signature, 'confirmed');
+            await connection.confirmTransaction({
+        signature,
+        blockhash,
+        lastValidBlockHeight
+      }, 'confirmed');
             setTransactionStatus(`✅ Airdrop received! +1 SOL`);
             setBalance(prev => (prev || 0) + 1);
             setIsLoading(false);
@@ -198,15 +202,15 @@ const LandingPage = () => {
           const verification = await fetch(`${API_BASE_URL}/api/tx/${signature}`);
           const backendResult = await verification.json();
           if (verification.ok && backendResult.found && !backendResult.error) {
-            setTransactionStatus(`🎉 Confirmed on Testnet and verified by backend · ${txUrl}`);
+            setTransactionStatus(`🎉 Memo Program transaction confirmed on Testnet and observed by backend · ${txUrl}`);
           } else {
-            setTransactionStatus(`⚠️ Wallet RPC confirmed; backend verification pending · ${txUrl}`);
+            setTransactionStatus(`⚠️ Memo Program transaction confirmed by wallet RPC; backend observation pending · ${txUrl}`);
           }
         } catch {
-          setTransactionStatus(`✅ Wallet RPC confirmed; backend currently unreachable · ${txUrl}`);
+          setTransactionStatus(`✅ Memo Program transaction confirmed; backend currently unreachable · ${txUrl}`);
         }
       } else {
-        setTransactionStatus(`✅ Testnet transaction confirmed · ${txUrl}`);
+        setTransactionStatus(`✅ Memo Program transaction confirmed on Testnet · ${txUrl}`);
       }
 
     } catch (error: any) {
@@ -222,8 +226,8 @@ const LandingPage = () => {
 
   // Quick transaction buttons
   const transactionButtons = [
-    { type: 'memo', label: 'Send Memo', icon: '📝', color: 'from-blue-600 to-purple-600' },
-    { type: 'airdrop', label: 'Get Airdrop', icon: '💰', color: 'from-green-600 to-blue-600' },
+    { type: 'memo', label: 'Send Testnet Memo', icon: '📝', color: 'from-blue-600 to-purple-600' },
+    { type: 'airdrop', label: 'Request Testnet Airdrop', icon: '💰', color: 'from-green-600 to-blue-600' },
     { type: 'balance', label: 'Check Balance', icon: '🔍', color: 'from-purple-600 to-pink-600' },
   ];
 
@@ -690,7 +694,7 @@ const LandingPage = () => {
                       <span className="text-orange-400 font-semibold">Live Testing</span>
                     </div>
                     <div className="text-gray-300 text-sm">
-                      Click "Test Transaction" above to check deployment status and simulate blockchain interaction
+                      Memo/Test buttons are wallet and RPC diagnostics only; they do not invoke or prove deployment of the custom Anchor programs.
                     </div>
                   </div>
 
