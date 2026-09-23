@@ -11,7 +11,7 @@ import { sha256 } from '@noble/hashes/sha256.js';
 import { ml_dsa65 } from '@noble/post-quantum/ml-dsa.js';
 
 console.log('╔══════════════════════════════════════════════════════════════════════════╗');
-console.log('║       SOLANA-PQC — GENERATING URS EVIDENCE CERTIFICATE                   ║');
+console.log('║       SCSTOBCMinority AI — GENERATING URS EVIDENCE CERTIFICATE                   ║');
 console.log('╚══════════════════════════════════════════════════════════════════════════╝\n');
 
 const TSX_CLI = 'node C:\\Users\\marti\\quantumshield\\node_modules\\tsx\\dist\\cli.mjs';
@@ -129,7 +129,7 @@ $$\\text{Internal Automated Profile} = 10.0 / 10$$
 fs.writeFileSync('docs/reality/URS_EVIDENCE_CERTIFICATE.md', markdownSummary);
 
 console.log('══════════════════════════════════════════════════════════════════════════');
-console.log('🏆 SOLANA-PQC — URS EVIDENCE CERTIFICATE GENERATED');
+console.log('🏆 SCSTOBCMinority AI — URS EVIDENCE CERTIFICATE GENERATED');
 console.log('══════════════════════════════════════════════════════════════════════════');
 console.log(`  Multiplicative Feature Reality:    1.0 / 1.0 (VERIFIED)`);
 console.log(`  Universal Weakest-Link (URS_10):   6.0 / 10 (Bottleneck: H = 0.6)`);
