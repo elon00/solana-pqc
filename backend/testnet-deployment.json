@@ -1,0 +1,12 @@
+{
+  "status": "pending",
+  "network": "testnet",
+  "quantumCustodyProgramId": null,
+  "spqcTokenProgramId": null,
+  "spqcMint": null,
+  "tokenInfoPda": null,
+  "custodyGlobalStatePda": null,
+  "custodyInitializeSignature": null,
+  "tokenInitializeSignature": null,
+  "verifiedAt": null
+}

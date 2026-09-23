@@ -1,470 +1,572 @@
-# SCSTOBCMinority AI: Quantum-Safe Custody & Transaction Protocol
-## Technical Whitepaper v1.0
+# SCSTOBCMinority AI
+## White Paper v2.0 — Quantum-Safe Solana Infrastructure for Community Upliftment
 
-**October 2024**
+**Last updated:** September 23, 2026  
+**Repository:** https://github.com/elon00/scstobcminority-ai  
+**Web app:** https://elon00.github.io/scstobcminority-ai/  
+**Token symbol:** SPQC  
+**Primary network target:** Solana Devnet
 
----
-
-## Abstract
-
-SCSTOBCMinority AI introduces the first comprehensive quantum-resistant custody and transaction protocol on the Solana blockchain, implementing NIST-standardized post-quantum cryptographic algorithms (FIPS 203, 204, and 205) to protect digital assets against quantum computing threats. The protocol features a native utility token (SPQC) with a total supply of 2.1 quadrillion tokens, designed to incentivize quantum-safe practices and enable decentralized governance of the security infrastructure.
-
-This whitepaper presents the technical architecture, cryptographic foundations, tokenomics, and compliance framework that positions SCSTOBCMinority AI as the security backbone for the post-quantum era of blockchain technology.
+> **Status notice:** SCSTOBCMinority AI is a research and development project. The repository contains working software components, but it is not represented here as independently audited, production-ready financial infrastructure, a guaranteed investment, a government program, a political organization, a religious authority, or a provider of guaranteed material outcomes. Features are explicitly separated below into implemented, prototype, and planned capabilities.
 
 ---
 
-## Table of Contents
+## 1. Executive Summary
 
-1. [Introduction](#1-introduction)
-2. [The Quantum Threat](#2-the-quantum-threat)
-3. [Technical Architecture](#3-technical-architecture)
-4. [Cryptographic Implementation](#4-cryptographic-implementation)
-5. [Token Economics](#5-token-economics)
-6. [Global Standards Compliance](#6-global-standards-compliance)
-7. [Protocol Governance](#7-protocol-governance)
-8. [Security Analysis](#8-security-analysis)
-9. [Roadmap](#9-roadmap)
-10. [Conclusion](#10-conclusion)
+SCSTOBCMinority AI is a Solana-based research project combining post-quantum cryptography (PQC), smart-contract infrastructure, wallet-enabled web software, and an SPQC utility-token model.
 
----
+The project's social mission is to support the **betterment, dignity, empowerment, opportunity, and upliftment of people from SC, ST, OBC, minority and other underserved communities**, while remaining open to lawful, non-discriminatory participation and respecting the equal rights and dignity of every person.
 
-## 1. Introduction
+The project is guided by the values of:
 
-### 1.1 Background
+**love, peace, joy, harmony, truth, charity, unity, equality, dignity, liberty, fraternity, consent, service, knowledge, and justice.**
 
-The advent of quantum computing poses an existential threat to current cryptographic systems that secure blockchain networks. Shor's algorithm, when implemented on a sufficiently powerful quantum computer, can break RSA, ECDSA, and other asymmetric cryptographic schemes in polynomial time. With major technology companies and governments investing billions in quantum computing research, the timeline for "Q-Day" (when quantum computers can break current encryption) is estimated between 2030-2035.
+Its long-term purpose is to create transparent digital infrastructure through which communities, donors, developers, institutions, civil-society organizations, and beneficiaries may coordinate lawful programs for education, health, livelihood, financial inclusion, housing, nutrition, technology access, scientific learning, community development, and other human-development goals.
 
-### 1.2 Problem Statement
-
-Current blockchain systems, including Solana, rely on elliptic curve cryptography (Ed25519) for transaction signing and account security. These systems are vulnerable to quantum attacks through:
-
-1. **Shor's Algorithm**: Breaks discrete logarithm and factoring problems
-2. **Grover's Algorithm**: Reduces hash function security by half
-3. **Quantum Key Distribution Attacks**: Compromises key exchange mechanisms
-
-### 1.3 Our Solution
-
-SCSTOBCMinority AI provides a comprehensive quantum-safe infrastructure layer for Solana, featuring:
-
-- **NIST-Approved Algorithms**: Implementation of FIPS 203, 204, and 205
-- **Backward Compatibility**: Seamless integration with existing Solana infrastructure
-- **Enterprise-Grade**: Compliance tracking, audit logging, and regulatory reporting
-- **Decentralized Governance**: Community-driven security parameter updates
-- **Economic Incentives**: Token-based rewards for quantum-safe practices
-
-### 1.4 Key Innovations
-
-1. **Hybrid Cryptographic System**: Combines classical and post-quantum algorithms
-2. **Automated Key Rotation**: 90-day rotation policy with zero downtime
-3. **Compliance Dashboard**: Real-time monitoring of security posture
-4. **Cross-Chain Bridge**: Quantum-safe transfers across multiple blockchains
-5. **Vesting Smart Contracts**: Automated token distribution with quantum security
+SPQC is intended to function as an ecosystem utility token for these programs. It does **not** represent a promise of profit, guaranteed wealth, a guaranteed job, guaranteed housing, land, precious metals, marriage, political influence, religious status, supernatural knowledge, or any other guaranteed personal outcome.
 
 ---
 
-## 2. The Quantum Threat
+## 2. Mission: Human Development and Equal Dignity
 
-### 2.1 Quantum Computing Timeline
+### 2.1 Core Purpose
 
-| Year | Milestone | Impact on Blockchain |
-|------|-----------|---------------------|
-| 2019 | Google's quantum supremacy | Proof of concept |
-| 2023 | IBM 1000+ qubit processor | Research acceleration |
-| 2025-2027 | Error-corrected quantum computers | Early threat emergence |
-| 2030-2035 | Cryptographically relevant quantum computers | Critical threat |
-| 2040+ | Widespread quantum computing | Existential risk |
+SCSTOBCMinority AI exists to explore whether open blockchain infrastructure can help communities organize resources more transparently and make opportunity easier to access.
 
-### 2.2 Attack Vectors
+The project seeks to support programs connected with:
 
-#### 2.2.1 Shor's Algorithm
-- **Target**: Public key cryptography (RSA, ECDSA, Ed25519)
-- **Complexity**: O(log N)³ (polynomial time)
-- **Impact**: Complete compromise of private keys from public keys
-- **Timeline**: 2030-2035 for blockchain-relevant attacks
+- fundamental and human rights;
+- dignity and equal treatment;
+- food and nutrition;
+- clothing and basic necessities;
+- safe housing and shelter;
+- healthcare and preventive care;
+- education, scholarships, skills and digital literacy;
+- jobs, apprenticeships, entrepreneurship and livelihoods;
+- lawful financial inclusion, savings and responsible wealth-building;
+- access to land, productive assets and livelihood resources where legally available;
+- scientific education and research;
+- technology, machines, tools, infrastructure and productive materials;
+- community institutions, cooperatives and charitable programs;
+- social harmony, peace-building and non-discrimination;
+- lawful civic awareness and access to public services;
+- freedom of thought, conscience, religion or belief;
+- spiritual and philosophical learning chosen freely by each individual;
+- family wellbeing and voluntary, adult, consensual relationship or marriage-support services where lawful;
+- cultural participation, creativity, gifts, grants and community celebrations;
+- environmental stewardship, agriculture, fruits, nutrition and sustainable local production.
 
-#### 2.2.2 Grover's Algorithm
-- **Target**: Symmetric encryption and hash functions
-- **Complexity**: O(√N) (quadratic speedup)
-- **Impact**: Reduces 256-bit security to 128-bit equivalent
-- **Mitigation**: Increase key sizes (already implemented in NIST PQC)
+### 2.2 Rights-Centered Safeguards
 
-#### 2.2.3 Harvest Now, Decrypt Later
-- **Threat**: Adversaries collect encrypted data today for future decryption
-- **Impact**: Long-term confidentiality breaches
-- **Urgency**: Requires immediate action despite distant quantum threat
+The protocol's social mission must never be used to reduce individual freedom. Programs built around SPQC should follow these principles:
 
-### 2.3 Financial Impact
-
-The quantum threat to blockchain represents:
-- **$3+ Trillion**: Total cryptocurrency market cap at risk
-- **$100+ Billion**: Annual DeFi transaction volume vulnerable
-- **Millions**: Of wallets and smart contracts exposed
-- **Irreversible**: Nature of blockchain makes post-breach recovery impossible
-
----
-
-## 3. Technical Architecture
-
-### 3.1 System Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     SCSTOBCMinority AI Protocol                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │   dApp UI    │  │  TypeScript  │  │   Wallets    │      │
-│  │   (React)    │  │     SDK      │  │  (Phantom)   │      │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘      │
-│         │                  │                  │              │
-│         └──────────────────┴──────────────────┘              │
-│                            │                                 │
-│                   ┌────────▼────────┐                        │
-│                   │   Rust SDK      │                        │
-│                   │  (PQC Crypto)   │                        │
-│                   └────────┬────────┘                        │
-│                            │                                 │
-│         ┌──────────────────┴──────────────────┐             │
-│         │                                      │             │
-│  ┌──────▼──────┐                      ┌───────▼──────┐      │
-│  │   Quantum   │                      │    Token     │      │
-│  │   Custody   │◄────────────────────►│   Program    │      │
-│  │   Program   │    Cross-Program     │    (SPQC)    │      │
-│  └──────┬──────┘    Invocation        └───────┬──────┘      │
-│         │                                      │             │
-│         └──────────────────┬──────────────────┘             │
-│                            │                                 │
-│                   ┌────────▼────────┐                        │
-│                   │  Solana Runtime │                        │
-│                   │   (BPF VM)      │                        │
-│                   └────────┬────────┘                        │
-│                            │                                 │
-│                   ┌────────▼────────┐                        │
-│                   │ Solana Validator│                        │
-│                   │    Network      │                        │
-│                   └─────────────────┘                        │
-│                                                               │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### 3.2 On-Chain Components
-
-#### 3.2.1 Quantum Custody Program
-- **Purpose**: Manage quantum-safe vaults and transaction signing
-- **Language**: Rust (Anchor Framework)
-- **Key Features**:
-  - Vault creation with algorithm selection
-  - Quantum-safe transaction signing
-  - Automated key rotation
-  - Compliance status tracking
-  - Event emission for audit trails
-
-#### 3.2.2 Token Program
-- **Purpose**: SPQC token management and distribution
-- **Standard**: SPL Token with quantum-safe extensions
-- **Key Features**:
-  - 2.1 quadrillion token supply
-  - Vesting schedules
-  - Quantum-safe transfers
-  - Governance integration
-  - Burn mechanism
+1. **Equal human dignity:** no person is property, a commodity, or an allocation.
+2. **Voluntary participation:** assistance must not require political loyalty, religious conversion, marriage, labor coercion, or surrender of fundamental rights.
+3. **Adult consent:** any family, matchmaking or marriage-related support must concern consenting adults and must never involve buying, selling, assigning, rewarding or coercing a spouse.
+4. **Political neutrality of aid:** community benefits must not be conditioned on voting behavior, party support, campaign activity or political allegiance.
+5. **Freedom of belief:** spiritual or religious programs must respect freedom of religion, non-religion, conscience and personal choice.
+6. **No guaranteed outcomes:** blockchain tokens cannot guarantee health, employment, wealth, housing, land, precious metals, relationships, blessings or life outcomes.
+7. **Lawful administration:** financial, charitable, securities, tax, data-protection, anti-fraud and consumer-protection requirements must be followed in each jurisdiction.
+8. **Privacy by design:** sensitive personal data should not be placed on a public blockchain.
+9. **Accountability:** community treasuries and grant programs should publish transparent rules, conflicts-of-interest policies, audits and measurable outcomes.
 
 ---
 
-## 4. Cryptographic Implementation
+## 3. The SPQC Token
 
-### 4.1 NIST Post-Quantum Standards
+### 3.1 Current Technical Model
 
-#### 4.1.1 FIPS 203: ML-KEM (CRYSTALS-Kyber)
+The current token program is an Anchor/Rust Solana program integrated with the SPL Token program.
 
-**Purpose**: Key Encapsulation Mechanism
+**Current repository design:**
 
-**Variants**:
-- **Kyber512**: NIST Security Level 1 (128-bit equivalent)
-- **Kyber768**: NIST Security Level 3 (192-bit equivalent) ⭐ Recommended
-- **Kyber1024**: NIST Security Level 5 (256-bit equivalent)
+- **Name:** SCSTOBCMinority AI
+- **Symbol:** SPQC
+- **Decimals:** 9
+- **Supply policy:** uncapped at the application layer
+- **Protocol ceiling:** SPL Token supply accounting ultimately uses a `u64` raw-unit counter
+- **Mint authority:** authority-controlled
+- **Implemented token operations:** initialization, minting, burning and token transfers
+- **Research extension:** a transfer path that requires a supplied quantum-signature byte payload, while full cryptographic verification must be independently validated before security claims are made
 
-**Technical Specifications**:
-```
-Algorithm: Module Learning With Errors (MLWE)
-Public Key Size: 800-1568 bytes
-Ciphertext Size: 768-1568 bytes
-Shared Secret: 32 bytes
-Security Assumption: Hardness of MLWE problem
-```
+“Uncapped” therefore means **no project-defined fixed total-supply cap**, not mathematically infinite supply.
 
-#### 4.1.2 FIPS 204: ML-DSA (CRYSTALS-Dilithium)
+### 3.2 Intended Community Utility
 
-**Purpose**: Digital Signature Algorithm
+SPQC may be used, subject to future implementation, governance and legal review, for:
 
-**Variants**:
-- **Dilithium2**: NIST Security Level 2 (128-bit equivalent)
-- **Dilithium3**: NIST Security Level 3 (192-bit equivalent) ⭐ Recommended
-- **Dilithium5**: NIST Security Level 5 (256-bit equivalent)
+- community grants and charitable distributions;
+- scholarships, training incentives and education support;
+- health and wellness support programs;
+- livelihood and entrepreneurship grants;
+- community infrastructure funding;
+- technology access and equipment programs;
+- transparent donor or sponsor campaigns;
+- rewards for verified community contribution;
+- ecosystem service payments;
+- protocol fees where implemented;
+- community treasury proposals;
+- open-source developer grants;
+- research grants;
+- disaster-relief or emergency-support programs;
+- local agriculture, food and nutrition initiatives;
+- housing-support or shelter programs administered by qualified partners;
+- financial-literacy and responsible savings programs.
 
-**Technical Specifications**:
-```
-Algorithm: Module Learning With Errors (MLWE)
-Public Key Size: 1312-2592 bytes
-Signature Size: 2420-4595 bytes
-Security Assumption: Hardness of MLWE problem
-Signing Speed: ~1ms
-Verification Speed: ~0.5ms
-```
+A token balance must **never** determine a person's fundamental rights, legal rights, eligibility to vote in public elections, human worth, religious status, access to justice, or entitlement to equal protection.
 
-#### 4.1.3 FIPS 205: SLH-DSA (SPHINCS+)
+### 3.3 Emission and Treasury Philosophy
 
-**Purpose**: Stateless Hash-Based Signatures (Fallback)
+Because the current code is uncapped at the application layer, responsible deployment requires governance over mint authority.
 
-**Technical Specifications**:
-```
-Algorithm: Hash-based signatures
-Public Key Size: 32 bytes
-Signature Size: 7,856-17,088 bytes
-Security Assumption: Hash function security only
-Signing Speed: ~10-50ms
-Verification Speed: ~1-5ms
-```
+A mature deployment should include:
 
----
+- published minting policies;
+- multi-signature or governed mint authority;
+- transparent treasury accounting;
+- per-program budgets;
+- rate limits or issuance controls;
+- public reporting of minted and distributed amounts;
+- conflict-of-interest rules;
+- beneficiary-protection standards;
+- independent financial and security review.
 
-## 5. Token Economics
-
-### 5.1 Token Overview
-
-**Name**: SCSTOBCMinority AI  
-**Symbol**: SPQC  
-**Total Supply**: 2,100,000,000,000,000 (2.1 Quadrillion)  
-**Decimals**: 9  
-**Standard**: SPL Token with Quantum-Safe Extensions  
-
-### 5.2 Distribution Model
-
-| Category | Allocation | Tokens (Trillions) | Vesting |
-|----------|-----------|-------------------|---------|
-| **Public Sale** | 30% | 630 | None |
-| **Ecosystem** | 25% | 525 | 4 years |
-| **Team** | 15% | 315 | 4 years, 1yr cliff |
-| **Strategic Partners** | 10% | 210 | 2 years |
-| **Liquidity** | 10% | 210 | Immediate |
-| **Community Rewards** | 5% | 105 | 3 years |
-| **Reserve** | 5% | 105 | Governance |
-
-### 5.3 Token Utility
-
-1. **Transaction Fees**: Pay for quantum-safe operations (up to 50% discount)
-2. **Governance**: Vote on protocol upgrades and parameters
-3. **Staking**: Earn 5% APY, secure the network
-4. **Access Control**: Enterprise API access, premium features
-5. **Liquidity Mining**: Provide liquidity, earn rewards
-
-### 5.4 Economic Model
-
-**Deflationary Mechanisms**:
-- 0.1% transaction burn
-- Governance proposal burns
-- 20% revenue buyback & burn
-
-**Net Emission Schedule**:
-- Year 1: +8% (inflationary)
-- Year 2: +5% (inflationary)
-- Year 3: +2% (mildly inflationary)
-- Year 4+: -1% to -3% (deflationary)
+No APY, staking return, token price, market capitalization, exchange listing, appreciation, or investment return is promised by this white paper.
 
 ---
 
-## 6. Global Standards Compliance
+## 4. Technology Stack
 
-### 6.1 Financial Standards
+### 4.1 Solana Blockchain
 
-#### ISO 20022
-**Status**: ✅ Fully Implemented
-- pacs.008: Customer Credit Transfer
-- pacs.009: Financial Institution Transfer
-- camt.053: Bank-to-Customer Statement
-- pain.001: Credit Transfer Initiation
+SCSTOBCMinority AI is built around Solana for high-throughput, low-latency blockchain execution.
 
-### 6.2 Securities Regulations
+The repository uses:
 
-#### United States
-- ✅ Reg D (Rule 506b/506c)
-- ✅ Reg S (Offshore transactions)
-- 🔄 Reg A+ (Tier 2 planned)
+- Solana accounts and public keys;
+- SPL Token integration;
+- Program Derived Addresses (PDAs);
+- on-chain Rust programs;
+- Solana wallet adapters;
+- Devnet-oriented deployment workflows.
 
-#### European Union
-- ✅ MiCA (Markets in Crypto-Assets)
-- ✅ ESMA Guidelines
-- ✅ Market abuse prevention
+### 4.2 Anchor Framework
 
-### 6.3 AML/CTF Compliance
+The on-chain programs use **Anchor 0.29.x**, providing:
 
-#### FATF Travel Rule
-**Status**: ✅ Fully Implemented
-- Threshold monitoring ($1,000+)
-- Encrypted PII storage
-- Automated reporting
-- Cross-border tracking
+- account validation;
+- instruction serialization;
+- program ID management;
+- IDL generation;
+- testing and deployment workflows.
 
-#### Sanctions Screening
-- OFAC (USA)
-- UN Security Council
-- EU Sanctions
-- Real-time API checks
+### 4.3 Rust Programs
 
-### 6.4 Data Protection
+The repository contains two principal on-chain program areas:
 
-#### GDPR (EU)
-**Status**: ✅ Fully Compliant
-- Data minimization
-- Right to erasure
-- Data portability
-- Consent management
+#### Quantum Custody Program
 
----
+Designed for:
 
-## 7. Protocol Governance
+- protocol initialization;
+- vault creation;
+- signing-related workflows;
+- key rotation;
+- custody-state management.
 
-### 7.1 Voting Power
+#### SCSTOBCMinority AI Token Program
 
-**Base**: 1 SPQC = 1 vote
+Designed for:
 
-**Multipliers**:
-- Staked: 1.5x
-- Locked >6 months: 1.75x
-- Locked >1 year: 2x
-- Locked >2 years: 2.5x
+- mint initialization;
+- uncapped application-level minting;
+- burning;
+- token-account transfers;
+- token metadata/state tracking.
 
-### 7.2 Proposal Types
+### 4.4 Post-Quantum Cryptography Research
 
-1. **Protocol Upgrades**: 10M SPQC deposit, 66% approval
-2. **Treasury Spending**: 5M SPQC deposit, 51% approval
-3. **Parameter Changes**: 1M SPQC deposit, 51% approval
-4. **Emergency Actions**: Multi-sig + 75% approval
+The repository contains TypeScript and Rust PQC-related SDK work.
 
-### 7.3 Governance Process
+The current evidence manifest identifies research implementations around:
 
-1. Discussion Phase (7 days)
-2. Proposal Submission
-3. Voting Period (5 days)
-4. Timelock Period (2-7 days)
-5. Execution
-6. Post-Execution Monitoring
+- **ML-KEM-768**, aligned with NIST FIPS 203 terminology;
+- **ML-DSA-65**, aligned with NIST FIPS 204 terminology;
+- hybrid concepts combining Ed25519 with ML-DSA;
+- Rust PQC libraries for Kyber/ML-KEM, Dilithium/ML-DSA and SPHINCS+/SLH-DSA families.
 
----
+These components are **research/prototype cryptography** until independently reviewed. A library implementing an algorithm does not by itself establish end-to-end protocol security or regulatory certification.
 
-## 8. Security Analysis
+### 4.5 TypeScript SDK
 
-### 8.1 Threat Model
+The TypeScript SDK provides client-side primitives for:
 
-**Quantum Threats**: ✅ Mitigated by NIST PQC algorithms  
-**Classical Attacks**: ✅ Standard security practices  
-**Economic Attacks**: ✅ Tokenomics design  
+- Solana connections;
+- custody interactions;
+- vault-related operations;
+- cryptographic utilities;
+- typed interfaces.
 
-### 8.2 Security Audits
+### 4.6 React Web Application
 
-- [ ] CertiK (Q4 2024)
-- [ ] Trail of Bits (Q4 2024)
-- [ ] Quantstamp (Q1 2025)
-- [ ] OpenZeppelin (Q1 2025)
+The web application uses:
 
-### 8.3 Bug Bounty
+- React;
+- TypeScript;
+- Vite;
+- Tailwind CSS;
+- React Router;
+- Solana wallet-adapter packages;
+- Phantom and Solflare wallet adapters;
+- GitHub Pages deployment.
 
-**Pool**: $1,000,000 SPQC  
-**Rewards**: Up to $100,000 for critical vulnerabilities
+### 4.7 Wallet Layer
 
----
+Current UI support includes multiple wallet **providers** such as Phantom and Solflare.
 
-## 9. Roadmap
+This should not be confused with a completed simultaneous multi-wallet treasury or multi-signer orchestration system. Such functionality requires additional implementation and security design.
 
-### Phase 1: Foundation (Q4 2024)
-- ✅ Core protocol development
-- ✅ NIST PQC implementation
-- ✅ Token generation
-- 🔄 Security audits
-- 🔄 Testnet launch
+### 4.8 AI and Agentic Layer
 
-### Phase 2: Launch (Q1 2025)
-- 🔄 Mainnet deployment
-- 🔄 DEX listings
-- 🔄 Staking launch
-- 🔄 Governance activation
+The repository now includes a bounded Testnet AI backend with:
 
-### Phase 3: Expansion (Q2-Q3 2025)
-- 🔄 CEX listings
-- 🔄 Cross-chain bridge
-- 🔄 DeFi integrations
-- 🔄 Institutional custody
+- intent routing for wallet, chain, mission, developer and general requests;
+- live Solana Testnet health grounding;
+- optional authenticated public-wallet context;
+- OpenAI-compatible, Anthropic and Gemini provider adapters;
+- automatic provider selection;
+- a deterministic local safe fallback when no external model credentials are configured;
+- frontend agentic chat integration;
+- explicit separation between verified chain evidence and model-generated text.
 
-### Phase 4: Ecosystem (Q4 2025+)
-- 🔄 Developer grants
-- 🔄 Quantum-safe DeFi
-- 🔄 Layer 2 solutions
-- 🔄 Global adoption
+This is an **agentic assistance layer**, not an unrestricted autonomous agent. External providers are only active when their server-side API credentials and model names are configured.
+
+Potential future extensions include multilingual community assistance, grant discovery, education/career navigation, treasury analytics and richer human-in-the-loop workflows.
+
+AI must not make final decisions about legal rights, voting, religious status, marriage, medical treatment, credit, employment eligibility or other high-impact matters without appropriate human and institutional safeguards.
+
+### 4.9 Future Experimental Modules
+
+Possible future research areas may include:
+
+- multi-wallet portfolio and treasury management;
+- verifiable AI actions;
+- decentralized identity;
+- privacy-preserving credentials;
+- community cooperatives;
+- transparent impact dashboards;
+- Conway's Game of Life or other cellular-automata research visualizations;
+- project-defined “Web4” experiments combining blockchain, AI, cryptography and user-owned identity.
+
+These items are roadmap concepts unless separately marked implemented in the repository.
 
 ---
 
-## 10. Conclusion
+## 5. Community Program Framework
 
-SCSTOBCMinority AI represents a paradigm shift in blockchain security, addressing the imminent quantum threat through rigorous implementation of NIST-standardized post-quantum cryptographic algorithms. By combining cutting-edge cryptography with robust tokenomics and comprehensive compliance frameworks, the protocol establishes a new standard for secure digital asset custody in the post-quantum era.
+### 5.1 Basic Needs
 
-### Key Achievements
+Programs may support qualified delivery partners working on:
 
-1. **First-Mover Advantage**: Comprehensive PQC solution on Solana
-2. **Standards Compliance**: Full implementation of NIST FIPS 203/204/205
-3. **Enterprise-Ready**: Regulatory compliance, audit trails, reporting
-4. **Economic Sustainability**: Well-designed tokenomics
-5. **Global Reach**: Multi-jurisdictional compliance
+- bread, food security and nutrition;
+- clothing;
+- shelter and housing;
+- clean water and sanitation;
+- healthcare and medicines;
+- education.
 
-### Future Vision
+### 5.2 Dignity and Opportunity
 
-As quantum computing advances, SCSTOBCMinority AI will evolve to remain at the forefront of quantum-resistant security through decentralized governance, continuous research, and community collaboration.
+Programs may support:
+
+- identity/documentation assistance;
+- legal-aid referrals;
+- anti-discrimination awareness;
+- job placement and career services;
+- apprenticeships and vocational training;
+- entrepreneurship;
+- digital connectivity;
+- access to tools and machines;
+- productive assets and materials.
+
+The phrase **“men-machine-material powers”** is interpreted here as the ethical accumulation of **human capability, technology/tools, and productive resources**—never control over other people.
+
+### 5.3 Wealth and Financial Capability
+
+Community-development programs may explore:
+
+- financial literacy;
+- responsible savings;
+- cooperative finance;
+- entrepreneurship;
+- productive asset ownership;
+- lawful land-access support;
+- transparent grants;
+- diversified savings education, which may include lawful education about commodities or precious metals.
+
+No token distribution should be marketed as guaranteed wealth or guaranteed asset appreciation.
+
+### 5.4 Family and Social Wellbeing
+
+The project may support lawful family-wellbeing programs, counseling, community introductions, or voluntary matchmaking services operated by qualified partners.
+
+It must never promise, allocate, purchase, sell, coerce or tokenize a wife, husband, partner, marriage, or relationship. Adults retain complete personal autonomy and consent.
+
+### 5.5 Scientific, Spiritual and Philosophical Development
+
+The project may support:
+
+- science education;
+- libraries and laboratories;
+- scholarships;
+- philosophy and ethics;
+- comparative religion;
+- freedom of inquiry;
+- interfaith and inter-community dialogue;
+- meditation, reflection or spiritual learning chosen freely by participants.
+
+The aspiration to “know and reveal the secrets of creation or the Creator” is treated as a **philosophical and educational quest for knowledge**, not a technical promise that SPQC, AI or blockchain can reveal supernatural truths.
 
 ---
 
-## Appendices
+## 6. Civic and Human-Rights Orientation
 
-### Appendix A: Technical Specifications
+The project supports awareness of universal human dignity and lawful access to rights.
 
-**Blockchain**: Solana  
-**Consensus**: Proof of History + Proof of Stake  
-**Programming Language**: Rust (on-chain), TypeScript (off-chain)  
-**Framework**: Anchor 0.29+  
-**Token Standard**: SPL Token  
-**Cryptographic Library**: pqcrypto-rs  
+This may include neutral, non-partisan resources about:
 
-### Appendix B: Glossary
+- constitutional or fundamental rights;
+- access to public services;
+- legal identity;
+- education rights;
+- anti-discrimination protections;
+- labor rights;
+- property and inheritance rights where applicable;
+- freedom of expression, conscience, religion and belief;
+- peaceful civic participation;
+- access to grievance and legal-remedy mechanisms.
 
-- **PQC**: Post-Quantum Cryptography
-- **NIST**: National Institute of Standards and Technology
-- **ML-KEM**: Module-Lattice-Based Key-Encapsulation Mechanism
-- **ML-DSA**: Module-Lattice-Based Digital Signature Algorithm
-- **SLH-DSA**: Stateless Hash-Based Digital Signature Algorithm
-- **MLWE**: Module Learning With Errors
-- **SPL**: Solana Program Library
-- **DAO**: Decentralized Autonomous Organization
-
-### Appendix C: References
-
-1. NIST Post-Quantum Cryptography Standardization (2024)
-2. Solana Technical Documentation (2024)
-3. ISO 20022 Financial Messaging Standard
-4. MiCA Regulation (EU) 2023/1114
-5. FATF Guidance on Virtual Assets (2021)
-
-### Appendix D: Contact Information
-
-**Website**: https://elon00.github.io/scstobcminority-ai/  
-**Documentation**: https://github.com/elon00/scstobcminority-ai  
-**GitHub**: https://github.com/elon00/scstobcminority-ai  
-**Email**: Not configured  
-**Twitter**: @solana_pqc  
-**Discord**: Not configured  
+SPQC must not be used to purchase votes, reward electoral support, penalize political beliefs, fund unlawful political influence, or condition humanitarian assistance on political behavior.
 
 ---
 
-**Document Version**: 1.0  
-**Last Updated**: October 2, 2024  
-**Authors**: SCSTOBCMinority AI Core Team  
-**License**: CC BY-NC-ND 4.0  
+## 7. Governance Principles
 
-© 2024 SCSTOBCMinority AI. All rights reserved.
+Future ecosystem governance should focus on **project and treasury administration**, not control of public political rights.
+
+Recommended principles include:
+
+- one-person-one-rights: fundamental rights are never token-weighted;
+- transparent treasury proposals;
+- conflict-of-interest disclosure;
+- independent community oversight;
+- beneficiary representation;
+- anti-capture mechanisms;
+- spending limits;
+- audit trails;
+- human appeal channels;
+- emergency controls with accountability.
+
+Token-weighted voting, if ever introduced, should be limited to appropriate protocol matters and designed to reduce plutocratic capture.
+
+---
+
+## 8. Privacy, Safety and Anti-Abuse
+
+Community programs can involve highly sensitive personal information. The project should minimize collection and avoid storing sensitive beneficiary data directly on-chain.
+
+Recommended controls:
+
+- off-chain encrypted data stores;
+- minimal public metadata;
+- consent and purpose limitation;
+- role-based access;
+- audit logs;
+- key rotation;
+- sanctions and fraud controls where legally required;
+- child-safety safeguards;
+- anti-trafficking and anti-exploitation controls;
+- whistleblower and grievance channels.
+
+---
+
+## 9. Current Status Versus Roadmap
+
+### Implemented or present in the repository
+
+- Solana/Anchor Rust programs;
+- SPL Token integration;
+- application-level uncapped mint policy;
+- mint/burn/transfer token paths;
+- TypeScript SDK;
+- Rust SDK;
+- PQC-related code and evidence scripts;
+- React/Vite web application;
+- Phantom and Solflare wallet-provider support;
+- GitHub CI/CD;
+- GitHub Pages deployment workflow;
+- Devnet deployment automation.
+
+### Prototype / requires independent validation
+
+- end-to-end post-quantum security claims;
+- hybrid-signature security properties;
+- deployment hardening;
+- economic design;
+- community treasury mechanisms.
+
+### Implemented application-layer capabilities
+
+- bounded AI agent intent routing;
+- multi-model provider routing with local fallback;
+- Testnet backend RPC grounding;
+- wallet message-signature authentication;
+- frontend/backend wallet and transaction verification.
+
+### Planned / not established as complete
+
+- unrestricted autonomous AI agents;
+- simultaneous multi-wallet orchestration;
+- token-governed community treasury;
+- staking/APY;
+- cross-chain bridges;
+- DEX/CEX listings;
+- formal compliance systems;
+- independent security audits;
+- large-scale community-benefit distribution;
+- Conway automaton integration;
+- broader “Web4” architecture.
+
+---
+
+## 10. Impact Measurement
+
+A credible community project should measure outcomes rather than only token activity.
+
+Possible indicators include:
+
+- scholarships funded;
+- people trained;
+- job placements;
+- businesses supported;
+- health interventions funded;
+- housing or shelter support delivered;
+- meals or nutrition packages delivered;
+- devices/tools distributed;
+- research grants funded;
+- community infrastructure completed;
+- percentage of funds reaching beneficiaries;
+- administrative-cost ratio;
+- beneficiary satisfaction;
+- grievance resolution;
+- independent audit results.
+
+Token price is **not** an adequate measure of human development.
+
+---
+
+## 11. Legal and Financial Disclosures
+
+SPQC should be treated as experimental software and token infrastructure unless and until appropriate legal analysis establishes otherwise in a relevant jurisdiction.
+
+Nothing in this document is:
+
+- investment advice;
+- a promise of return;
+- a securities-law opinion;
+- a tax opinion;
+- a guarantee of liquidity;
+- a guarantee of exchange listing;
+- a guarantee of charitable status;
+- a guarantee of government recognition;
+- a substitute for legal, medical, financial, social-work or religious advice.
+
+Any fundraising, public sale, grant program, custody service or beneficiary program should obtain appropriate professional review before launch.
+
+---
+
+## 12. Roadmap
+
+### Phase A — Technical Integrity
+
+- keep repository claims aligned with verifiable code;
+- complete CI and reproducible builds;
+- complete Devnet verification;
+- publish real program IDs and transaction signatures;
+- obtain independent cryptographic and smart-contract review.
+
+### Phase B — Community Infrastructure
+
+- community-needs registry without exposing sensitive personal data;
+- transparent grant/treasury dashboard;
+- scholarship and skills pilots;
+- health, nutrition and livelihood pilots with qualified partners;
+- measurable impact reporting.
+
+### Phase C — Governance and AI Assistance
+
+- accountable project-governance framework;
+- beneficiary representation;
+- multilingual AI assistance with human oversight;
+- fraud and abuse controls;
+- grant discovery and education/career navigation.
+
+### Phase D — Broader Ecosystem
+
+- audited production deployment if justified;
+- partner integrations;
+- privacy-preserving credentials;
+- cooperative/community treasury tooling;
+- broader research into decentralized identity, agentic systems and community-owned digital infrastructure.
+
+---
+
+## 13. Conclusion
+
+SCSTOBCMinority AI combines a quantum-safe research agenda with a human-development mission.
+
+Its purpose is not merely to issue a token. The intended long-term purpose is to build transparent, rights-respecting infrastructure that can help people gain greater access to **food, clothing, housing, health, education, dignity, livelihoods, skills, technology, lawful wealth-building opportunities, productive resources, scientific knowledge, community solidarity, spiritual freedom and equal human rights**.
+
+The project embraces **love, peace, joy, harmony, truth, charity, unity and equality** as guiding values.
+
+At the same time, technology must remain humble about what it can accomplish. A blockchain cannot grant human dignity, manufacture consent, guarantee prosperity, assign relationships, determine truth, or replace institutions and people. It can, however, help communities coordinate resources, create transparent records, build open tools, and make accountable programs easier to operate.
+
+That is the standard against which SCSTOBCMinority AI should be evaluated: **verifiable technology, voluntary participation, equal dignity, transparent governance, measurable community benefit, and no false promises.**
+
+---
+
+## Appendix A — Technology Inventory
+
+| Layer | Current technology |
+|---|---|
+| Blockchain | Solana |
+| Smart-contract framework | Anchor 0.29.x |
+| On-chain language | Rust |
+| Token integration | SPL Token |
+| Web SDK | TypeScript |
+| Rust SDK | Rust |
+| Web application | React + TypeScript + Vite |
+| Styling | Tailwind CSS |
+| Wallet adapters | Phantom, Solflare |
+| PQC research | ML-KEM/ML-DSA/SLH-DSA family tooling |
+| CI/CD | GitHub Actions |
+| Web hosting | GitHub Pages |
+| Primary public environment | Devnet-oriented |
+
+## Appendix B — Core Values
+
+**Love · Peace · Joy · Harmony · Truth · Charity · Unity · Equality · Dignity · Liberty · Consent · Knowledge · Service · Justice**
+
+## Appendix C — Contact and Project Links
+
+- Repository: https://github.com/elon00/scstobcminority-ai
+- Web app: https://elon00.github.io/scstobcminority-ai/
+- White paper: `WHITEPAPER.md`
+- Tokenomics: `docs/TOKENOMICS.md`
+- Security policy: `SECURITY.md`
+
+---
+
+**Document version:** 2.0  
+**Date:** September 23, 2026  
+**License:** Repository licensing applies.

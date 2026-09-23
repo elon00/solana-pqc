@@ -1,113 +1,199 @@
 # SCSTOBCMinority AI Tokenomics
 
+## Status
+
+This document describes the **current token design plus intended future community utility**. It is not an investment prospectus and does not promise price appreciation, yield, exchange listings, market capitalization, liquidity, or guaranteed financial returns.
+
 ## Token Overview
 
-**Name**: SCSTOBCMinority AI  
-**Symbol**: SPQC  
-**Network**: Solana  
-**Standard**: SPL Token with Quantum-Safe Extensions  
-**Supply Policy**: Uncapped minting (no application-level fixed supply cap)  
-**Technical Limit**: SPL Token supply is stored as `u64` raw units  
-**Decimals**: 9  
-**Your Wallet**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
+- **Name:** SCSTOBCMinority AI
+- **Symbol:** SPQC
+- **Network:** Solana
+- **Standard:** SPL Token integrated through an Anchor/Rust program
+- **Decimals:** 9
+- **Application-level supply policy:** Uncapped minting
+- **Technical ceiling:** SPL Token raw supply accounting is ultimately bounded by a `u64` counter
+- **Mint model:** Authority-controlled
+- **Current code paths:** initialize, mint, burn, transfer
 
-## Token Distribution
+“Uncapped” means there is no project-defined fixed total-supply cap. It does **not** mean mathematically infinite supply.
 
-| Category | Allocation | Emission Basis | Vesting | Purpose |
-|----------|-----------|-------------------|---------|---------|
-| **Public Sale** | 30% | Emission-based | None | Initial distribution |
-| **Ecosystem & Development** | 25% | Emission-based | 4 years linear | Grants, partnerships |
-| **Team & Advisors** | 15% | Emission-based | 4 years, 1yr cliff | Core contributors |
-| **Strategic Partners** | 10% | Emission-based | 2 years linear | Partnerships |
-| **Liquidity Provision** | 10% | Emission-based | Immediate | DEX/CEX liquidity |
-| **Community Rewards** | 5% | Emission-based | 3 years linear | Staking, participation |
-| **Reserve Fund** | 5% | Emission-based | Governance | Emergency fund |
+## Core Social Purpose
 
-## Token Utility
+SPQC is intended to support transparent digital programs for the dignity, empowerment and upliftment of SC, ST, OBC, minority and other underserved communities.
 
-### 1. Transaction Fees
-- Pay for quantum-safe custody operations
-- Discounts up to 50% for SPQC holders
-- Staking rewards from fee pool
+Guiding values:
 
-### 2. Governance
-- Vote on protocol upgrades
-- Propose new cryptographic algorithms
-- Control treasury allocation
-- Set compliance parameters
+**Love · Peace · Joy · Harmony · Truth · Charity · Unity · Equality · Dignity · Liberty · Consent · Knowledge · Service · Justice**
 
-**Voting Power**:
-- 1 SPQC = 1 vote
-- Staked SPQC = 1.5x multiplier
-- Long-term stakers (>1 year) = 2x multiplier
+Potential program areas include:
 
-### 3. Staking
-- Stake SPQC to secure the network
-- Earn 5% APY (decreasing over time)
-- Boosted rewards for long-term locks
-- Validator rewards in SPQC
+- food and nutrition;
+- clothing and basic necessities;
+- shelter and housing support;
+- healthcare;
+- education and scholarships;
+- skills and digital literacy;
+- jobs, apprenticeships and entrepreneurship;
+- livelihood and productive-asset programs;
+- financial literacy and responsible savings;
+- lawful land-access or agriculture-support programs;
+- technology, machines, tools and productive materials;
+- research, science and open-source development;
+- charitable grants and gifts;
+- agriculture, fruits and nutrition programs;
+- community infrastructure;
+- dignity, anti-discrimination and access-to-rights initiatives;
+- peaceful, non-partisan civic awareness;
+- freedom of thought, conscience, religion or belief;
+- voluntary adult family-wellbeing services;
+- philosophical, scientific and spiritual learning chosen freely by each participant.
 
-### 4. Access Control
-- Enterprise API access
-- Advanced compliance tools
-- Priority support
-- Custom integration assistance
+## Intended Token Utility
 
-## Economic Model
+The following are **intended or planned utilities** unless separately implemented and verified in code:
 
-### Deflationary Mechanisms
-1. **Transaction Burning**: 0.1% of every transaction
-2. **Governance Burning**: Failed proposals burn deposit
-3. **Buyback & Burn**: 20% of protocol revenue
+### 1. Community Grants
 
-### Inflationary Mechanisms
-1. **Staking Rewards**: 5% annual (decreasing)
-2. **Liquidity Mining**: 3% annual (first 2 years)
-3. **Development Grants**: 2% annual (governance-controlled)
+SPQC may be used as an accounting and distribution instrument for transparent grants supporting education, health, housing, nutrition, livelihoods, research and community infrastructure.
 
-### Net Emission Schedule
+### 2. Scholarships and Learning Incentives
 
-| Year | Inflation | Deflation | Net | Circulating Supply |
-|------|-----------|-----------|-----|-------------------|
-| 1 | +10% | -2% | +8% | 907T (43%) |
-| 2 | +7% | -2% | +5% | 952T (45%) |
-| 3 | +4% | -2% | +2% | 971T (46%) |
-| 4+ | +2% | -3% | -1% | Decreasing |
+Future programs may use SPQC for scholarships, course completion rewards, digital-skills training, scientific learning and open-source contribution incentives.
 
-## Vesting Schedules
+### 3. Livelihood and Entrepreneurship Programs
 
-### Team & Advisors (15% - 315T tokens)
-- **Cliff**: 12 months
-- **Vesting**: 48 months linear
-- **Release**: Monthly after cliff
-- **Beneficiary**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
+Potential uses include support for:
 
-### Ecosystem & Development (25% - 525T tokens)
-- **Cliff**: None
-- **Vesting**: 48 months linear
-- **Release**: Monthly
-- **Governance**: DAO-controlled after year 2
+- tools and equipment;
+- micro-enterprise pilots;
+- vocational training;
+- apprenticeships;
+- cooperative projects;
+- agriculture and productive assets.
 
-### Strategic Partners (10% - 210T tokens)
-- **Cliff**: 6 months
-- **Vesting**: 24 months linear
-- **Release**: Quarterly
+### 4. Health and Nutrition Support
 
-### Community Rewards (5% - 105T tokens)
-- **Cliff**: None
-- **Vesting**: 36 months linear
-- **Distribution**: Based on participation metrics
+Qualified partners may use transparent treasury programs to support healthcare access, preventive care, medicines, nutrition, food-security and emergency assistance.
 
-## Target Metrics (Year 1)
+### 5. Technology Access
 
-- **Market Cap**: $100M - $500M
-- **Fully Diluted Valuation**: $1B - $5B
-- **Daily Volume**: $5M - $25M
-- **Holders**: 50,000+
-- **Staking Ratio**: 40%+
-- **Enterprise Customers**: 100+
+Potential programs may support devices, connectivity, software access, laboratory tools, machines and other productive technology.
+
+### 6. Research and Open-Source Development
+
+SPQC may support:
+
+- cryptography research;
+- blockchain engineering;
+- AI-safety and community-assistance research;
+- scientific grants;
+- developer bounties;
+- public-interest open-source software.
+
+### 7. Community Treasury Operations
+
+A future governed treasury may fund approved programs with public budgets, audit trails, conflicts-of-interest rules and measurable impact reporting.
+
+Token ownership must **not** determine a person's fundamental rights, public voting rights, religious status, access to justice, human worth, or eligibility for equal protection.
+
+## Emission Governance
+
+Because the token is uncapped at the application layer, responsible issuance is more important than a fixed allocation table.
+
+A mature deployment should use:
+
+- published minting policy;
+- multi-signature or governed mint authority;
+- per-program issuance budgets;
+- time-based or amount-based emission controls;
+- transparent treasury accounts;
+- public reporting of minted, burned and distributed amounts;
+- independent audits;
+- beneficiary-protection standards;
+- emergency pause or recovery procedures where technically and legally appropriate.
+
+## Recommended Treasury Buckets
+
+These are governance design categories, **not pre-minted guaranteed allocations**:
+
+| Treasury Area | Illustrative Purpose |
+|---|---|
+| Community Development | Education, health, housing, nutrition, livelihoods |
+| Research & Engineering | PQC, Solana, security, AI, open source |
+| Grants & Scholarships | Students, researchers, builders, community initiatives |
+| Infrastructure | Devices, connectivity, tools, machines, facilities |
+| Emergency & Relief | Disaster, medical or urgent community support |
+| Ecosystem Operations | Security reviews, hosting, developer operations |
+| Reserve | Risk management and future community-approved needs |
+
+Percentages should be set only after governance, legal review, treasury controls and real program budgets exist.
+
+## Rights and Anti-Abuse Rules
+
+SPQC must never be used to:
+
+- purchase or condition public votes;
+- reward party or candidate support;
+- penalize lawful political beliefs;
+- require religious conversion;
+- buy, sell, assign or coerce a spouse or relationship;
+- exploit children or vulnerable people;
+- place sensitive beneficiary information publicly on-chain;
+- guarantee wealth, employment, housing, land, health outcomes, precious metals or other personal results.
+
+Any family-wellbeing or matchmaking-related service must be voluntary, lawful, adult and based on explicit consent. People are never tokenized assets.
+
+## Financial-Risk Principles
+
+SPQC is experimental token infrastructure.
+
+The project does not promise:
+
+- APY or staking yield;
+- token-price appreciation;
+- buybacks;
+- exchange listings;
+- market capitalization targets;
+- liquidity;
+- profit sharing;
+- guaranteed returns.
+
+Any future staking, sale, liquidity, fundraising, treasury or exchange activity requires separate technical implementation and legal review.
+
+## Impact Measurement
+
+Human development should be measured by outcomes rather than token price.
+
+Potential metrics:
+
+- scholarships funded;
+- people trained;
+- jobs or apprenticeships facilitated;
+- businesses or livelihood projects supported;
+- health interventions funded;
+- meals or nutrition packages delivered;
+- shelter or housing support delivered;
+- devices or tools distributed;
+- research grants funded;
+- community assets created;
+- percentage of treasury reaching beneficiaries;
+- administrative-cost ratio;
+- beneficiary feedback and grievance resolution;
+- independent audit results.
+
+## Technical Note on Supply
+
+With 9 decimals, all mint amounts are expressed in raw base units. Solana SPL Token supply fields use unsigned 64-bit integer accounting. Therefore issuance software must guard against raw-unit overflow even though the project itself has no fixed application-level supply cap.
+
+## Related Documents
+
+- [Core Purpose](../CORE_PURPOSE.md)
+- [White Paper](../WHITEPAPER.md)
+- [Security Policy](../SECURITY.md)
+- [Repository](https://github.com/elon00/scstobcminority-ai)
 
 ---
 
-**Last Updated**: October 2, 2024  
-**Version**: 1.0.0
+**Version:** 2.0  
+**Last updated:** September 23, 2026

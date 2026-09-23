@@ -1,0 +1,206 @@
+name: Deploy SCSTOBCMinority AI to Solana Testnet
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths:
+      - "programs/**"
+      - "scripts/initialize-testnet.mjs"
+      - "Anchor.toml"
+      - "Cargo.toml"
+      - "sdk/rust/Cargo.toml"
+      - ".github/workflows/deploy-testnet.yml"
+      - "TESTNET_DEPLOYMENT.md"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scstobcminority-ai-testnet-v3
+  cancel-in-progress: true
+
+env:
+  PROJECT_AUTHORITY: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
+  ANCHOR_PROVIDER_URL: ${{ secrets.SOLANA_TESTNET_RPC_URL || 'https://api.testnet.solana.com' }}
+  SOLANA_URL: ${{ secrets.SOLANA_TESTNET_RPC_URL || 'https://api.testnet.solana.com' }}
+  TESTNET_DEPLOYER_KEYPAIR_B64: ${{ secrets.TESTNET_DEPLOYER_KEYPAIR_B64 }}
+  RUSTUP_HOME: /root/.rustup
+  CARGO_HOME: /root/.cargo
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-testnet]')
+    runs-on: ubuntu-latest
+    container:
+      image: backpackapp/build:v0.29.0
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify pinned toolchain
+        run: |
+          anchor --version
+          solana --version
+          rustc --version
+          node --version
+
+      - name: Configure Testnet deployer
+        run: |
+          mkdir -p "$HOME/.config/solana"
+          if [ -n "${TESTNET_DEPLOYER_KEYPAIR_B64:-}" ]; then
+            echo "$TESTNET_DEPLOYER_KEYPAIR_B64" | base64 -d > "$HOME/.config/solana/id.json"
+            chmod 600 "$HOME/.config/solana/id.json"
+            echo "Using funded deployer from GitHub Actions secret."
+          else
+            solana-keygen new --no-bip39-passphrase --silent --force --outfile "$HOME/.config/solana/id.json"
+            echo "Using ephemeral Testnet deployer; faucet funding will be attempted."
+          fi
+          solana config set --url "$SOLANA_URL"
+          solana config set --keypair "$HOME/.config/solana/id.json"
+          echo "ANCHOR_WALLET=$HOME/.config/solana/id.json" >> "$GITHUB_ENV"
+          echo "Testnet payer: $(solana address)"
+
+      # On-chain workspace intentionally excludes sdk/rust.
+      - name: Generate Solana SBF-compatible dependency lock
+        run: |
+          rustup toolchain install 1.85.0 --profile minimal
+          rm -f Cargo.lock
+          CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo +1.85.0 generate-lockfile
+          head -n 5 Cargo.lock
+          CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS=fallback cargo +1.85.0 metadata --locked --no-deps >/dev/null
+          echo "Lockfile generated locally for the deployment run; branch writes are deferred until verified on-chain success."
+
+      - name: Build and synchronize program IDs
+        run: |
+          anchor build
+          anchor keys sync
+          anchor build
+          echo "QUANTUM_CUSTODY_PROGRAM_ID=$(solana address -k target/deploy/quantum_custody-keypair.json)" >> "$GITHUB_ENV"
+          echo "SPQC_TOKEN_PROGRAM_ID=$(solana address -k target/deploy/scstobcminority_ai_token-keypair.json)" >> "$GITHUB_ENV"
+
+      - name: Ensure Testnet payer funding
+        run: |
+          if [ -z "${TESTNET_DEPLOYER_KEYPAIR_B64:-}" ]; then
+            set +e
+            for i in 1 2 3 4 5 6 7 8; do
+              solana airdrop 1 "$(solana address)" --url "$SOLANA_URL"
+              sleep 3
+            done
+            set -e
+          fi
+          BALANCE_SOL="$(solana balance --url "$SOLANA_URL" | awk '{print $1}')"
+          echo "Payer balance: $BALANCE_SOL SOL"
+          node -e 'const b=Number(process.argv[1]); if (!Number.isFinite(b) || b <= 0) { console.error("No Testnet SOL available. Configure TESTNET_DEPLOYER_KEYPAIR_B64 with a funded Testnet-only signer or use a Testnet faucet."); process.exit(1); }' "$BALANCE_SOL"
+
+      - name: Deploy programs to Solana Testnet
+        run: |
+          anchor deploy --provider.cluster testnet
+          solana program show "$QUANTUM_CUSTODY_PROGRAM_ID" --url "$SOLANA_URL"
+          solana program show "$SPQC_TOKEN_PROGRAM_ID" --url "$SOLANA_URL"
+
+      - name: Install initialization client
+        run: npm install --no-save --ignore-scripts @coral-xyz/anchor@0.29.0
+
+      - name: Initialize custody and uncapped SPQC mint
+        run: |
+          node scripts/initialize-testnet.mjs | tee /tmp/testnet-init.txt
+          grep -E '^[A-Z_]+=[A-Za-z0-9]+$' /tmp/testnet-init.txt >> "$GITHUB_ENV"
+
+      - name: Transfer program upgrade authority to project owner
+        run: |
+          solana program set-upgrade-authority "$QUANTUM_CUSTODY_PROGRAM_ID" --new-upgrade-authority "$PROJECT_AUTHORITY" --skip-new-upgrade-authority-signer-check --url "$SOLANA_URL"
+          solana program set-upgrade-authority "$SPQC_TOKEN_PROGRAM_ID" --new-upgrade-authority "$PROJECT_AUTHORITY" --skip-new-upgrade-authority-signer-check --url "$SOLANA_URL"
+
+      - name: Verify final on-chain Testnet state
+        run: |
+          solana program show "$QUANTUM_CUSTODY_PROGRAM_ID" --url "$SOLANA_URL" | tee /tmp/custody-program.txt
+          solana program show "$SPQC_TOKEN_PROGRAM_ID" --url "$SOLANA_URL" | tee /tmp/token-program.txt
+          solana account "$SPQC_MINT" --url "$SOLANA_URL" | tee /tmp/spqc-mint.txt
+
+      - name: Write verified Testnet deployment record
+        run: |
+          cat > TESTNET_DEPLOYMENT.md <<EOF
+          # SCSTOBCMinority AI — Solana Testnet Deployment
+
+          **Status:** VERIFIED ON-CHAIN
+          **Network:** Solana Testnet
+          **RPC:** https://api.testnet.solana.com
+          **Project authority:** $PROJECT_AUTHORITY
+
+          ## On-chain identifiers
+
+          - **Quantum Custody Program:** `$QUANTUM_CUSTODY_PROGRAM_ID`
+          - **SCSTOBCMinority AI Token Program:** `$SPQC_TOKEN_PROGRAM_ID`
+          - **SPQC Mint:** `$SPQC_MINT`
+          - **Token Info PDA:** `$SPQC_TOKEN_INFO`
+          - **Custody Global State PDA:** `$QUANTUM_CUSTODY_GLOBAL_STATE`
+
+          ## Initialization transactions
+
+          - **Custody initialization signature:** `$CUSTODY_INITIALIZE_SIGNATURE`
+          - **Token initialization signature:** `$TOKEN_INITIALIZE_SIGNATURE`
+
+          ## Supply policy
+
+          SPQC uses uncapped application-level minting. SPL Token raw supply remains technically bounded by Solana's `u64` accounting.
+
+          ## Deployment policy
+
+          Mainnet deployment is intentionally deferred until Testnet verification, security review, and release-readiness checks are complete.
+
+          Generated and verified by GitHub Actions on `$(date -u +"%Y-%m-%dT%H:%M:%SZ")`.
+          EOF
+
+      - name: Write synchronized machine deployment config
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const payload = {
+            status: "verified",
+            network: "testnet",
+            quantumCustodyProgramId: process.env.QUANTUM_CUSTODY_PROGRAM_ID,
+            spqcTokenProgramId: process.env.SPQC_TOKEN_PROGRAM_ID,
+            spqcMint: process.env.SPQC_MINT,
+            tokenInfoPda: process.env.SPQC_TOKEN_INFO,
+            custodyGlobalStatePda: process.env.QUANTUM_CUSTODY_GLOBAL_STATE,
+            custodyInitializeSignature: process.env.CUSTODY_INITIALIZE_SIGNATURE,
+            tokenInitializeSignature: process.env.TOKEN_INITIALIZE_SIGNATURE,
+            verifiedAt: new Date().toISOString()
+          };
+          const content = JSON.stringify(payload, null, 2) + "\n";
+          fs.writeFileSync("backend/testnet-deployment.json", content);
+          fs.mkdirSync("app/public", { recursive: true });
+          fs.writeFileSync("app/public/testnet-deployment.json", content);
+          NODE
+
+      - name: Commit verified deployment record
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" config user.name "github-actions[bot]"
+          git -C "$GITHUB_WORKSPACE" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$GITHUB_WORKSPACE" add             Cargo.lock             Anchor.toml             programs/quantum-custody/src/lib.rs             programs/token/src/lib.rs             TESTNET_DEPLOYMENT.md             backend/testnet-deployment.json             app/public/testnet-deployment.json
+          git -C "$GITHUB_WORKSPACE" commit -m "chore(testnet): record verified deployment evidence"
+          git -C "$GITHUB_WORKSPACE" pull --rebase origin master
+          git -C "$GITHUB_WORKSPACE" push origin HEAD:master
+
+      - name: Publish deployment summary
+        run: |
+          {
+            echo "## SCSTOBCMinority AI - Solana Testnet Deployment"
+            echo
+            echo "- Network: Testnet"
+            echo "- Quantum Custody Program: $QUANTUM_CUSTODY_PROGRAM_ID"
+            echo "- Token Program: $SPQC_TOKEN_PROGRAM_ID"
+            echo "- SPQC Mint: $SPQC_MINT"
+            echo "- Token Info PDA: $SPQC_TOKEN_INFO"
+            echo "- Custody Global State PDA: $QUANTUM_CUSTODY_GLOBAL_STATE"
+            echo "- Custody init signature: $CUSTODY_INITIALIZE_SIGNATURE"
+            echo "- Token init signature: $TOKEN_INITIALIZE_SIGNATURE"
+            echo
+            echo "Mainnet was not touched."
+          } >> "$GITHUB_STEP_SUMMARY"

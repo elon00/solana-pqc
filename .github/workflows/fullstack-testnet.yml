@@ -1,0 +1,107 @@
+name: One-Click Full Stack Testnet
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  backend:
+    name: Backend verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - run: npm ci
+        working-directory: backend
+      - run: npm run check && npm test
+        working-directory: backend
+      - name: Verify backend against Solana Testnet
+        working-directory: backend
+        env:
+          SOLANA_RPC_URL: https://api.testnet.solana.com
+          API_PORT: 3001
+        run: |
+          npm start >/tmp/backend.log 2>&1 &
+          echo $! >/tmp/backend.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:3001/health | tee /tmp/health.json; then
+              kill "$(cat /tmp/backend.pid)" || true
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/backend.log
+          kill "$(cat /tmp/backend.pid)" || true
+          exit 1
+
+  frontend:
+    name: Frontend Testnet verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+        working-directory: app
+      - name: Build synchronized Testnet frontend
+        working-directory: app
+        env:
+          VITE_SOLANA_NETWORK: testnet
+          VITE_SOLANA_RPC_URL: https://api.testnet.solana.com
+          VITE_API_BASE_URL: ${{ vars.TESTNET_BACKEND_URL }}
+        run: npm run build
+
+  chain:
+    name: Solana Testnet deployment
+    needs: [backend, frontend]
+    uses: ./.github/workflows/deploy-testnet.yml
+    secrets: inherit
+
+  verify:
+    name: End-to-end evidence gate
+    needs: [backend, frontend, chain]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+      - name: Verify on-chain deployment record
+        run: |
+          git pull --ff-only origin master
+          test -f TESTNET_DEPLOYMENT.md
+          grep -q "VERIFIED ON-CHAIN" TESTNET_DEPLOYMENT.md
+          grep -q "Quantum Custody Program" TESTNET_DEPLOYMENT.md
+          grep -q "SPQC Mint" TESTNET_DEPLOYMENT.md
+      - name: Verify public backend when configured
+        env:
+          TESTNET_BACKEND_URL: ${{ vars.TESTNET_BACKEND_URL }}
+        run: |
+          if [ -n "$TESTNET_BACKEND_URL" ]; then
+            curl -fsS "$TESTNET_BACKEND_URL/health"
+            curl -fsS "$TESTNET_BACKEND_URL/api/status"
+          else
+            echo "::warning::TESTNET_BACKEND_URL is not configured. Code/CI backend is verified, but public GitHub Pages chat cannot reach it yet."
+          fi
+      - name: Publish system result
+        run: |
+          {
+            echo "## SCSTOBCMinority AI — Full Stack Testnet"
+            echo
+            echo "✅ Backend syntax/tests"
+            echo "✅ Backend Testnet RPC health"
+            echo "✅ Frontend Testnet build"
+            echo "✅ Wallet adapter configured for Testnet"
+            echo "✅ Solana program deployment evidence gate"
+            echo "✅ SPQC mint evidence gate"
+            echo
+            echo "Mainnet remains intentionally disabled."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,17 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Connection, PublicKey, LAMPORTS_PER_SOL, Transaction } from '@solana/web3.js';
-import {
-  RPC_ENDPOINT,
-  CLUSTER_PARAM,
-  NETWORK_LABEL,
-  PROGRAM_ID,
-  DEPLOYER_ADDRESS,
-  APP_NAME,
-  GITHUB_REPO_URL
-} from '../config';
+import { API_BASE_URL, SOLANA_RPC_URL, explorerAccountUrl, explorerTxUrl } from '../config';
+import { Buffer } from 'buffer';
 
 const LandingPage = () => {
   const { connected, publicKey, sendTransaction } = useWallet();
@@ -23,9 +16,10 @@ const LandingPage = () => {
   const [showDeploymentGuide, setShowDeploymentGuide] = useState(false);
   const [transactionHistory, setTransactionHistory] = useState<string[]>([]);
   const [showTransactionPanel, setShowTransactionPanel] = useState(false);
+  const [backendSystem, setBackendSystem] = useState<any>(null);
 
   // Initialize Solana connection
-  const connection = new Connection(RPC_ENDPOINT, 'confirmed');
+  const connection = useMemo(() => new Connection(SOLANA_RPC_URL, 'confirmed'), []);
 
   // Check network status and balance
   useEffect(() => {
@@ -57,6 +51,33 @@ const LandingPage = () => {
     return () => clearInterval(interval);
   }, [connected, publicKey, connection]);
 
+  useEffect(() => {
+    let cancelled = false;
+    const loadBackendSystem = async () => {
+      if (!API_BASE_URL) {
+        if (!cancelled) setBackendSystem(null);
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/status`);
+        const data = await response.json();
+        if (!cancelled) setBackendSystem(response.ok ? data : null);
+      } catch {
+        if (!cancelled) setBackendSystem(null);
+      }
+    };
+    loadBackendSystem();
+    const id = window.setInterval(loadBackendSystem, 30000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  const custodyProgram = backendSystem?.programs?.quantumCustody;
+  const tokenProgram = backendSystem?.programs?.spqcToken;
+  const verifiedProgramCount = [custodyProgram, tokenProgram].filter((item) => item?.verified).length;
+
   // Enhanced transaction functionality with multiple transaction types
   const handleTransaction = async (transactionType: string) => {
     if (!connected || !publicKey || !sendTransaction) {
@@ -83,7 +104,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`${APP_NAME} ${transactionType} - ${timestamp} 🚀`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp} 🚀`)
           });
           break;
 
@@ -151,7 +172,7 @@ const LandingPage = () => {
           transaction.add({
             programId: new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'),
             keys: [],
-            data: Buffer.from(`${APP_NAME} ${transactionType} - ${timestamp}`)
+            data: Buffer.from(`SCSTOBCMinority AI ${transactionType} - ${timestamp}`)
           });
       }
 
@@ -161,17 +182,32 @@ const LandingPage = () => {
       const signature = await sendTransaction(transaction, connection);
 
       // Add to transaction history
-      const txUrl = `https://explorer.solana.com/tx/${signature}?cluster=${CLUSTER_PARAM}`;
+      const txUrl = explorerTxUrl(signature);
       const historyEntry = `${timestamp}: ${transactionType} - ${signature.slice(0, 8)}...${signature.slice(-8)}`;
       setTransactionHistory(prev => [historyEntry, ...prev.slice(0, 4)]);
 
       setTransactionStatus(`✅ Transaction sent! Signature: ${signature.slice(0, 8)}...${signature.slice(-8)}`);
       setTransactionStatus(`⏳ Waiting for confirmation...`);
 
-      // Wait for confirmation
+      // Wait for wallet/RPC confirmation.
       await connection.confirmTransaction(signature, 'confirmed');
-      setTransactionStatus(`🎉 Transaction confirmed!`);
-      setTransactionStatus(`🔗 View: ${txUrl}`);
+
+      // Independently mirror the same signature through the backend when configured.
+      if (API_BASE_URL) {
+        try {
+          const verification = await fetch(`${API_BASE_URL}/api/tx/${signature}`);
+          const backendResult = await verification.json();
+          if (verification.ok && backendResult.found && !backendResult.error) {
+            setTransactionStatus(`🎉 Confirmed on Testnet and verified by backend · ${txUrl}`);
+          } else {
+            setTransactionStatus(`⚠️ Wallet RPC confirmed; backend verification pending · ${txUrl}`);
+          }
+        } catch {
+          setTransactionStatus(`✅ Wallet RPC confirmed; backend currently unreachable · ${txUrl}`);
+        }
+      } else {
+        setTransactionStatus(`✅ Testnet transaction confirmed · ${txUrl}`);
+      }
 
     } catch (error: any) {
       if (error.message?.includes('User rejected')) {
@@ -201,7 +237,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">{APP_NAME}</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
@@ -226,8 +262,7 @@ const LandingPage = () => {
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto">
-              Next-generation cryptocurrency custody with military-grade post-quantum cryptography.
-              Secure your digital assets against quantum computing threats.
+              Solana Testnet research wallet with post-quantum cryptography experiments, backend wallet verification, and agentic AI integration.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
@@ -275,7 +310,7 @@ const LandingPage = () => {
                     <h3 className="text-2xl font-semibold text-white">🚀 Transaction Center</h3>
                     <div className="flex items-center space-x-2">
                       <span className={`w-3 h-3 rounded-full ${networkStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                      <span className="text-sm text-gray-400">Solana {NETWORK_LABEL}</span>
+                      <span className="text-sm text-gray-400">Solana Testnet</span>
                     </div>
                   </div>
 
@@ -318,7 +353,7 @@ const LandingPage = () => {
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Network</p>
-                        <p className="text-purple-400 font-semibold">{NETWORK_LABEL}</p>
+                        <p className="text-blue-400 font-semibold">Testnet</p>
                       </div>
                     </div>
                   </div>
@@ -416,7 +451,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">Post-Quantum Cryptography</h3>
                 <p className="text-gray-300">
-                  Military-grade encryption resistant to quantum computing attacks using Kyber, Dilithium, and SPHINCS algorithms.
+                  Post-quantum cryptography research using ML-KEM, ML-DSA and SLH-DSA-family tooling; independent security validation is still required.
                 </p>
               </div>
 
@@ -436,7 +471,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">Multi-Sig Security</h3>
                 <p className="text-gray-300">
-                  Advanced multi-signature wallets with customizable threshold requirements for enhanced security.
+                  Multi-signature treasury controls are a planned security layer and are not represented as production-ready yet.
                 </p>
               </div>
 
@@ -446,7 +481,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">Key Rotation</h3>
                 <p className="text-gray-300">
-                  Automated cryptographic key rotation with zero-downtime security updates and forward secrecy.
+                  Key-rotation research is present in the custody design; production guarantees require independent validation.
                 </p>
               </div>
 
@@ -456,7 +491,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">Real-time Monitoring</h3>
                 <p className="text-gray-300">
-                  Comprehensive dashboard with real-time transaction monitoring and security alerts.
+                  Dashboard monitors wallet and Testnet state; advanced alerting remains a roadmap capability.
                 </p>
               </div>
 
@@ -466,7 +501,7 @@ const LandingPage = () => {
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">Cross-Platform</h3>
                 <p className="text-gray-300">
-                  Seamless experience across web, mobile, and desktop platforms with unified security.
+                  Web interface is implemented; mobile and desktop packaging remain roadmap items.
                 </p>
               </div>
             </div>
@@ -540,7 +575,7 @@ const LandingPage = () => {
                 </div>
                 <div>
                   <h3 className="text-xl font-semibold text-white">GitHub Repository</h3>
-                  <p className="text-gray-400">Solana PQC (SPQC) Protocol</p>
+                  <p className="text-gray-400">elon00/scstobcminority-ai</p>
                 </div>
               </div>
 
@@ -562,7 +597,7 @@ const LandingPage = () => {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href={GITHUB_REPO_URL}
+                href="https://github.com/elon00/scstobcminority-ai"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-gray-800 hover:bg-gray-700 border border-gray-600 px-6 py-3 rounded-lg font-semibold text-white transition-all flex items-center justify-center space-x-2"
@@ -593,18 +628,23 @@ const LandingPage = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-semibold text-purple-400 mb-6">Solana {NETWORK_LABEL} Deployment</h3>
+                <h3 className="text-2xl font-semibold text-purple-400 mb-6">Solana Testnet Deployment</h3>
 
                 <div className="space-y-4">
                   <div className="bg-green-900/20 border border-green-400/30 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-2">
                       <div className={`w-3 h-3 rounded-full ${networkStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                      <span className="text-green-400 font-semibold">Programs Deployed & Active</span>
+                      <span className="text-green-400 font-semibold">On-chain Program Verification</span>
                     </div>
-                    <div className="text-gray-300 text-sm">
-                      Quantum Program: <code className="text-purple-400">{PROGRAM_ID}</code>
-                      <br />
-                      Deployer Authority: <code className="text-blue-400">{DEPLOYER_ADDRESS}</code>
+                    <div className="text-gray-300 text-sm space-y-1">
+                      <div>
+                        Quantum Custody: <code className="text-purple-400">{custodyProgram?.address || 'pending deployment'}</code>
+                        {' · '}{custodyProgram?.verified ? 'verified executable' : 'not yet verified'}
+                      </div>
+                      <div>
+                        Token Program: <code className="text-blue-400">{tokenProgram?.address || 'pending deployment'}</code>
+                        {' · '}{tokenProgram?.verified ? 'verified executable' : 'not yet verified'}
+                      </div>
                     </div>
                   </div>
 
@@ -618,7 +658,7 @@ const LandingPage = () => {
                         {networkStatus === 'connected' ? 'Connected' : 'Disconnected'}
                       </span>
                       <br />
-                      Network: Solana {NETWORK_LABEL}
+                      Network: Solana Testnet · live RPC health only
                     </div>
                   </div>
 
@@ -628,11 +668,11 @@ const LandingPage = () => {
                       <span className="text-purple-400 font-semibold">Transaction Ready</span>
                     </div>
                     <div className="text-gray-300 text-sm">
-                      ✅ Multi-signature support
+                      ✅ Wallet signing remains client-side
                       <br />
-                      ✅ Quantum-resistant encryption (NIST FIPS 203/204)
+                      ✅ Backend independently checks Testnet transactions
                       <br />
-                      ✅ Real-time verification on {NETWORK_LABEL}
+                      {verifiedProgramCount === 2 ? '✅ Programs verified on-chain' : '⚠️ Program deployment still pending'}
                     </div>
                   </div>
 
@@ -642,30 +682,30 @@ const LandingPage = () => {
                       <span className="text-orange-400 font-semibold">Live Testing</span>
                     </div>
                     <div className="text-gray-300 text-sm">
-                      Click "Send Memo" or "Check Balance" above to interact directly with Solana {NETWORK_LABEL}
+                      Click "Test Transaction" above to check deployment status and simulate blockchain interaction
                     </div>
                   </div>
 
-                  <div className="bg-green-900/20 border border-green-400/30 rounded-lg p-4">
+                  <div className="bg-red-900/20 border border-red-400/30 rounded-lg p-4">
                     <div className="flex items-center space-x-3 mb-2">
-                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                      <span className="text-green-400 font-semibold">Contract Verified on {NETWORK_LABEL}</span>
+                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="text-red-400 font-semibold">Deployment Required</span>
                     </div>
                     <div className="text-gray-300 text-sm mb-3">
-                      Solana PQC smart contracts are deployed and verified on Solana {NETWORK_LABEL}.
+                      Solana programs must be verified on Testnet before program-specific transactions are treated as active.
                     </div>
                     <div className="space-y-2">
                       <button
-                        onClick={() => window.open(`${GITHUB_REPO_URL}/actions`, '_blank')}
+                        onClick={() => window.open('https://github.com/elon00/scstobcminority-ai/actions', '_blank')}
                         className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 px-3 rounded-lg text-sm font-semibold text-white transition-all"
                       >
-                        🚀 View CI/CD Workflows
+                        🚀 Deploy via GitHub Actions (Automated)
                       </button>
                       <button
                         onClick={() => setShowDeploymentGuide(!showDeploymentGuide)}
                         className="w-full bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 py-2 px-3 rounded-lg text-sm font-semibold text-white transition-all"
                       >
-                        🔧 Deployment Details
+                        🔧 Manual Deployment (Advanced)
                       </button>
                     </div>
                   </div>
@@ -678,7 +718,7 @@ const LandingPage = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-purple-900/30 rounded-lg">
                     <span className="text-gray-300">Network:</span>
-                    <span className="text-purple-400 font-semibold">Solana {NETWORK_LABEL}</span>
+                    <span className="text-purple-400 font-semibold">Solana Testnet</span>
                   </div>
 
                   <div className="flex items-center justify-between p-3 bg-blue-900/30 rounded-lg">
@@ -693,29 +733,18 @@ const LandingPage = () => {
 
                   <div className="flex items-center justify-between p-3 bg-yellow-900/30 rounded-lg">
                     <span className="text-gray-300">Programs:</span>
-                    <span className="text-yellow-400 font-semibold">Active Deployed</span>
+                    <span className="text-yellow-400 font-semibold">{verifiedProgramCount}/2 Verified</span>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-gray-700 flex flex-col sm:flex-row gap-3">
+                <div className="mt-6 pt-6 border-t border-gray-700">
                   <a
-                    href={`https://explorer.solana.com/address/${PROGRAM_ID}?cluster=${CLUSTER_PARAM}`}
+                    href={custodyProgram?.address ? explorerAccountUrl(custodyProgram.address) : 'https://github.com/elon00/scstobcminority-ai/actions'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-3 px-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center space-x-2"
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 py-3 px-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center space-x-2"
                   >
-                    <span>Solana Explorer</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                  <a
-                    href={`https://solscan.io/account/${PROGRAM_ID}?cluster=${CLUSTER_PARAM}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 bg-gray-800 hover:bg-gray-700 border border-gray-600 py-3 px-4 rounded-lg font-semibold text-white transition-all flex items-center justify-center space-x-2"
-                  >
-                    <span>View on Solscan</span>
+                    <span>{custodyProgram?.address ? 'View Custody Program on Explorer' : 'Open Deployment Pipeline'}</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
@@ -749,10 +778,10 @@ const LandingPage = () => {
                     <div className="space-y-2 text-gray-300 text-sm">
                       <p>✅ Fully automated deployment</p>
                       <p>✅ No local setup required</p>
-                      <p>✅ Production-ready pipeline</p>
+                      <p>✅ Evidence-gated Testnet pipeline</p>
                     </div>
                     <button
-                      onClick={() => window.open(`${GITHUB_REPO_URL}/actions`, '_blank')}
+                      onClick={() => window.open('https://github.com/elon00/scstobcminority-ai/actions', '_blank')}
                       className="mt-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 py-2 px-4 rounded-lg text-sm font-semibold text-white transition-all"
                     >
                       Open GitHub Actions →
@@ -766,7 +795,7 @@ const LandingPage = () => {
                         <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold mt-0.5">1</div>
                         <div>
                           <p className="font-semibold">Install Dependencies</p>
-                          <p>npm install -g @coral-xyz/anchor-cli</p>
+                          <p>npm install -g @project-serum/anchor-cli</p>
                         </div>
                       </div>
                       <div className="flex items-start space-x-3">
@@ -779,23 +808,23 @@ const LandingPage = () => {
                       <div className="flex items-start space-x-3">
                         <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold mt-0.5">3</div>
                         <div>
-                          <p className="font-semibold">Deploy to {NETWORK_LABEL}</p>
-                          <p>anchor deploy --provider.cluster {CLUSTER_PARAM}</p>
+                          <p className="font-semibold">Deploy to Testnet</p>
+                          <p>anchor deploy --provider.cluster testnet</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div className="bg-green-900/20 border border-green-400/30 rounded-lg p-4">
-                    <h3 className="text-lg font-semibold text-green-400 mb-3">Deployed On-Chain Contracts ({NETWORK_LABEL})</h3>
+                    <h3 className="text-lg font-semibold text-green-400 mb-3">Expected Results After Deployment</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                       <div>
                         <p className="text-green-400 font-semibold">✅ Quantum Custody Program</p>
-                        <p className="text-gray-400 font-mono text-xs">Program ID: {PROGRAM_ID}</p>
+                        <p className="text-gray-400">Program ID is recorded only after verified Testnet deployment</p>
                       </div>
                       <div>
-                        <p className="text-green-400 font-semibold">✅ Deployer Authority</p>
-                        <p className="text-gray-400 font-mono text-xs">Address: {DEPLOYER_ADDRESS}</p>
+                        <p className="text-green-400 font-semibold">✅ Token Program</p>
+                        <p className="text-gray-400">Program ID is recorded only after verified Testnet deployment</p>
                       </div>
                     </div>
                   </div>
@@ -814,7 +843,7 @@ const LandingPage = () => {
               <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">SP</span>
               </div>
-              <span className="text-white font-bold text-xl">{APP_NAME}</span>
+              <span className="text-white font-bold text-xl">SCSTOBCMinority AI</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
@@ -839,7 +868,7 @@ const LandingPage = () => {
               <div>
                 <h5 className="text-white font-semibold mb-3">Community</h5>
                 <ul className="space-y-2 text-gray-400">
-                  <li><a href={GITHUB_REPO_URL} className="hover:text-purple-400 transition-colors">GitHub</a></li>
+                  <li><a href="https://github.com/elon00/scstobcminority-ai" className="hover:text-purple-400 transition-colors">GitHub</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Discord</a></li>
                   <li><a href="#" className="hover:text-purple-400 transition-colors">Twitter</a></li>
                 </ul>
@@ -857,7 +886,7 @@ const LandingPage = () => {
 
             <div className="border-t border-gray-800 pt-8">
               <p className="text-gray-400">
-                © 2026 {APP_NAME}. Built with post-quantum security for the future of blockchain.
+                © 2024 SCSTOBCMinority AI. Built with post-quantum security for the future of blockchain.
               </p>
             </div>
           </div>

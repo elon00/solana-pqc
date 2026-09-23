@@ -1,265 +1,185 @@
-# 🎉 SCSTOBCMinority AI Project - Complete Summary
+# SCSTOBCMinority AI — Project Summary
 
-## 📊 Project Status: PRODUCTION READY ✅
+## Current Status
 
-**Repository**: https://github.com/elon00/scstobcminority-ai  
-**Total Files**: 50+  
-**Total Commits**: 6  
-**Status**: Live on GitHub  
+**Stage:** Research prototype / Devnet-oriented development  
+**Repository:** https://github.com/elon00/scstobcminority-ai  
+**Web app:** https://elon00.github.io/scstobcminority-ai/  
+**Token:** SPQC  
+**Supply model:** Uncapped at the application layer; SPL Token raw supply remains bounded by Solana's `u64` accounting.
 
----
-
-## 🏗️ What's Been Built
-
-### ✅ Core Infrastructure (100% Complete)
-
-#### 1. Solana Programs (Rust)
-- **Quantum Custody Program** - NIST PQC implementation
-  - Vault creation with 10 algorithms
-  - Transaction signing
-  - Automated key rotation
-  - Compliance tracking
-  - Event emission
-
-- **Token Program (SPQC)** - 2.1 Quadrillion supply
-  - Minting & burning
-  - Quantum-safe transfers
-  - Vesting schedules
-  - Pause functionality
-
-#### 2. Rust SDK
-- **NIST FIPS 203** (ML-KEM/Kyber) - Key encapsulation
-- **NIST FIPS 204** (ML-DSA/Dilithium) - Digital signatures
-- **NIST FIPS 205** (SLH-DSA/SPHINCS+) - Hash-based signatures
-- Vault management
-- Transaction signing
-- Compliance reporting
-
-#### 3. TypeScript SDK
-- Web3 integration
-- Wallet adapter support
-- Type-safe APIs
-- Client library
-- Crypto utilities
-
-#### 4. React dApp
-- Modern UI with Tailwind CSS
-- Wallet integration (Phantom, Solflare)
-- Dashboard with stats
-- Quantum readiness display
-- Security features showcase
-
-### ✅ Documentation (100% Complete)
-
-1. **README.md** - Project overview
-2. **WHITEPAPER.md** - 50+ page technical whitepaper
-3. **SECURITY_AUDIT.md** - Security assessment
-4. **TOKENOMICS.md** - Token economics
-5. **CONTRIBUTING.md** - Contribution guidelines
-6. **CODE_OF_CONDUCT.md** - Community standards
-7. **SECURITY.md** - Security policy
-
-### ✅ GitHub Infrastructure (100% Complete)
-
-1. **CI/CD Workflow** - Automated testing
-2. **Issue Templates** - Bug reports & features
-3. **PR Template** - Pull request guidelines
-4. **License** - MIT License
-5. **Gitignore** - Proper exclusions
-
-### ✅ Deployment Scripts (100% Complete)
-
-1. **deploy-all.sh** - Complete deployment automation
-2. **test-wallet.ts** - Wallet testing script
+The repository contains substantive Solana, Rust, TypeScript, React and post-quantum-cryptography research components, but it should not be represented as independently audited, fully production-ready, legally compliant in every jurisdiction, or guaranteed to deliver financial returns.
 
 ---
 
-## 🪙 Token Details
+## Core Mission
 
-**Name**: SCSTOBCMinority AI  
-**Symbol**: SPQC  
-**Total Supply**: 2,100,000,000,000,000 (2.1 Quadrillion)  
-**Decimals**: 9  
-**Your Wallet**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg  
-**Your Allocation**: 315 Trillion (15% - Team vesting)
+SCSTOBCMinority AI combines quantum-safe blockchain research with a human-development mission focused on dignity, opportunity and upliftment for **SC, ST, OBC, minority and other underserved communities**.
 
-### Distribution
-- Public Sale: 30% (630T)
-- Ecosystem: 25% (525T)
-- Team: 15% (315T) - **YOUR ALLOCATION**
-- Partners: 10% (210T)
-- Liquidity: 10% (210T)
-- Community: 5% (105T)
-- Reserve: 5% (105T)
+Guiding values:
+
+**Love · Peace · Joy · Harmony · Truth · Charity · Unity · Equality · Dignity · Liberty · Consent · Knowledge · Service · Justice**
+
+Potential future community programs include education, scholarships, health, nutrition, housing support, jobs, livelihoods, entrepreneurship, financial literacy, productive assets, technology access, scientific learning, charitable grants, agriculture, community infrastructure and other lawful human-development initiatives.
+
+See:
+
+- [Core Purpose](./CORE_PURPOSE.md)
+- [White Paper](./WHITEPAPER.md)
+- [Tokenomics](./docs/TOKENOMICS.md)
 
 ---
 
-## 🌐 Global Standards Compliance
+## Technology Present in the Repository
 
-### Financial Standards
-✅ **ISO 20022** - International financial messaging  
-✅ **SWIFT gpi** - Global payments (planned)
+### Solana / Rust
 
-### Securities Regulations
-✅ **Reg D/Reg S** (USA)  
-✅ **MiCA** (EU)  
-✅ **MAS** (Singapore)  
-✅ **FINMA** (Switzerland)
+- Anchor-based Solana programs
+- Quantum custody program
+- SCSTOBCMinority AI token program
+- SPL Token integration
+- PDA-based account patterns
+- Devnet deployment automation
 
-### AML/CTF
-✅ **FATF Travel Rule**  
-✅ **Sanctions Screening** (OFAC, UN, EU)  
-✅ **KYC/AML** procedures
+### Post-Quantum Cryptography Research
 
-### Data Protection
-✅ **GDPR** (EU)  
-✅ **CCPA** (California)
+Repository code and evidence tooling cover research around:
 
-### Cross-Chain
-✅ **ERC-20 Bridge** - Ethereum/BSC/Polygon  
-✅ **Wormhole Protocol**  
-✅ **LayerZero**
+- ML-KEM / Kyber-family tooling
+- ML-DSA / Dilithium-family tooling
+- SLH-DSA / SPHINCS+-family tooling
+- hybrid Ed25519 + PQC concepts
 
----
+Independent cryptographic review is still required before production-security claims.
 
-## 🚀 Deployment Instructions
+### SDKs
 
-### 1. Install Dependencies
+- TypeScript SDK
+- Rust SDK
+- Solana client and vault utilities
+- crypto-related utilities and tests
 
-```bash
-cd scstobcminority-ai
-npm install
-cd sdk/typescript && npm install && cd ../..
-cd app && npm install && cd ..
-```
+### Web Application
 
-### 2. Build Programs
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Phantom wallet adapter
+- Solflare wallet adapter
+- GitHub Pages deployment
 
-```bash
-anchor build
-```
+### CI/CD
 
-### 3. Deploy to Solana Devnet
-
-```bash
-anchor deploy --provider.cluster devnet
-```
-
-### 4. Test Your Wallet
-
-```bash
-npx ts-node scripts/test-wallet.ts
-```
-
-### 5. Start dApp
-
-```bash
-cd app
-npm run dev
-```
+- GitHub Actions
+- frontend build checks
+- Rust checks/tests
+- Devnet deployment workflow
+- GitHub Pages workflow
 
 ---
 
-## 📈 Project Statistics
+## SPQC Token
 
-- **Total Lines of Code**: 5,000+
-- **Programming Languages**: Rust, TypeScript, JavaScript
-- **Frameworks**: Anchor, React, Vite
-- **Cryptographic Algorithms**: 10 (NIST PQC)
-- **Documentation Pages**: 7
-- **Test Coverage**: In progress
-- **Security Audits**: Scheduled Q4 2024
+### Current Technical Model
 
----
+- Symbol: **SPQC**
+- Decimals: **9**
+- Supply policy: **uncapped at the application layer**
+- Authority-controlled minting
+- Current token paths: initialize, mint, burn, transfer
+- SPL Token raw accounting ceiling: `u64`
 
-## 🎯 Next Steps
+### Intended Future Utility
 
-### Immediate (This Week)
-1. ✅ Install dependencies: `npm install`
-2. ✅ Build programs: `anchor build`
-3. ✅ Deploy to devnet: `anchor deploy --provider.cluster devnet`
-4. ✅ Test wallet: `npx ts-node scripts/test-wallet.ts`
-5. ✅ Start dApp: `cd app && npm run dev`
+Subject to implementation, governance and legal review, SPQC may support:
 
-### Short Term (This Month)
-1. 🔄 Complete test suites
-2. 🔄 Security audit (CertiK, Trail of Bits)
-3. 🔄 Deploy to mainnet
-4. 🔄 List on DEXs (Raydium, Orca)
-5. 🔄 Launch bug bounty program
+- community grants;
+- scholarships;
+- education and skills programs;
+- health and nutrition programs;
+- housing support;
+- livelihoods and entrepreneurship;
+- technology and productive assets;
+- open-source and scientific research;
+- accountable community treasuries.
 
-### Long Term (Q1 2025)
-1. 🔄 CEX listings (Binance, Coinbase)
-2. 🔄 Cross-chain bridge launch
-3. 🔄 DeFi integrations
-4. 🔄 Enterprise partnerships
-5. 🔄 Mobile app
+The token must not be used to buy public votes, condition aid on political or religious allegiance, coerce relationships, or promise guaranteed personal or investment outcomes.
 
 ---
 
-## 🏆 Key Achievements
+## Implemented vs Planned
 
-1. ✅ **First quantum-safe custody on Solana**
-2. ✅ **Complete NIST FIPS 203/204/205 implementation**
-3. ✅ **2.1 quadrillion token supply**
-4. ✅ **Professional documentation (50+ pages)**
-5. ✅ **Global standards compliance**
-6. ✅ **Modern React dApp**
-7. ✅ **Comprehensive SDKs (Rust + TypeScript)**
-8. ✅ **Live on GitHub**
+### Implemented / Present
 
----
+- Solana Anchor programs
+- SPL Token integration
+- uncapped application-level mint model
+- Rust SDK
+- TypeScript SDK
+- PQC research code
+- React/Vite web app
+- Phantom/Solflare provider support
+- GitHub CI/CD
+- GitHub Pages
 
-## 📞 Resources
+### Prototype / Requires Validation
 
-### Links
-- **GitHub**: https://github.com/elon00/scstobcminority-ai
-- **Whitepaper**: [WHITEPAPER.md](./WHITEPAPER.md)
-- **Documentation**: [docs/](./docs/)
-- **Security**: [SECURITY.md](./SECURITY.md)
+- end-to-end PQC security
+- hybrid cryptographic guarantees
+- production deployment hardening
+- token economic controls
+- community treasury architecture
 
-### Commands
-```bash
-# Clone repository
-git clone https://github.com/elon00/scstobcminority-ai.git
+### Implemented Application Integration
 
-# Install & build
-npm install && anchor build
+- Testnet Node backend API
+- AI agent intent routing with live chain grounding
+- multi-model provider router (OpenAI-compatible / Anthropic / Gemini when credentials are configured)
+- deterministic local safe fallback model
+- wallet/account/transaction/program verification endpoints
+- Ed25519 wallet ownership verification through signMessage
+- short-lived backend wallet sessions
+- frontend ↔ backend wallet state synchronization
+- one-click Docker Compose Testnet stack
 
-# Deploy
-anchor deploy --provider.cluster devnet
+### Planned / Not Yet Complete
 
-# Run dApp
-cd app && npm run dev
-```
-
-### Your Wallet
-- **Address**: 8QrEi46qwx1hxZBa9RGvxh4FrAK2rsG6BmRT1xV9qMWg
-- **Network**: Devnet
-- **Allocation**: 315 Trillion SPQC (15%)
-- **Vesting**: 4 years with 1 year cliff
-
----
-
-## 🎉 Congratulations!
-
-You now have a **complete, production-ready, quantum-safe custody protocol** with:
-
-✅ Solana programs (Quantum Custody + Token)  
-✅ Rust SDK with NIST PQC  
-✅ TypeScript SDK for Web3  
-✅ Modern React dApp  
-✅ Comprehensive documentation  
-✅ Global standards compliance  
-✅ GitHub repository with CI/CD  
-✅ Deployment scripts  
-✅ Security audit framework  
-
-**Everything is live on GitHub and ready for deployment!** 🚀
+- simultaneous multi-wallet orchestration
+- staking and yield systems
+- cross-chain bridges
+- formal community governance
+- Conway automaton integration
+- broader Web4 architecture
+- large-scale beneficiary-distribution systems
+- independent security audit
 
 ---
 
-**Created**: October 2, 2024  
-**Version**: 0.1.0  
-**Status**: Production Ready  
-**Repository**: https://github.com/elon00/scstobcminority-ai
+## Safety and Rights Principles
+
+- Human dignity is not token-weighted.
+- Public political rights cannot be bought with SPQC.
+- Assistance cannot be conditioned on party support or voting behavior.
+- Religious or spiritual participation must remain voluntary.
+- Marriage and relationships require lawful adult consent; people can never be tokenized or allocated.
+- Sensitive beneficiary information should not be written publicly on-chain.
+- No guaranteed wealth, job, housing, land, precious metals, health outcome, relationship, blessing or supernatural result is promised.
+
+---
+
+## Immediate Technical Priorities
+
+1. Verify Devnet deployment state and publish real on-chain program IDs/signatures.
+2. Keep CI green and reproducible.
+3. Complete independent smart-contract and cryptographic review.
+4. Add treasury/mint-authority safeguards before any significant issuance.
+5. Build measurable community-program pilots with qualified partners.
+6. Add AI or governance modules only when code, tests and safeguards exist.
+7. Keep documentation synchronized with actual implementation.
+
+---
+
+**Version:** 2.0  
+**Last updated:** September 23, 2026

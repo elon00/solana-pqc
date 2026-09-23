@@ -1,7 +1,7 @@
 {
   "name": "scstobcminority-ai",
   "version": "0.1.0",
-  "description": "SCSTOBCMinority AI — quantum-safe Solana custody and transaction research prototype with an uncapped SPQC mint policy and wallet-enabled web app.",
+  "description": "SCSTOBCMinority AI — quantum-safe Solana research infrastructure and SPQC community-utility token prototype for transparent, rights-respecting human-development programs.",
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
@@ -11,17 +11,19 @@
     "reality:universal": "npx tsx scripts/reality-universal.ts",
     "reality:certify": "npx tsx scripts/generate-urs-certificate.ts",
     "deploy:devnet": "anchor deploy --provider.cluster devnet",
-    "deploy:testnet": "anchor deploy --provider.cluster testnet",
     "deploy:mainnet": "anchor deploy --provider.cluster mainnet",
     "initialize:devnet": "ts-node scripts/initialize.ts --cluster devnet",
-    "initialize:testnet": "ts-node scripts/initialize.ts --cluster testnet",
     "initialize:mainnet": "ts-node scripts/initialize.ts --cluster mainnet",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
     "app:dev": "cd app && npm run dev",
     "app:build": "cd app && npm run build",
     "sdk:build": "cd sdk/typescript && npm run build",
-    "docs": "typedoc --out docs/api sdk/typescript/src"
+    "docs": "typedoc --out docs/api sdk/typescript/src",
+    "testnet:backend": "cd backend && npm ci && npm run check && npm test",
+    "testnet:frontend": "cd app && npm ci && npm run build",
+    "testnet:stack": "docker compose -f docker-compose.testnet.yml up --build",
+    "testnet:stack:down": "docker compose -f docker-compose.testnet.yml down --remove-orphans"
   },
   "keywords": [
     "solana",

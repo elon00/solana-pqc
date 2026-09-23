@@ -1,4 +1,4 @@
-name: Deploy Solana PQC Web to GitHub Pages
+name: Deploy SCSTOBCMinority AI Web to GitHub Pages
 
 on:
   push:
@@ -35,8 +35,12 @@ jobs:
         working-directory: app
         run: npm ci
 
-      - name: Build web app
+      - name: Build Testnet web app
         working-directory: app
+        env:
+          VITE_SOLANA_NETWORK: testnet
+          VITE_SOLANA_RPC_URL: https://api.testnet.solana.com
+          VITE_API_BASE_URL: ${{ vars.TESTNET_BACKEND_URL }}
         run: npm run build
 
       - name: Configure GitHub Pages

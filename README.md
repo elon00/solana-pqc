@@ -14,9 +14,25 @@
 
 - **Web App**: https://elon00.github.io/scstobcminority-ai/
 - **GitHub Repository**: https://github.com/elon00/scstobcminority-ai
-- **Network Target**: Solana Devnet
+- **Network Target**: Solana Testnet
 - **Token Policy**: Uncapped application-level minting; SPL Token raw supply remains bounded by Solana's `u64` counter.
+- **Full-stack Testnet Blueprint**: [TESTNET_BLUEPRINT.md](./TESTNET_BLUEPRINT.md)
+- **Testnet Deployment Evidence**: [TESTNET_DEPLOYMENT.md](./TESTNET_DEPLOYMENT.md)
 
+
+---
+
+## ❤️ Core Purpose
+
+SCSTOBCMinority AI combines quantum-safe Solana research with a human-development mission focused on the dignity, empowerment and upliftment of **SC, ST, OBC, minority and other underserved communities**.
+
+Its guiding values are **love, peace, joy, harmony, truth, charity, unity, equality, dignity, liberty, consent, knowledge, service and justice**.
+
+The intended long-term use of SPQC is to support transparent, lawful community programs such as scholarships, education, health and nutrition support, housing assistance, jobs and livelihood programs, entrepreneurship, technology access, scientific learning, charitable grants, productive assets and accountable community treasuries.
+
+The token does **not** guarantee wealth, jobs, housing, land, health outcomes, precious metals, marriage, political influence, religious status or supernatural knowledge. Aid must not be conditioned on political allegiance, religious conversion or personal relationships.
+
+See **[CORE_PURPOSE.md](./CORE_PURPOSE.md)** and **[WHITEPAPER.md](./WHITEPAPER.md)** for the complete mission, safeguards and technical model.
 
 ---
 
@@ -27,10 +43,10 @@ SCSTOBCMinority AI protects digital assets against quantum computing threats thr
 - **Research target: NIST FIPS 203** (ML-KEM) - implementation requires cryptographic test evidence
 - **Research target: NIST FIPS 204** (ML-DSA) - implementation requires cryptographic test evidence
 - **Research target: NIST FIPS 205** (SLH-DSA) - implementation requires cryptographic test evidence
-- **✅ ISO 20022** - International financial messaging standard
+- **ISO 20022** - design/reference area; implementation and certification require separate validation
 - **MiCA legal review required** - this repository is not a compliance certificate
-- **✅ FATF Travel Rule** - AML/CTF compliance
-- **✅ ERC-20 Bridge** - Cross-chain compatibility
+- **FATF Travel Rule** - compliance consideration; no compliance certification is claimed
+- **Cross-chain bridge** - roadmap concept; not represented as production-ready
 
 ### 🪙 SPQC Token
 
@@ -58,7 +74,7 @@ SCSTOBCMinority AI protects digital assets against quantum computing threats thr
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/scstobcminority-ai.git
+git clone https://github.com/elon00/scstobcminority-ai.git
 cd scstobcminority-ai
 
 # Install dependencies
@@ -70,12 +86,11 @@ anchor build
 # Run tests
 anchor test
 
-# Deploy to devnet
-anchor deploy --provider.cluster devnet
+# Deploy to Testnet after configuring a funded Testnet signer
+anchor deploy --provider.cluster testnet
 
 # Initialize programs
-npx ts-node scripts/initialize.ts
-npx ts-node scripts/deploy-token.ts
+ANCHOR_PROVIDER_URL=https://api.testnet.solana.com node scripts/initialize-devnet.mjs
 
 # Start dApp
 cd app && npm run dev
@@ -140,31 +155,32 @@ console.log(`Quantum Readiness: ${score}%`);
 
 ---
 
-## 🌐 Global Standards Compliance
+## 🤖 Testnet Application Integration
 
-### Financial Standards
-- ✅ **ISO 20022** - Financial messaging (pacs.008, pain.001, camt.053)
-- ✅ **SWIFT gpi** - Global payments innovation (planned Q2 2025)
+Implemented in the repository:
 
-### Securities Regulations
-- ✅ **Reg D/Reg S** (USA) - Securities exemptions
-- ✅ **MiCA** (EU) - Markets in Crypto-Assets Regulation
-- ✅ **MAS** (Singapore) - Payment Services Act
-- ✅ **FINMA** (Switzerland) - Token classification
+- **Frontend wallet layer:** Phantom + Solflare adapters on Solana Testnet
+- **Backend wallet layer:** public account/balance/transaction/program verification
+- **Wallet ownership auth:** Ed25519 `signMessage` challenge verification with short-lived backend sessions
+- **AI agentic layer:** intent routing grounded in live Testnet chain state
+- **Multi-model router:** OpenAI-compatible, Anthropic and Gemini adapters when server-side credentials are configured
+- **Local fallback:** deterministic safe backend agent when external providers are not configured
+- **Bidirectional evidence:** frontend → wallet → backend → chain and chain → backend → frontend
+- **One-click local stack:** `npm run testnet:stack`
+- **One-click GitHub pipeline:** `One-Click Full Stack Testnet`
 
-### AML/CTF
-- ✅ **FATF Travel Rule** - Transaction monitoring >$1,000
-- ✅ **Sanctions Screening** - OFAC, UN, EU real-time checks
-- ✅ **KYC/AML** - Multi-tier verification system
+External model providers are not represented as online unless their server-side credentials and model names are actually configured.
 
-### Data Protection
-- ✅ **GDPR** (EU) - General Data Protection Regulation
-- ✅ **CCPA** (California) - Consumer Privacy Act
+## 🌐 Standards & Compliance Position
 
-### Cross-Chain
-- ✅ **ERC-20 Bridge** - Ethereum/BSC/Polygon compatibility
-- ✅ **Wormhole Protocol** - Cross-chain messaging
-- ✅ **LayerZero** - Omnichain interoperability
+The project may reference standards and regulatory frameworks for design research, but **does not claim certification or automatic legal compliance**.
+
+- **NIST FIPS 203/204/205:** cryptographic research targets; independent end-to-end review required
+- **ISO 20022:** design/reference area, not a certification claim
+- **MiCA / securities laws / MAS / FINMA:** jurisdiction-specific legal review required
+- **FATF / AML / sanctions controls:** future compliance-design areas where applicable
+- **GDPR / CCPA:** privacy-design considerations; sensitive beneficiary data should not be placed openly on-chain
+- **Cross-chain bridges:** roadmap concepts, not production-ready features
 
 ---
 
@@ -185,10 +201,10 @@ console.log(`Quantum Readiness: ${score}%`);
 ## 🔐 Security
 
 ### Audits
-- [ ] CertiK - Smart contract audit (Scheduled Q4 2024)
-- [ ] Trail of Bits - Cryptography review (Scheduled Q4 2024)
-- [ ] Quantstamp - Full stack audit (Scheduled Q1 2025)
-- [ ] OpenZeppelin - Governance audit (Scheduled Q1 2025)
+- [ ] Independent smart-contract audit
+- [ ] Independent cryptographic implementation review
+- [ ] Full-stack security review
+- [ ] Governance/economic review before production use
 
 ### Bug Bounty
 - **Pool**: $1,000,000 SPQC
@@ -221,18 +237,23 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🗺️ Roadmap
 
-### Q4 2024
-- [x] Core protocol development
-- [x] NIST PQC implementation
-- [x] Token generation
-- [ ] Security audits
-- [ ] Testnet launch
+### Current Testnet phase
+- [x] Core Solana/Anchor programs
+- [x] PQC research SDKs and evidence tooling
+- [x] Uncapped application-level SPQC token model
+- [x] Testnet frontend wallet integration
+- [x] Testnet backend API and wallet verification
+- [x] Agentic multi-model routing layer
+- [x] CI/CD and one-click Testnet blueprint
+- [ ] Verified on-chain Testnet program deployment
+- [ ] Independent security review
 
-### Q1 2025
-- [ ] Mainnet deployment
-- [ ] DEX listings
-- [ ] Staking launch
-- [ ] Governance activation
+### Mainnet release gate
+- [ ] Testnet programs verified executable
+- [ ] SPQC mint + initialization signatures recorded
+- [ ] Public backend health verified
+- [ ] Security/readiness review completed
+- [ ] Mainnet deployment explicitly approved
 
 ---
 
@@ -244,4 +265,4 @@ This software is provided for research and development purposes. While it implem
 
 **Built with ❤️ for a quantum-safe future**
 
-[![Star on GitHub](https://img.shields.io/github/stars/elon00/scstobcminority-ai?style=social)](https://github.com/yourusername/scstobcminority-ai)
+[![Star on GitHub](https://img.shields.io/github/stars/elon00/scstobcminority-ai?style=social)](https://github.com/elon00/scstobcminority-ai)

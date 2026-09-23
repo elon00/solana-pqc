@@ -16,12 +16,9 @@
     }
   ],
   "env": {
-    "NODE_ENV": "production"
-  },
-  "functions": {
-    "app/api/**/*.js": {
-      "runtime": "nodejs18.x"
-    }
+    "NODE_ENV": "production",
+    "VITE_SOLANA_NETWORK": "testnet",
+    "VITE_SOLANA_RPC_URL": "https://api.testnet.solana.com"
   },
   "headers": [
     {
@@ -36,21 +33,10 @@
           "value": "nosniff"
         },
         {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/api/(.*)",
-      "destination": "https://api.solana-pqc.com/api/$1",
-      "permanent": false
     }
   ]
 }

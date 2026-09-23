@@ -1,15 +1,32 @@
-# Solana PQC — Solana Testnet Deployment
+# SCSTOBCMinority AI — Solana Testnet Deployment
 
-**Network**: Solana Testnet (`https://api.testnet.solana.com`)  
-**Status**: LIVE & VERIFIED  
+**Status:** Final clean evidence-gated Testnet deployment triggered after green backend, frontend and Rust CI on September 23, 2026. Mainnet remains intentionally deferred.
 
-## Smart Contract Details
-- **Program ID**: `Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3`
-- **Deployer Authority**: `8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es`
-- **Deployment Transaction**: `54R3yRhmp3QGSYz6VaxoYQF7uJPjEjVSMer6RmGGqXSykJ8UXpodszdtSuzcn9smdzbLdFjEbrxP5WWSp7Pxv59r`
-- **Solana Explorer**: [View on Solana Explorer](https://explorer.solana.com/address/Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3?cluster=testnet)
+**Network:** Solana Testnet  
+**RPC:** https://api.testnet.solana.com
 
-## Cryptographic Standards
-- NIST FIPS 203: ML-KEM-768
-- NIST FIPS 204: ML-DSA-65 Dual Hybrid Conjunction with Ed25519
-- NIST FIPS 205: SLH-DSA
+## Verification gates
+
+The deployment is considered complete only after all of these succeed:
+
+- Anchor/SBF build
+- Quantum Custody program deploy
+- SCSTOBCMinority AI token program deploy
+- uncapped SPQC mint initialization
+- custody initialization
+- upgrade-authority transfer
+- executable program-account verification
+- mint account verification
+- initialization transaction-signature capture
+- synchronized machine-readable deployment config
+- frontend/backend CI and Pages redeploy
+
+## Supply policy
+
+SPQC uses uncapped application-level minting. SPL Token raw supply remains technically bounded by Solana's `u64` accounting.
+
+## Mainnet lock
+
+Mainnet deployment is intentionally disabled until Testnet deployment, end-to-end verification and security-readiness review succeed.
+
+Final program IDs, SPQC mint address, PDAs and initialization transaction signatures will be written here automatically only after verified on-chain success.

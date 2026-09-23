@@ -1,8 +1,8 @@
 {
-  "system": "SolanaPQC",
-  "version": "1.0.0",
-  "status": "EVIDENCE_BASED_PQC_PROTOCOL",
-  "description": "Quantum-Safe Custody & Transaction SDK for Solana - NIST FIPS 203 ML-KEM-768 and NIST FIPS 204 ML-DSA-65 Dual Hybrid Conjunction with Ed25519",
+  "system": "SCSTOBCMinority AI",
+  "version": "2.1.0",
+  "status": "TESTNET_FIRST_FULL_STACK_INTEGRATION",
+  "description": "Quantum-safe Solana custody/token research prototype with PQC SDKs, an uncapped application-level SPQC mint model, and a rights-centered community upliftment mission.",
   "truthTaxonomy": {
     "cryptographicCore": "PURE_TYPESCRIPT_PQC_EXECUTION",
     "kemScheme": "NIST_FIPS_203_ML_KEM_768",
@@ -37,5 +37,136 @@
       "path": "sdk/typescript/src/vault.ts",
       "status": "VERIFIED_PDA_COMMITMENT"
     }
-  ]
+  ],
+  "socialMission": {
+    "focus": "Dignity, opportunity and upliftment for SC, ST, OBC, minority and other underserved communities through voluntary, lawful and non-discriminatory programs.",
+    "values": [
+      "love",
+      "peace",
+      "joy",
+      "harmony",
+      "truth",
+      "charity",
+      "unity",
+      "equality",
+      "dignity",
+      "liberty",
+      "consent",
+      "knowledge",
+      "service",
+      "justice"
+    ],
+    "safeguards": [
+      "No aid conditioned on political allegiance",
+      "No religious coercion or conversion requirement",
+      "No buying, selling, assigning or coercing spouses or relationships",
+      "No guaranteed wealth, jobs, housing, land, health outcomes or investment returns",
+      "Fundamental rights are never token-weighted",
+      "Sensitive beneficiary data should not be stored openly on-chain"
+    ]
+  },
+  "tokenModel": {
+    "symbol": "SPQC",
+    "decimals": 9,
+    "applicationSupplyPolicy": "UNCAPPED",
+    "technicalCeiling": "SPL Token raw supply uses u64 accounting",
+    "currentOperations": [
+      "initialize",
+      "mint",
+      "burn",
+      "transfer"
+    ],
+    "intendedCommunityUtilities": [
+      "grants",
+      "scholarships",
+      "education",
+      "health",
+      "nutrition",
+      "housing-support",
+      "livelihoods",
+      "technology-access",
+      "research",
+      "community-treasury"
+    ]
+  },
+  "featureStatus": {
+    "implemented": [
+      "Solana Anchor programs",
+      "SPL Token integration",
+      "TypeScript SDK",
+      "Rust SDK",
+      "React/Vite Testnet web app",
+      "Phantom/Solflare wallet-provider support",
+      "Backend Testnet RPC service",
+      "Frontend/backend wallet-state synchronization",
+      "Backend transaction verification",
+      "AI agent planner",
+      "Multi-model provider router",
+      "Local deterministic AI fallback",
+      "PQC research code",
+      "GitHub CI/CD",
+      "One-click Testnet pipeline",
+      "Node Testnet backend API",
+      "AI agent intent router with live Testnet grounding",
+      "Multi-model provider router with local safe fallback",
+      "Ed25519 wallet ownership authentication and short-lived backend sessions",
+      "Frontend/backend wallet state synchronization",
+      "One-click Testnet Docker Compose stack"
+    ],
+    "prototypeOrNeedsIndependentValidation": [
+      "end-to-end PQC security",
+      "hybrid-signature security",
+      "on-chain Testnet deployment until TESTNET_DEPLOYMENT.md is VERIFIED ON-CHAIN",
+      "public backend hosting until an external backend URL is configured",
+      "economic design",
+      "External multi-model provider activation requires server-side credentials",
+      "Public backend availability requires persistent HTTPS hosting"
+    ],
+    "planned": [
+      "community treasury governance",
+      "staking",
+      "cross-chain bridges",
+      "Conway automaton integration",
+      "broader Web4 architecture"
+    ]
+  },
+  "fullStack": {
+    "network": "Solana Testnet",
+    "frontend": {
+      "status": "IMPLEMENTED",
+      "walletProviders": [
+        "Phantom",
+        "Solflare"
+      ],
+      "signingBoundary": "USER_WALLET_ONLY",
+      "backendWalletSync": true,
+      "transactionBackendVerification": true
+    },
+    "backend": {
+      "status": "IMPLEMENTED_AND_CI_VERIFIED",
+      "chainHealth": true,
+      "walletStatus": true,
+      "transactionStatus": true,
+      "programStatus": true,
+      "agentPlanner": true,
+      "localSafeFallback": true,
+      "publicHosting": "REQUIRES_EXTERNAL_BACKEND_DEPLOYMENT"
+    },
+    "multiModel": {
+      "router": "IMPLEMENTED",
+      "providers": [
+        "OpenAI-compatible",
+        "Anthropic",
+        "Gemini",
+        "local fallback"
+      ],
+      "externalProviderActivation": "REQUIRES_SERVER_SIDE_API_KEYS_AND_MODEL_NAMES"
+    },
+    "pipelines": {
+      "ci": "IMPLEMENTED",
+      "oneClickTestnet": "IMPLEMENTED",
+      "pages": "IMPLEMENTED",
+      "mainnet": "DISABLED_PENDING_TESTNET_VERIFICATION"
+    }
+  }
 }

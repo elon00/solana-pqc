@@ -1,42 +1,41 @@
 [workspace]
 members = [
     "programs/quantum-custody",
-    "programs/token",
-    "sdk/rust"
+    "programs/token"
 ]
+exclude = ["sdk/rust"]
 
 resolver = "2"
 
 [workspace.package]
 version = "0.1.0"
 edition = "2021"
-rust-version = "1.73"
+rust-version = "1.68"
 license = "MIT"
-authors = ["SCSTOBCMinority AI Team <info@solana-pqc.io>"]
+authors = ["SCSTOBCMinority AI Team"]
 
 [workspace.dependencies]
-anchor-lang = "0.29.0"
-anchor-spl = "0.29.0"
-spl-token = "4.0"
-spl-associated-token-account = "2.2"
-solana-program = "1.18.0"
-solana-sdk = "1.18.0"
-borsh = "0.10.3"
+anchor-lang = "=0.29.0"
+anchor-spl = { version = "=0.29.0", default-features = false, features = ["token", "token_2022"] }
+spl-token = "=4.0.0"
+spl-associated-token-account = "=2.2.0"
+solana-program = "=1.16.13"
+solana-sdk = "=1.16.13"
+borsh = "=0.10.3"
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# Post-Quantum Cryptography Libraries
-pqcrypto-kyber = "0.8"
-pqcrypto-dilithium = "0.5"
-pqcrypto-sphincsplus = "0.7"
-pqcrypto-traits = "0.3.5"
-
 # Cryptographic utilities
 sha3 = "0.10"
 blake3 = "=1.5.0"
-rand = "0.8"
-zeroize = "=1.3.0"
+ahash = "=0.8.11"
+num_enum = "=0.7.1"
+jobserver = "=0.1.32"
+proc-macro2 = "=1.0.67"
+quote = "=1.0.33"
+syn = "=2.0.39"
+unicode-ident = "=1.0.12"
 
 [profile.release]
 overflow-checks = true

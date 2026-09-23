@@ -1,17 +1,19 @@
 import { useMemo } from 'react';
 import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { NETWORK, RPC_ENDPOINT } from './config';
+import { SOLANA_RPC_URL } from './config';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import LandingPage from './components/LandingPage';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 function App() {
-  const endpoint = useMemo(() => RPC_ENDPOINT, []);
-  const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter({ network: NETWORK })], []);
+  const network = WalletAdapterNetwork.Testnet;
+  const endpoint = useMemo(() => SOLANA_RPC_URL, []);
+  const wallets = useMemo(() => [new PhantomWalletAdapter(), new SolflareWalletAdapter({ network })], [network]);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

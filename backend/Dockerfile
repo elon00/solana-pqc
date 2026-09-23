@@ -1,12 +1,12 @@
 FROM node:20-alpine
-WORKDIR /app/backend
-COPY backend/package.json backend/package-lock.json ./
+WORKDIR /app
+COPY package*.json ./
 RUN npm ci --omit=dev
-COPY backend/src ./src
+COPY src ./src
+COPY testnet-deployment.json ./testnet-deployment.json
 ENV NODE_ENV=production
 ENV API_HOST=0.0.0.0
 ENV API_PORT=3001
-ENV SOLANA_RPC_URL=https://api.testnet.solana.com
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD wget -qO- http://127.0.0.1:3001/health >/dev/null || exit 1
 CMD ["npm", "start"]

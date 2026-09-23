@@ -3,6 +3,7 @@ name = "scstobcminority-ai-token"
 version = "0.1.0"
 description = "SCSTOBCMinority AI Token with quantum-safe features"
 edition = "2021"
+rust-version = "1.68"
 
 [lib]
 crate-type = ["cdylib", "lib"]
@@ -18,5 +19,14 @@ default = []
 anchor-lang = { workspace = true }
 anchor-spl = { workspace = true }
 spl-token = { workspace = true }
-spl-associated-token-account = { workspace = true }
+
+# Resolver constraints: keep Anchor 0.29/Solana 1.17 build reproducible.
 solana-program = { workspace = true }
+blake3 = { workspace = true }
+ahash = { workspace = true }
+num_enum = { workspace = true }
+jobserver = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }
+unicode-ident = { workspace = true }

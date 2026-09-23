@@ -1,0 +1,52 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      API_HOST: 0.0.0.0
+      API_PORT: 3001
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.testnet.solana.com}
+      ALLOWED_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-}
+      ANTHROPIC_BASE_URL: ${ANTHROPIC_BASE_URL:-https://api.anthropic.com}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      GEMINI_BASE_URL: ${GEMINI_BASE_URL:-https://generativelanguage.googleapis.com/v1beta}
+      MODEL_PROVIDER_PRIORITY: ${MODEL_PROVIDER_PRIORITY:-openai,anthropic,gemini,local}
+      QUANTUM_CUSTODY_PROGRAM_ID: ${QUANTUM_CUSTODY_PROGRAM_ID:-}
+      SPQC_TOKEN_PROGRAM_ID: ${SPQC_TOKEN_PROGRAM_ID:-}
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./app:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      VITE_SOLANA_NETWORK: testnet
+      VITE_SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.testnet.solana.com}
+      VITE_API_BASE_URL: http://localhost:3001
+      VITE_QUANTUM_CUSTODY_PROGRAM_ID: ${QUANTUM_CUSTODY_PROGRAM_ID:-}
+      VITE_SPQC_TOKEN_PROGRAM_ID: ${SPQC_TOKEN_PROGRAM_ID:-}
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0 --port 8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  frontend_node_modules:

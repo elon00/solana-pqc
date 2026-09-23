@@ -1,17 +1,20 @@
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { clusterApiUrl } from '@solana/web3.js';
+export const SOLANA_NETWORK = "testnet";
+export const SOLANA_RPC_URL =
+  import.meta.env.VITE_SOLANA_RPC_URL || "https://api.testnet.solana.com";
 
-// Network configuration - currently Solana Testnet (easy toggle to Mainnet in the future)
-export const NETWORK: WalletAdapterNetwork = WalletAdapterNetwork.Testnet;
-export const RPC_ENDPOINT = clusterApiUrl(NETWORK);
-export const CLUSTER_PARAM = 'testnet';
-export const NETWORK_LABEL = 'Testnet';
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.DEV ? "http://localhost:3001" : "");
 
-// On-chain deployed Solana Testnet program & deployer
-export const PROGRAM_ID = 'Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3';
-export const DEPLOYER_ADDRESS = '8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es';
+export const QUANTUM_CUSTODY_PROGRAM_ID =
+  import.meta.env.VITE_QUANTUM_CUSTODY_PROGRAM_ID || "";
 
-// Branding & Metadata
-export const APP_NAME = 'Solana PQC';
-export const APP_TAGLINE = 'Quantum-Resistant Solana Wallet';
-export const GITHUB_REPO_URL = 'https://github.com/elon00/scstobcminority-ai';
+export const SPQC_TOKEN_PROGRAM_ID =
+  import.meta.env.VITE_SPQC_TOKEN_PROGRAM_ID || "";
+
+export const explorerTxUrl = (signature: string) =>
+  `https://explorer.solana.com/tx/${signature}?cluster=testnet`;
+
+
+export const explorerAccountUrl = (address: string) =>
+  `https://explorer.solana.com/address/${address}?cluster=testnet`;
