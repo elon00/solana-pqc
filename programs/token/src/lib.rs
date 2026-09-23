@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, Token, TokenAccount, MintTo, Burn, Transfer};
 
-declare_id!("SPQC1111111111111111111111111111111111111");
+declare_id!("7sWRRPKoEUFAVbRRLYqagvxRs4QULHrjrA6EeSA41Dyk");
 
 pub const DECIMALS: u8 = 9;
 
