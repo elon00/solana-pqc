@@ -1,5 +1,5 @@
 {
-  "name": "@solana-pqc/sdk",
+  "name": "@scstobcminority-ai/sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for Solana Quantum-Safe Custody",
   "main": "dist/index.js",
@@ -16,7 +16,7 @@
     "cryptography",
     "typescript"
   ],
-  "author": "Solana PQC Team",
+  "author": "SCSTOBCMinority AI Team",
   "license": "MIT",
   "dependencies": {
     "@coral-xyz/anchor": "^0.29.0",
