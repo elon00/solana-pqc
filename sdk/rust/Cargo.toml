@@ -3,8 +3,8 @@ name = "scstobcminority-ai-sdk"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "Rust SDK for Solana Quantum-Safe Custody"
-repository = "https://github.com/elon00/solana-pqc"
+description = "Rust SDK for SCSTOBCMinority AI quantum-safe Solana custody"
+repository = "https://github.com/elon00/scstobcminority-ai"
 keywords = ["solana", "post-quantum", "cryptography", "nist"]
 
 [dependencies]
