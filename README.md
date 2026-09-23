@@ -26,7 +26,8 @@ SOLANA-PQC protects digital assets against quantum computing threats through:
 
 ### 🪙 SPQC Token
 
-**Total Supply**: 2,100,000,000,000,000 (2.1 Quadrillion)  
+**Supply Policy**: Uncapped minting (no application-level fixed supply cap)  
+**Technical Limit**: Solana SPL Token uses a `u64` raw supply counter  
 **Symbol**: SPQC  
 **Decimals**: 9  
 **Standard**: SPL Token with Quantum-Safe Extensions
@@ -163,13 +164,13 @@ console.log(`Quantum Readiness: ${score}%`);
 
 | Category | Allocation | Tokens | Vesting |
 |----------|-----------|--------|---------|
-| Public Sale | 30% | 630T | None |
-| Ecosystem | 25% | 525T | 4 years |
-| Team | 15% | 315T | 4 years, 1yr cliff |
-| Partners | 10% | 210T | 2 years |
-| Liquidity | 10% | 210T | Immediate |
-| Community | 5% | 105T | 3 years |
-| Reserve | 5% | 105T | Governance |
+| Public Sale | 30% | Emission-based | None |
+| Ecosystem | 25% | Emission-based | 4 years |
+| Team | 15% | Emission-based | 4 years, 1yr cliff |
+| Partners | 10% | Emission-based | 2 years |
+| Liquidity | 10% | Emission-based | Immediate |
+| Community | 5% | Emission-based | 3 years |
+| Reserve | 5% | Emission-based | Governance |
 
 ---
 
