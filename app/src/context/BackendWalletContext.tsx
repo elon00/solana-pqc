@@ -28,9 +28,8 @@ const storageKey = (wallet: string) => `scstobcminority-ai:wallet-session:${wall
 
 export function BackendWalletProvider({ children }: { children: React.ReactNode }) {
   const { publicKey, connected, signMessage } = useWallet();
-  const [authState, setAuthState] = useState<BackendWalletAuthState>(
-    API_BASE_URL ? 'disconnected' : 'backend-offline'
-  );
+  const [authState, setAuthState] = useState<BackendWalletAuthState>('backend-offline');
+  const [backendReady, setBackendReady] = useState(false);
   const [sessionToken, setSessionToken] = useState('');
   const [authenticatedWallet, setAuthenticatedWallet] = useState<string | null>(null);
   const [expiresAt, setExpiresAt] = useState<number | null>(null);
@@ -48,10 +47,36 @@ export function BackendWalletProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     let cancelled = false;
+
+    const checkBackend = async () => {
+      if (!API_BASE_URL || !backendReady) {
+        if (!cancelled) setBackendReady(false);
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE_URL}/health`, { cache: 'no-store' });
+        const data = await response.json();
+        const ready = Boolean(response.ok && data?.ok && data?.walletAuth?.configured !== false);
+        if (!cancelled) setBackendReady(ready);
+      } catch {
+        if (!cancelled) setBackendReady(false);
+      }
+    };
+
+    checkBackend();
+    const id = window.setInterval(checkBackend, 30000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
     const wallet = publicKey?.toBase58() || '';
 
     const restore = async () => {
-      if (!API_BASE_URL) {
+      if (!API_BASE_URL || !backendReady) {
         clearSession(wallet);
         if (!cancelled) setAuthState('backend-offline');
         return;
@@ -102,7 +127,7 @@ export function BackendWalletProvider({ children }: { children: React.ReactNode 
     return () => {
       cancelled = true;
     };
-  }, [publicKey, connected, signMessage, clearSession]);
+  }, [publicKey, connected, signMessage, clearSession, backendReady]);
 
   const verifyWallet = useCallback(async () => {
     const wallet = publicKey?.toBase58() || '';
@@ -163,24 +188,24 @@ export function BackendWalletProvider({ children }: { children: React.ReactNode 
       setAuthState('error');
       setError(reason instanceof Error ? reason.message : String(reason));
     }
-  }, [publicKey, connected, signMessage, clearSession]);
+  }, [publicKey, connected, signMessage, clearSession, backendReady]);
 
   const logoutBackendWallet = useCallback(() => {
     const wallet = publicKey?.toBase58() || '';
     clearSession(wallet);
-    setAuthState(API_BASE_URL ? (connected ? 'unverified' : 'disconnected') : 'backend-offline');
-  }, [publicKey, connected, clearSession]);
+    setAuthState(backendReady ? (connected ? 'unverified' : 'disconnected') : 'backend-offline');
+  }, [publicKey, connected, clearSession, backendReady]);
 
   const value = useMemo<BackendWalletContextValue>(() => ({
     authState,
     sessionToken,
     error,
-    backendReady: Boolean(API_BASE_URL),
+    backendReady,
     authenticatedWallet,
     expiresAt,
     verifyWallet,
     logoutBackendWallet
-  }), [authState, sessionToken, error, authenticatedWallet, expiresAt, verifyWallet, logoutBackendWallet]);
+  }), [authState, sessionToken, error, backendReady, authenticatedWallet, expiresAt, verifyWallet, logoutBackendWallet]);
 
   return (
     <BackendWalletContext.Provider value={value}>
