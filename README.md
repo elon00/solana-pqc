@@ -10,6 +10,14 @@
 
 > **Research and prototype project for quantum-resistant custody concepts on Solana. Claims of implemented FIPS algorithms, production security, and regulatory compliance require independent cryptographic, deployment, and legal verification.**
 
+## 🔗 Project Links
+
+- **Web App**: https://elon00.github.io/scstobcminority-ai/
+- **GitHub Repository**: https://github.com/elon00/scstobcminority-ai
+- **Network Target**: Solana Devnet
+- **Token Policy**: Uncapped application-level minting; SPL Token raw supply remains bounded by Solana's `u64` counter.
+
+
 ---
 
 ## 🌟 Overview
@@ -93,7 +101,7 @@ cd app && npm run dev
 ### Rust SDK
 
 ```rust
-use solana_pqc_sdk::{QuantumVault, Algorithm};
+use scstobcminority_ai_sdk::{QuantumVault, Algorithm};
 
 // Create quantum-safe vault
 let vault = QuantumVault::new(
@@ -112,7 +120,7 @@ let valid = vault.verify_signature(&transaction, &signature)?;
 ### TypeScript SDK
 
 ```typescript
-import { QuantumVaultClient, Algorithm } from '@solana-pqc/sdk';
+import { QuantumVaultClient, Algorithm } from '@scstobcminority-ai/sdk';
 
 // Initialize client
 const client = new QuantumVaultClient(connection, wallet, programId, idl);
@@ -203,11 +211,11 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🌍 Community
 
-- **Website**: https://solana-pqc.io
-- **Documentation**: https://docs.solana-pqc.io
-- **Twitter**: [@solana_pqc](https://twitter.com/solana_pqc)
-- **Discord**: [Join our community](https://discord.gg/solana-pqc)
-- **Email**: info@solana-pqc.io
+- **Website**: https://elon00.github.io/scstobcminority-ai/
+- **Documentation**: https://github.com/elon00/scstobcminority-ai
+- **Twitter**: Not configured
+- **Discord**: Not configured
+- **Email**: Not configured
 
 ---
 
