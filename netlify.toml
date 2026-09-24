@@ -4,7 +4,7 @@
   functions = "netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "20"
+  NODE_VERSION = "24"
   VITE_SOLANA_NETWORK = "testnet"
   VITE_SOLANA_RPC_URL = "https://api.testnet.solana.com"
 
