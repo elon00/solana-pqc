@@ -1,11 +1,11 @@
-import http from "node:http";
+import http from "node:http";\nimport crypto from "node:crypto";
 import { URL } from "node:url";
 import { runAgent } from "./agent.mjs";
 import { providerStatus } from "./providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "./solana.mjs";
 import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWalletChallenge, walletAuthStatus } from "./auth.mjs";
 import { readTestnetDeployment } from "./deployment.mjs";
-import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";
+import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";\nimport { bazaarManifest, settlePayment } from "./x402V2.mjs";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const HOST = process.env.API_HOST || "0.0.0.0";
@@ -23,12 +23,12 @@ function cors(req, res) {
     res.setHeader("vary", "Origin");
   }
   res.setHeader("access-control-allow-methods", "GET,POST,OPTIONS");
-  res.setHeader("access-control-allow-headers", "content-type, authorization");
+  res.setHeader("access-control-allow-headers", "content-type, authorization, payment-signature");\n  res.setHeader("access-control-expose-headers", "payment-required, payment-response, extension-responses");
   res.setHeader("x-content-type-options", "nosniff");
 }
 
-function send(res, status, value) {
-  res.writeHead(status, { "content-type": "application/json; charset=utf-8" });
+function send(res, status, value, extraHeaders = {}) {
+  res.writeHead(status, { "content-type": "application/json; charset=utf-8", ...extraHeaders });
   res.end(JSON.stringify(value));
 }
 
@@ -197,6 +197,73 @@ export async function handler(req, res) {
         walletAuthenticated: Boolean(session),
         authenticatedWallet: session?.walletAddress || null
       });
+    }
+
+    if (req.method === "GET" && (url.pathname === "/.well-known/x402-bazaar.json" || url.pathname === "/.well-known/x402.json" || url.pathname === "/api/x402/bazaar")) {
+      return send(res, 200, await bazaarManifest());
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/v1/x402/pqc-keygen") {
+      const settlement = await settlePayment("pqc-keygen", req.headers["payment-signature"]);
+      if (!settlement.paid) {
+        return send(res, 402, {
+          status: 402,
+          error: settlement.error || "Payment Required",
+          protocol: "x402",
+          x402Version: 2
+        }, { "PAYMENT-REQUIRED": settlement.header });
+      }
+
+      const seed = crypto.randomBytes(32);
+      const kemPub = crypto.createHash("sha3-512").update(Buffer.concat([seed, Buffer.from("ML-KEM-768")])).digest("hex");
+      const dsaPub = crypto.createHash("sha3-512").update(Buffer.concat([seed, Buffer.from("ML-DSA-65")])).digest("hex");
+      const headers = { "PAYMENT-RESPONSE": settlement.paymentResponseHeader };
+      if (settlement.extensionResponsesHeader) headers["EXTENSION-RESPONSES"] = settlement.extensionResponsesHeader;
+
+      return send(res, 200, {
+        success: true,
+        protocol: "x402",
+        x402Version: 2,
+        service: "scstobcminority-ai",
+        x402Receipt: settlement.settlement,
+        pqcResearchMaterial: {
+          algorithmsReferenced: ["ML-KEM-768", "ML-DSA-65"],
+          derivedPublicMaterialMlKem768: `0x${kemPub}`,
+          derivedPublicMaterialMlDsa65: `0x${dsaPub}`,
+          note: "Research-derived material only; this endpoint does not claim to generate a standards-conformant PQC keypair."
+        }
+      }, headers);
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/v1/x402/vault-lock") {
+      const settlement = await settlePayment("vault-lock", req.headers["payment-signature"]);
+      if (!settlement.paid) {
+        return send(res, 402, {
+          status: 402,
+          error: settlement.error || "Payment Required",
+          protocol: "x402",
+          x402Version: 2
+        }, { "PAYMENT-REQUIRED": settlement.header });
+      }
+
+      const body = await readJson(req);
+      const receiptId = settlement.settlement?.transaction || settlement.settlement?.payer || "x402";
+      const commitment = crypto.createHash("sha256").update(JSON.stringify(body) + receiptId).digest("hex");
+      const headers = { "PAYMENT-RESPONSE": settlement.paymentResponseHeader };
+      if (settlement.extensionResponsesHeader) headers["EXTENSION-RESPONSES"] = settlement.extensionResponsesHeader;
+
+      return send(res, 200, {
+        success: true,
+        protocol: "x402",
+        x402Version: 2,
+        service: "scstobcminority-ai",
+        x402Receipt: settlement.settlement,
+        vaultCommitment: {
+          value: `0x${commitment}`,
+          onChainLockCreated: false,
+          note: "This paid endpoint creates a research commitment bound to the x402 settlement; it does not itself submit a custody-program instruction."
+        }
+      }, headers);
     }
 
     return send(res, 404, { error: "not found" });
