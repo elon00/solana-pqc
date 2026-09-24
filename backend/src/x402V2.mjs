@@ -17,15 +17,21 @@ const RESOURCES = {
     amount: "1000",
     description: "Generate a research PQC public-key bundle for an autonomous agent.",
     tags: ["pqc", "ml-kem", "ml-dsa", "solana", "ai-agent"],
-    input: { type: "http", method: "POST" },
+    inputExample: { label: "agent-demo" },
     inputSchema: {
       type: "object",
       properties: { label: { type: "string", description: "Optional caller label." } },
       additionalProperties: true
     },
-    output: {
+    outputExample: { success: true, protocol: "x402", service: "scstobcminority-ai" },
+    outputSchema: {
       type: "object",
-      example: { success: true, protocol: "x402", service: "scstobcminority-ai" }
+      properties: {
+        success: { type: "boolean" },
+        protocol: { type: "string" },
+        service: { type: "string" }
+      },
+      required: ["success", "protocol", "service"]
     }
   },
   "vault-lock": {
@@ -33,7 +39,7 @@ const RESOURCES = {
     amount: "2000",
     description: "Create a paid research vault commitment bound to the settled x402 receipt.",
     tags: ["custody", "vault", "solana", "pqc", "ai-agent"],
-    input: { type: "http", method: "POST" },
+    inputExample: { commitment: { id: "example" } },
     inputSchema: {
       type: "object",
       properties: {
@@ -41,9 +47,15 @@ const RESOURCES = {
       },
       additionalProperties: true
     },
-    output: {
+    outputExample: { success: true, protocol: "x402", service: "scstobcminority-ai" },
+    outputSchema: {
       type: "object",
-      example: { success: true, protocol: "x402", service: "scstobcminority-ai" }
+      properties: {
+        success: { type: "boolean" },
+        protocol: { type: "string" },
+        service: { type: "string" }
+      },
+      required: ["success", "protocol", "service"]
     }
   }
 };
@@ -121,8 +133,44 @@ export async function buildPaymentRequired(resourceKey) {
     accepts: [requirements],
     extensions: {
       bazaar: {
-        info: { input: resource.input, output: resource.output },
-        schema: { input: resource.inputSchema }
+        info: {
+          input: {
+            type: "http",
+            method: "POST",
+            bodyType: "json",
+            body: resource.inputExample
+          },
+          output: {
+            type: "json",
+            example: resource.outputExample,
+            schema: resource.outputSchema
+          }
+        },
+        schema: {
+          type: "object",
+          properties: {
+            input: {
+              type: "object",
+              properties: {
+                type: { const: "http" },
+                method: { const: "POST" },
+                bodyType: { const: "json" },
+                body: resource.inputSchema
+              },
+              required: ["type", "method", "bodyType"]
+            },
+            output: {
+              type: "object",
+              properties: {
+                type: { const: "json" },
+                example: {},
+                schema: { type: "object" }
+              },
+              required: ["type"]
+            }
+          },
+          required: ["input", "output"]
+        }
       }
     }
   };
