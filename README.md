@@ -40,6 +40,8 @@ For runtime backend status, use the deployed app's `/health` and `/api/status` e
 - backend transaction-status verification
 - TypeScript and Rust PQC research SDKs
 - branding/reality CI gates
+- x402 v2 paid API transport with `PAYMENT-REQUIRED`, `PAYMENT-SIGNATURE`, and `PAYMENT-RESPONSE` headers
+- Bazaar discovery metadata on paid API resources, plus local discovery manifests at `/api/x402/bazaar` and `/.well-known/x402-bazaar.json`
 
 ### Not yet established
 
@@ -53,6 +55,19 @@ For runtime backend status, use the deployed app's `/health` and `/api/status` e
 - production treasury/governance controls
 - Mainnet readiness
 - regulatory certification or universal legal compliance
+
+## x402 v2 and Bazaar
+
+The paid API layer now uses the x402 v2 HTTP transport and a facilitator-compatible settlement flow. The protected resources are:
+
+- `POST /api/v1/x402/pqc-keygen` — 0.001 USDC (1,000 atomic units)
+- `POST /api/v1/x402/vault-lock` — 0.002 USDC (2,000 atomic units)
+
+The default x402 payment rail is **Solana Devnet USDC** (`solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1`). This is intentionally separate from the application's Solana **Testnet** smart-contract research environment. Override the x402 network, token mint, facilitator, public base URL, and receiver through the `X402_*` environment variables.
+
+A 402 response advertises Bazaar discovery metadata in `extensions.bazaar`. Clients must echo that extension in their x402 v2 payment payload. A Bazaar-capable facilitator may catalog the public resource after a conformant paid settlement. **Source integration does not by itself prove that an external Bazaar catalog has indexed the resource**; catalog visibility must be confirmed against the facilitator's discovery API after a real settlement.
+
+The `pqc-keygen` endpoint currently returns research-derived public material and does not claim standards-conformant PQC key generation. The `vault-lock` endpoint creates a paid commitment bound to the settlement receipt; it does not itself submit an on-chain custody instruction.
 
 ## Send and receive semantics
 
