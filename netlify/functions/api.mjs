@@ -4,7 +4,7 @@ import { chainHealth, programStatus, transactionStatus, walletStatus } from "../
 import { requireHostedWalletAuth, createWalletChallenge, getWalletSession, verifyWalletChallenge, walletAuthStatus } from "../../backend/src/auth.mjs";
 import { readTestnetDeployment } from "../../backend/src/deployment.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "../../backend/src/payments.mjs";
-import { verifySolanaX402Payment, OFFICIAL_SOLANA_RECIPIENT, X402_CAIP2_SOLANA_TESTNET } from "../../backend/src/x402Verifier.mjs";
+import { bazaarManifest, settlePayment } from "../../backend/src/x402V2.mjs";
 import crypto from "node:crypto";
 
 requireHostedWalletAuth();
@@ -25,7 +25,8 @@ function json(status, value, origin, extraHeaders = {}) {
     headers.set("vary", "Origin");
   }
   headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
-  headers.set("access-control-allow-headers", "content-type, authorization, x-payment-signature");
+  headers.set("access-control-allow-headers", "content-type, authorization, payment-signature, x-payment-signature");
+  headers.set("access-control-expose-headers", "payment-required, payment-response, extension-responses");
   return new Response(status === 204 ? null : JSON.stringify(value), { status, headers });
 }
 
@@ -171,163 +172,74 @@ export default async (request) => {
     }
 
     if (request.method === "GET" && (path === "/.well-known/x402-bazaar.json" || path === "/.well-known/x402.json" || path === "/api/x402/bazaar")) {
-      return json(200, {
-        x402Version: "1.0.0",
-        version: "1.0.0",
-        name: "SCSTOBCMinority AI — Quantum-Safe Solana Custody Protocol",
-        type: "quantum-security-protocol",
-        category: "infrastructure",
-        tags: ["solana", "testnet", "post-quantum", "pqc", "ml-kem-768", "ml-dsa-65", "fips-203", "fips-204", "dual-conjunction", "custody-vault", "x402"],
-        provider: {
-          name: "SCSTOBCMinority AI / Martin",
-          website: "https://scstobcminority-ai.netlify.app",
-          payTo: OFFICIAL_SOLANA_RECIPIENT,
-          network: "solana-testnet",
-          caip2: X402_CAIP2_SOLANA_TESTNET,
-          smartContract: "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3"
-        },
-        endpoints: [
-          {
-            path: "/api/v1/x402/pqc-keygen",
-            method: "POST",
-            description: "Generate NIST FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) quantum-safe cryptographic keypair for autonomous AI agents",
-            pricing: { amountSol: 0.001, lamports: 1000000, currency: "SOL", alternativeUsdc: "0.01" }
-          },
-          {
-            path: "/api/v1/x402/vault-lock",
-            method: "POST",
-            description: "Lock asset commitment into on-chain Solana Testnet PQC smart contract vault with dual-conjunction Ed25519 + ML-DSA signature",
-            pricing: { amountSol: 0.002, lamports: 2000000, currency: "SOL", alternativeUsdc: "0.02" }
-          }
-        ]
-      }, origin);
+      return json(200, await bazaarManifest(), origin);
     }
 
     if (request.method === "POST" && path === "/api/v1/x402/pqc-keygen") {
-      const authHeader = request.headers.get("authorization") || "";
-      const sigHeader = request.headers.get("x-payment-signature") || "";
-      let signature = "";
-      if (authHeader.toLowerCase().startsWith("x402 ")) {
-        signature = authHeader.slice(5).trim();
-      } else if (sigHeader) {
-        signature = sigHeader.trim();
-      }
-
-      const costLamports = 1_000_000; // 0.001 SOL
-      const challengeHeader = `x402 realm="scstobcminority-ai", payTo="${OFFICIAL_SOLANA_RECIPIENT}", amount="0.001", currency="SOL", network="${X402_CAIP2_SOLANA_TESTNET}"`;
-
-      if (!signature) {
+      const settlement = await settlePayment("pqc-keygen", request.headers.get("payment-signature"));
+      if (!settlement.paid) {
         return json(402, {
           status: 402,
-          error: "Payment Required",
+          error: settlement.error || "Payment Required",
           protocol: "x402",
-          version: "1.0.0",
-          challenge: {
-            network: X402_CAIP2_SOLANA_TESTNET,
-            payTo: OFFICIAL_SOLANA_RECIPIENT,
-            pricing: { amountSol: 0.001, lamports: costLamports, currency: "SOL", alternativeUsdc: "0.01" },
-            solanaPayUri: `solana:${OFFICIAL_SOLANA_RECIPIENT}?amount=0.001&label=SCSTOBCMinority%20AI&memo=x402-pqc-keygen`
-          },
-          instructions: `Broadcast transfer of 0.001 SOL on Solana Testnet to ${OFFICIAL_SOLANA_RECIPIENT}, then retry with header: 'Authorization: x402 <txSignature>'`
-        }, origin, { "www-authenticate": challengeHeader });
-      }
-
-      const verification = await verifySolanaX402Payment(signature, costLamports, OFFICIAL_SOLANA_RECIPIENT);
-      if (!verification.verified) {
-        return json(402, {
-          status: 402,
-          error: verification.error || "Payment verification failed",
-          protocol: "x402",
-          receivedSignature: signature
-        }, origin, { "www-authenticate": challengeHeader });
+          x402Version: 2
+        }, origin, { "PAYMENT-REQUIRED": settlement.header });
       }
 
       const seed = crypto.randomBytes(32);
       const kemPub = crypto.createHash("sha3-512").update(Buffer.concat([seed, Buffer.from("ML-KEM-768")])).digest("hex");
       const dsaPub = crypto.createHash("sha3-512").update(Buffer.concat([seed, Buffer.from("ML-DSA-65")])).digest("hex");
+      const responseHeaders = { "PAYMENT-RESPONSE": settlement.paymentResponseHeader };
+      if (settlement.extensionResponsesHeader) {
+        responseHeaders["EXTENSION-RESPONSES"] = settlement.extensionResponsesHeader;
+      }
 
       return json(200, {
         success: true,
         protocol: "x402",
+        x402Version: 2,
         service: "scstobcminority-ai",
-        x402Receipt: {
-          signature: verification.signature,
-          payer: verification.payer,
-          recipient: verification.recipient,
-          receivedSol: verification.receivedSol,
-          slot: verification.slot
-        },
-        pqcKeypair: {
-          standard: "NIST FIPS 203 & 204",
-          algorithms: ["ML-KEM-768", "ML-DSA-65"],
-          publicKeyMlKem768: `0x${kemPub}`,
-          publicKeyMlDsa65: `0x${dsaPub}`,
-          securityLevel: "NIST Level 3 (192-bit classical, 128-bit quantum)",
-          vaultAuthority: OFFICIAL_SOLANA_RECIPIENT,
-          network: "solana-testnet"
+        x402Receipt: settlement.settlement,
+        pqcResearchMaterial: {
+          algorithmsReferenced: ["ML-KEM-768", "ML-DSA-65"],
+          derivedPublicMaterialMlKem768: `0x${kemPub}`,
+          derivedPublicMaterialMlDsa65: `0x${dsaPub}`,
+          note: "Research-derived material only; this endpoint does not claim to generate a standards-conformant PQC keypair."
         }
-      }, origin);
+      }, origin, responseHeaders);
     }
 
     if (request.method === "POST" && path === "/api/v1/x402/vault-lock") {
-      const authHeader = request.headers.get("authorization") || "";
-      const sigHeader = request.headers.get("x-payment-signature") || "";
-      let signature = "";
-      if (authHeader.toLowerCase().startsWith("x402 ")) {
-        signature = authHeader.slice(5).trim();
-      } else if (sigHeader) {
-        signature = sigHeader.trim();
-      }
-
-      const costLamports = 2_000_000; // 0.002 SOL
-      const challengeHeader = `x402 realm="scstobcminority-ai", payTo="${OFFICIAL_SOLANA_RECIPIENT}", amount="0.002", currency="SOL", network="${X402_CAIP2_SOLANA_TESTNET}"`;
-
-      if (!signature) {
+      const settlement = await settlePayment("vault-lock", request.headers.get("payment-signature"));
+      if (!settlement.paid) {
         return json(402, {
           status: 402,
-          error: "Payment Required",
+          error: settlement.error || "Payment Required",
           protocol: "x402",
-          version: "1.0.0",
-          challenge: {
-            network: X402_CAIP2_SOLANA_TESTNET,
-            payTo: OFFICIAL_SOLANA_RECIPIENT,
-            pricing: { amountSol: 0.002, lamports: costLamports, currency: "SOL", alternativeUsdc: "0.02" },
-            solanaPayUri: `solana:${OFFICIAL_SOLANA_RECIPIENT}?amount=0.002&label=SCSTOBCMinority%20AI&memo=x402-vault-lock`
-          },
-          instructions: `Broadcast transfer of 0.002 SOL on Solana Testnet to ${OFFICIAL_SOLANA_RECIPIENT}, then retry with header: 'Authorization: x402 <txSignature>'`
-        }, origin, { "www-authenticate": challengeHeader });
-      }
-
-      const verification = await verifySolanaX402Payment(signature, costLamports, OFFICIAL_SOLANA_RECIPIENT);
-      if (!verification.verified) {
-        return json(402, {
-          status: 402,
-          error: verification.error || "Payment verification failed",
-          protocol: "x402",
-          receivedSignature: signature
-        }, origin, { "www-authenticate": challengeHeader });
+          x402Version: 2
+        }, origin, { "PAYMENT-REQUIRED": settlement.header });
       }
 
       const body = await readJson(request);
-      const vaultCommitment = crypto.createHash("sha256").update(JSON.stringify(body) + verification.signature).digest("hex");
+      const receiptId = settlement.settlement?.transaction || settlement.settlement?.payer || "x402";
+      const vaultCommitment = crypto.createHash("sha256").update(JSON.stringify(body) + receiptId).digest("hex");
+      const responseHeaders = { "PAYMENT-RESPONSE": settlement.paymentResponseHeader };
+      if (settlement.extensionResponsesHeader) {
+        responseHeaders["EXTENSION-RESPONSES"] = settlement.extensionResponsesHeader;
+      }
 
       return json(200, {
         success: true,
         protocol: "x402",
+        x402Version: 2,
         service: "scstobcminority-ai",
-        x402Receipt: {
-          signature: verification.signature,
-          payer: verification.payer,
-          slot: verification.slot
-        },
-        vaultLock: {
-          programId: "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3",
-          vaultCommitment: `0x${vaultCommitment}`,
-          dualSignatureScheme: "Ed25519 + ML-DSA-65",
-          quantumResistance: "ENABLED",
-          lockedAt: new Date().toISOString()
+        x402Receipt: settlement.settlement,
+        vaultCommitment: {
+          value: `0x${vaultCommitment}`,
+          onChainLockCreated: false,
+          note: "This paid endpoint creates a research commitment bound to the x402 settlement; it does not itself submit a custody-program instruction."
         }
-      }, origin);
+      }, origin, responseHeaders);
     }
 
     return json(404, { error: "not found" }, origin);
@@ -338,7 +250,7 @@ export default async (request) => {
 
 
 export const config = {
-  path: ["/api/*", "/health"],
+  path: ["/api/*", "/health", "/.well-known/x402-bazaar.json", "/.well-known/x402.json"],
   rateLimit: {
     windowLimit: 60,
     windowSize: 60,
