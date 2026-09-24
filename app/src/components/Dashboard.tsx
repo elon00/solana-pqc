@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
           <div className="text-3xl mb-2">{backendStatus === 'authenticated-and-synchronized' ? '✓' : '○'}</div>
           <div className="text-sm text-gray-400">Frontend ↔ Backend Wallet Sync</div>
