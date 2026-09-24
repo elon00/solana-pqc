@@ -12,6 +12,7 @@ const Dashboard: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [backendWallet, setBackendWallet] = useState<{ sol?: number; accountExists?: boolean } | null>(null);
   const [backendStatus, setBackendStatus] = useState<string>('checking');
+  const [x402Status, setX402Status] = useState<string>('checking');
   const {
     authState,
     sessionToken,
@@ -25,6 +26,30 @@ const Dashboard: React.FC = () => {
       connection.getBalance(publicKey).then(bal => setBalance(bal / LAMPORTS_PER_SOL));
     }
   }, [publicKey, connection]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const syncX402 = async () => {
+      if (!API_BASE_URL) {
+        setX402Status('backend-not-configured');
+        return;
+      }
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/x402/bazaar`);
+        const data = await response.json();
+        if (!response.ok || data?.x402Version !== 2 || !Array.isArray(data?.items)) {
+          throw new Error('x402 manifest unavailable');
+        }
+        if (!cancelled) setX402Status(`v2-bazaar-ready · ${data.items.length} resources`);
+      } catch {
+        if (!cancelled) setX402Status('x402-bazaar-unavailable');
+      }
+    };
+    syncX402();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -127,7 +152,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
           <div className="text-3xl mb-2">{backendStatus === 'authenticated-and-synchronized' ? '✓' : '○'}</div>
           <div className="text-sm text-gray-400">Frontend ↔ Backend Wallet Sync</div>
@@ -138,8 +163,9 @@ const Dashboard: React.FC = () => {
           <div className="text-sm text-gray-400">Backend Testnet SOL View</div>
         </div>
         <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6 border border-gray-700">
-          <div className="text-3xl mb-2">0</div>
-          <div className="text-sm text-gray-400">Transactions</div>
+          <div className="text-3xl mb-2">{x402Status.startsWith('v2-bazaar-ready') ? '✓' : '○'}</div>
+          <div className="text-sm text-gray-400">x402 v2 / Bazaar</div>
+          <div className="text-xs text-gray-500 mt-2">{x402Status}</div>
         </div>
       </div>
 
