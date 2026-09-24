@@ -1,54 +1,147 @@
 {
-  "x402Version": "1.0.0",
-  "version": "1.0.0",
-  "name": "SCSTOBCMinority AI — Quantum-Safe Solana Custody Protocol",
-  "type": "quantum-security-protocol",
-  "category": "infrastructure",
-  "tags": [
-    "solana",
-    "testnet",
-    "post-quantum",
-    "pqc",
-    "ml-kem-768",
-    "ml-dsa-65",
-    "fips-203",
-    "fips-204",
-    "dual-conjunction",
-    "custody-vault",
-    "x402"
-  ],
+  "x402Version": 2,
+  "service": "SCSTOBCMinority AI",
+  "facilitator": "https://x402.org/facilitator",
+  "ready": true,
+  "catalogRegistration": "A Bazaar-capable facilitator indexes a resource after a conformant paid settlement echoes the bazaar extension.",
   "provider": {
     "name": "SCSTOBCMinority AI / Martin",
     "website": "https://scstobcminority-ai.netlify.app",
     "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
-    "network": "solana-testnet",
-    "caip2": "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
+    "network": "solana-devnet",
+    "caip2": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+    "tokenMint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+    "currency": "USDC",
     "smartContract": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3"
   },
-  "endpoints": [
+  "items": [
     {
-      "path": "/api/v1/x402/pqc-keygen",
-      "method": "POST",
-      "description": "Generate NIST FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) quantum-safe cryptographic keypair for autonomous AI agents",
-      "pricing": {
-        "amountSol": 0.001,
-        "lamports": 1000000,
-        "currency": "SOL",
-        "alternativeUsdc": "0.01"
-      },
-      "challengeHeader": "WWW-Authenticate: x402 realm=\"scstobcminority-ai\", payTo=\"8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es\", amount=\"0.001\", currency=\"SOL\", network=\"solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z\""
+      "resource": "https://scstobcminority-ai.netlify.app/api/v1/x402/pqc-keygen",
+      "type": "http",
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+          "amount": "1000",
+          "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+          "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+          "maxTimeoutSeconds": 60,
+          "extra": {
+            "feePayer": "CKPKJWNdJEqa81x7CkZ14BVPiY6y16Sxs7owznqtWYp5",
+            "features": {
+              "smartWalletSupported": true
+            },
+            "paymentFlow": "upfront"
+          }
+        }
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "body": {
+                "label": "agent-demo"
+              }
+            },
+            "output": {
+              "type": "json",
+              "example": {
+                "success": true,
+                "protocol": "x402",
+                "service": "scstobcminority-ai"
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "service": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "success",
+                  "protocol",
+                  "service"
+                ]
+              }
+            }
+          }
+        }
+      }
     },
     {
-      "path": "/api/v1/x402/vault-lock",
-      "method": "POST",
-      "description": "Lock asset commitment into on-chain Solana Testnet PQC smart contract vault (Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3) with dual-conjunction Ed25519 + ML-DSA signature",
-      "pricing": {
-        "amountSol": 0.002,
-        "lamports": 2000000,
-        "currency": "SOL",
-        "alternativeUsdc": "0.02"
-      },
-      "challengeHeader": "WWW-Authenticate: x402 realm=\"scstobcminority-ai\", payTo=\"8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es\", amount=\"0.002\", currency=\"SOL\", network=\"solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z\""
+      "resource": "https://scstobcminority-ai.netlify.app/api/v1/x402/vault-lock",
+      "type": "http",
+      "x402Version": 2,
+      "accepts": [
+        {
+          "scheme": "exact",
+          "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
+          "amount": "2000",
+          "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+          "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+          "maxTimeoutSeconds": 60,
+          "extra": {
+            "feePayer": "CKPKJWNdJEqa81x7CkZ14BVPiY6y16Sxs7owznqtWYp5",
+            "features": {
+              "smartWalletSupported": true
+            },
+            "paymentFlow": "upfront"
+          }
+        }
+      ],
+      "extensions": {
+        "bazaar": {
+          "info": {
+            "input": {
+              "type": "http",
+              "method": "POST",
+              "bodyType": "json",
+              "body": {
+                "commitment": {
+                  "id": "example"
+                }
+              }
+            },
+            "output": {
+              "type": "json",
+              "example": {
+                "success": true,
+                "protocol": "x402",
+                "service": "scstobcminority-ai"
+              },
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "success": {
+                    "type": "boolean"
+                  },
+                  "protocol": {
+                    "type": "string"
+                  },
+                  "service": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "success",
+                  "protocol",
+                  "service"
+                ]
+              }
+            }
+          }
+        }
+      }
     }
   ]
 }
