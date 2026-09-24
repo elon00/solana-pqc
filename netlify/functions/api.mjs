@@ -25,7 +25,8 @@ function json(status, value, origin, extraHeaders = {}) {
     headers.set("vary", "Origin");
   }
   headers.set("access-control-allow-methods", "GET,POST,OPTIONS");
-  headers.set("access-control-allow-headers", "content-type, authorization, payment-signature, x-payment-signature");\n  headers.set("access-control-expose-headers", "payment-required, payment-response, extension-responses");
+  headers.set("access-control-allow-headers", "content-type, authorization, payment-signature, x-payment-signature");
+  headers.set("access-control-expose-headers", "payment-required, payment-response, extension-responses");
   return new Response(status === 204 ? null : JSON.stringify(value), { status, headers });
 }
 
