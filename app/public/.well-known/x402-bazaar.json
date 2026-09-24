@@ -7,7 +7,7 @@
   "provider": {
     "name": "SCSTOBCMinority AI / Martin",
     "website": "https://scstobcminority-ai.netlify.app",
-    "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+    "payTo": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
     "network": "solana-devnet",
     "caip2": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
     "tokenMint": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
@@ -25,7 +25,7 @@
           "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
           "amount": "1000",
           "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-          "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+          "payTo": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
           "maxTimeoutSeconds": 60,
           "extra": {
             "feePayer": "CKPKJWNdJEqa81x7CkZ14BVPiY6y16Sxs7owznqtWYp5",
@@ -88,7 +88,7 @@
           "network": "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1",
           "amount": "2000",
           "asset": "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-          "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+          "payTo": "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3",
           "maxTimeoutSeconds": 60,
           "extra": {
             "feePayer": "CKPKJWNdJEqa81x7CkZ14BVPiY6y16Sxs7owznqtWYp5",

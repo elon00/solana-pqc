@@ -1,6 +1,6 @@
 import { looksLikeBase58, TESTNET_RPC_URL } from "./solana.mjs";
 
-export const OFFICIAL_SOLANA_RECIPIENT = process.env.X402_RECIPIENT_WALLET || "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es";
+export const OFFICIAL_SOLANA_RECIPIENT = process.env.X402_RECIPIENT_WALLET || "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3";
 export const X402_CAIP2_SOLANA_TESTNET = "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z";
 
 // In-Memory Replay Protection Cache (stores confirmed signature hashes)

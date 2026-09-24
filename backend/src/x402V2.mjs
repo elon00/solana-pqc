@@ -2,7 +2,7 @@ const DEFAULT_FACILITATOR = "https://x402.org/facilitator";
 const DEFAULT_PUBLIC_BASE = "https://scstobcminority-ai.netlify.app";
 const DEFAULT_NETWORK = "solana:EtWTRABZaYq6iMfeYKouRu166VU2xqa1";
 const DEFAULT_USDC_MINT = "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU";
-const DEFAULT_PAY_TO = "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es";
+const DEFAULT_PAY_TO = "BPshPrMazV7qunhcq18AvCHjSceHbKytiRDNrtCv68g3";
 
 export const X402_VERSION = 2;
 export const X402_FACILITATOR_URL = (process.env.X402_FACILITATOR_URL || DEFAULT_FACILITATOR).replace(/\/$/, "");
