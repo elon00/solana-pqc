@@ -1,11 +1,13 @@
-import http from "node:http";\nimport crypto from "node:crypto";
+import http from "node:http";
+import crypto from "node:crypto";
 import { URL } from "node:url";
 import { runAgent } from "./agent.mjs";
 import { providerStatus } from "./providers.mjs";
 import { chainHealth, programStatus, transactionStatus, walletStatus } from "./solana.mjs";
 import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWalletChallenge, walletAuthStatus } from "./auth.mjs";
 import { readTestnetDeployment } from "./deployment.mjs";
-import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";\nimport { bazaarManifest, settlePayment } from "./x402V2.mjs";
+import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";
+import { bazaarManifest, settlePayment } from "./x402V2.mjs";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const HOST = process.env.API_HOST || "0.0.0.0";
@@ -23,7 +25,8 @@ function cors(req, res) {
     res.setHeader("vary", "Origin");
   }
   res.setHeader("access-control-allow-methods", "GET,POST,OPTIONS");
-  res.setHeader("access-control-allow-headers", "content-type, authorization, payment-signature");\n  res.setHeader("access-control-expose-headers", "payment-required, payment-response, extension-responses");
+  res.setHeader("access-control-allow-headers", "content-type, authorization, payment-signature");
+  res.setHeader("access-control-expose-headers", "payment-required, payment-response, extension-responses");
   res.setHeader("x-content-type-options", "nosniff");
 }
 
