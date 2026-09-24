@@ -22,6 +22,16 @@
   status = 200
 
 [[redirects]]
+  from = "/.well-known/x402-bazaar.json"
+  to = "/.netlify/functions/api/.well-known/x402-bazaar.json"
+  status = 200
+
+[[redirects]]
+  from = "/.well-known/x402.json"
+  to = "/.netlify/functions/api/.well-known/x402.json"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
