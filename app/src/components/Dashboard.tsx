@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
       try {
         const response = await fetch(`${API_BASE_URL}/api/x402/bazaar`);
         const data = await response.json();
-        if (!response.ok || data?.x402Version !== 2 || !Array.isArray(data?.items)) {
+        if (!response.ok || data?.x402Version !== 2 || data?.ready !== true || !Array.isArray(data?.items)) {
           throw new Error('x402 manifest unavailable');
         }
         if (!cancelled) setX402Status(`v2-bazaar-ready · ${data.items.length} resources`);
