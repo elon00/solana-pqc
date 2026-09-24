@@ -126,7 +126,7 @@ export async function buildPaymentRequired(resourceKey) {
     asset: X402_ASSET,
     payTo: X402_PAY_TO,
     maxTimeoutSeconds: Number(process.env.X402_MAX_TIMEOUT_SECONDS || 60),
-    extra: { ...(kind.extra || {}), feePayer: facilitatorSigner }
+    extra: { ...(kind.extra || {}), feePayer: facilitatorSigner, paymentFlow: "upfront" }
   };
   const paymentRequired = {
     x402Version: X402_VERSION,
