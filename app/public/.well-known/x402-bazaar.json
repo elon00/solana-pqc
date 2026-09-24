@@ -1,0 +1,54 @@
+{
+  "x402Version": "1.0.0",
+  "version": "1.0.0",
+  "name": "SCSTOBCMinority AI — Quantum-Safe Solana Custody Protocol",
+  "type": "quantum-security-protocol",
+  "category": "infrastructure",
+  "tags": [
+    "solana",
+    "testnet",
+    "post-quantum",
+    "pqc",
+    "ml-kem-768",
+    "ml-dsa-65",
+    "fips-203",
+    "fips-204",
+    "dual-conjunction",
+    "custody-vault",
+    "x402"
+  ],
+  "provider": {
+    "name": "SCSTOBCMinority AI / Martin",
+    "website": "https://scstobcminority-ai.netlify.app",
+    "payTo": "8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es",
+    "network": "solana-testnet",
+    "caip2": "solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z",
+    "smartContract": "Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3"
+  },
+  "endpoints": [
+    {
+      "path": "/api/v1/x402/pqc-keygen",
+      "method": "POST",
+      "description": "Generate NIST FIPS 203 (ML-KEM-768) and FIPS 204 (ML-DSA-65) quantum-safe cryptographic keypair for autonomous AI agents",
+      "pricing": {
+        "amountSol": 0.001,
+        "lamports": 1000000,
+        "currency": "SOL",
+        "alternativeUsdc": "0.01"
+      },
+      "challengeHeader": "WWW-Authenticate: x402 realm=\"scstobcminority-ai\", payTo=\"8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es\", amount=\"0.001\", currency=\"SOL\", network=\"solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z\""
+    },
+    {
+      "path": "/api/v1/x402/vault-lock",
+      "method": "POST",
+      "description": "Lock asset commitment into on-chain Solana Testnet PQC smart contract vault (Bnpd9YGaVxMAwdxFoVA3SQP1Vhfwv7jnJ67QNcyAVKq3) with dual-conjunction Ed25519 + ML-DSA signature",
+      "pricing": {
+        "amountSol": 0.002,
+        "lamports": 2000000,
+        "currency": "SOL",
+        "alternativeUsdc": "0.02"
+      },
+      "challengeHeader": "WWW-Authenticate: x402 realm=\"scstobcminority-ai\", payTo=\"8qhW8ctXX77UNLTY9kx3XoAoH8kstQXPbCghUwqu34es\", amount=\"0.002\", currency=\"SOL\", network=\"solana:4uhcVJyU9pJkvQyS88uRDiswHXSCkY3z\""
+    }
+  ]
+}
