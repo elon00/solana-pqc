@@ -249,7 +249,7 @@ export default async (request) => {
 
 
 export const config = {
-  path: ["/api/*", "/health"],
+  path: ["/api/*", "/health", "/.well-known/x402-bazaar.json", "/.well-known/x402.json"],
   rateLimit: {
     windowLimit: 60,
     windowSize: 60,
