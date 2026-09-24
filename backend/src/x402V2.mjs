@@ -111,6 +111,14 @@ export async function buildPaymentRequired(resourceKey) {
   if (!kind) {
     throw new Error(`Configured facilitator does not advertise x402 v2 exact support for ${X402_NETWORK}`);
   }
+  const facilitatorSigner =
+    kind?.extra?.feePayer ||
+    supported?.signers?.[X402_NETWORK]?.[0] ||
+    supported?.signers?.["solana:*"]?.[0] ||
+    null;
+  if (!facilitatorSigner) {
+    throw new Error("Configured facilitator did not advertise an SVM fee payer");
+  }
   const requirements = {
     scheme: "exact",
     network: X402_NETWORK,
@@ -118,7 +126,7 @@ export async function buildPaymentRequired(resourceKey) {
     asset: X402_ASSET,
     payTo: X402_PAY_TO,
     maxTimeoutSeconds: Number(process.env.X402_MAX_TIMEOUT_SECONDS || 60),
-    extra: { ...(kind.extra || {}) }
+    extra: { ...(kind.extra || {}), feePayer: facilitatorSigner }
   };
   const paymentRequired = {
     x402Version: X402_VERSION,
@@ -184,6 +192,18 @@ export async function settlePayment(resourceKey, paymentSignatureHeader) {
   if (Number(paymentPayload?.x402Version) !== X402_VERSION) {
     return { paid: false, error: "Only x402 v2 payment payloads are accepted", ...built };
   }
+  if (paymentPayload?.resource?.url !== built.paymentRequired.resource.url) {
+    return { paid: false, error: "x402 payment payload resource does not match this protected endpoint", ...built };
+  }
+  if (!paymentPayload?.extensions?.bazaar) {
+    return { paid: false, error: "x402 payment payload must echo the Bazaar extension advertised by the server", ...built };
+  }
+  const accepted = paymentPayload?.accepted || {};
+  for (const field of ["scheme", "network", "amount", "asset", "payTo"]) {
+    if (String(accepted[field] ?? "") !== String(built.requirements[field] ?? "")) {
+      return { paid: false, error: `x402 accepted.${field} does not match the advertised payment requirement`, ...built };
+    }
+  }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 25_000);
@@ -244,6 +264,7 @@ export async function bazaarManifest() {
     x402Version: X402_VERSION,
     service: "SCSTOBCMinority AI",
     facilitator: X402_FACILITATOR_URL,
+    ready: items.some((item) => Array.isArray(item.accepts) && item.accepts.length > 0),
     catalogRegistration: "A Bazaar-capable facilitator indexes a resource after a conformant paid settlement echoes the bazaar extension.",
     items
   };
