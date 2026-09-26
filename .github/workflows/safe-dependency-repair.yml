@@ -38,7 +38,14 @@ jobs:
           if grep -qx "typecheck" /tmp/scripts.txt; then npm run typecheck; fi
           if grep -qx "test" /tmp/scripts.txt; then npm test; fi
           if grep -qx "test:nextgen" /tmp/scripts.txt; then npm run test:nextgen; fi
-          if grep -qx "build" /tmp/scripts.txt; then npm run build; fi
+          if grep -qx "build" /tmp/scripts.txt; then
+            BUILD_CMD="$(node -p "require('./package.json').scripts.build || ''")"
+            if echo "$BUILD_CMD" | grep -qE '(^|[[:space:]])anchor([[:space:]]|$)' && ! command -v anchor >/dev/null 2>&1; then
+              echo "Skipping root build here: Anchor CLI is validated by the dedicated Solana/Anchor CI workflow."
+            else
+              npm run build
+            fi
+          fi
 
       - name: Commit verified non-breaking dependency repair
         shell: bash
