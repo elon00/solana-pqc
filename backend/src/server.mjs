@@ -8,6 +8,7 @@ import { createWalletChallenge, getWalletSession, revokeWalletSession, verifyWal
 import { readTestnetDeployment } from "./deployment.mjs";
 import { buildSolanaPayRequest, parseSolanaPayRequest } from "./payments.mjs";
 import { bazaarManifest, settlePayment } from "./x402V2.mjs";
+import { createMcpRuntime, createSolanaActionMetadata, createBlinkUrl } from "./nextgen.mjs";
 
 const PORT = Number(process.env.PORT || process.env.API_PORT || 3001);
 const HOST = process.env.API_HOST || "0.0.0.0";
@@ -57,6 +58,32 @@ async function readJson(req) {
   return JSON.parse(Buffer.concat(chunks).toString("utf8"));
 }
 
+const scstMcp = createMcpRuntime({
+  name: "scstobcminority-ai",
+  version: "0.1.0",
+  tools: [
+    {
+      name: "health",
+      description: "Return evidence-backed SCSTOBCMinority AI backend status.",
+      execute: async () => {
+        const chain = await chainHealth();
+        return { chain, walletAuth: walletAuthStatus(), providers: providerStatus() };
+      },
+    },
+    {
+      name: "wallet_status",
+      description: "Read public Solana wallet status from Testnet RPC.",
+      inputSchema: {
+        type: "object",
+        properties: { address: { type: "string" } },
+        required: ["address"],
+        additionalProperties: false,
+      },
+      execute: async (args) => walletStatus(String(args.address || "")),
+    },
+  ],
+});
+
 export async function handler(req, res) {
   cors(req, res);
   if (req.method === "OPTIONS") return send(res, 204, {});
@@ -74,6 +101,36 @@ export async function handler(req, res) {
         chain,
         walletAuth: walletAuthStatus(),
         providers: providerStatus()
+      });
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/mcp") {
+      const body = await readJson(req);
+      const response = await scstMcp.handle(body);
+      return send(res, response.error ? 400 : 200, response);
+    }
+
+    if (req.method === "GET" && url.pathname === "/api/actions/receive") {
+      return send(res, 200, createSolanaActionMetadata({
+        title: "SCSTOBCMinority AI Testnet Receive",
+        icon: "https://github.com/elon00.png",
+        description: "Action discovery for the existing Solana Pay receive flow. No transaction is fabricated by the backend.",
+        label: "Open receive flow",
+        disabled: true,
+        error: "Wallet-signable Action transaction construction is not enabled in this backend.",
+      }));
+    }
+
+    if (req.method === "POST" && url.pathname === "/api/actions/receive") {
+      return send(res, 501, { error: { message: "No transaction is fabricated. Use the verified client-side wallet signing flow until a tested backend Action transaction builder is added." } });
+    }
+
+    if (req.method === "GET" && url.pathname === "/api/blinks/receive") {
+      const base = process.env.PUBLIC_BASE_URL || `http://${req.headers.host || "localhost"}`;
+      return send(res, 200, {
+        action: `${base}/api/actions/receive`,
+        blink: createBlinkUrl(`${base}/api/actions/receive`),
+        status: "DISCOVERY_ONLY",
       });
     }
 
