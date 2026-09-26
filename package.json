@@ -1,7 +1,7 @@
 {
   "name": "scstobcminority-ai",
   "version": "0.1.0",
-  "description": "SCSTOBCMinority AI \u2014 quantum-safe Solana research infrastructure and SPQC community-utility token prototype for transparent, rights-respecting human-development programs.",
+  "description": "SCSTOBCMinority AI — quantum-safe Solana research infrastructure and SPQC community-utility token prototype for transparent, rights-respecting human-development programs.",
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
@@ -28,7 +28,8 @@
     "deploy:testnet": "anchor deploy --provider.cluster testnet",
     "initialize:testnet": "node scripts/initialize-testnet.mjs",
     "test:deployment": "node --test tests/deployment-evidence.test.mjs",
-    "copilot:check": "node scripts/check-colosseum.mjs"
+    "copilot:check": "node scripts/check-colosseum.mjs",
+    "test:nextgen": "node --test tests/nextgen-integrations.test.mjs"
   },
   "keywords": [
     "solana",
