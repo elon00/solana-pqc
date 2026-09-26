@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "anchor build",
-    "test": "npm run branding:check && npm run test:nist && npm run audit:crypto && npm run reality:audit && npm run test:deployment",
+    "test": "npm run branding:check && npm run test:nist && npm run test:nextgen && npm run audit:crypto && npm run reality:audit && npm run test:deployment",
     "test:nist": "npx tsx tests/official-nist-vectors.test.ts",
     "audit:crypto": "node scripts/audit-crypto.mjs",
     "reality:universal": "npm run reality:audit",
